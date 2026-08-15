@@ -1,0 +1,11 @@
+# Default experimental risk limits (Section 20). Not enforced by any
+# code yet -- the Risk Management Agent that reads this does not exist
+# until a later phase. Recorded now so the defaults exist in one place
+# before anything is built that could need them.
+# max_correlated_exposure_pct is intentionally absent (unconfigured);
+# read it with a None default rather than assuming a value.
+
+risk_per_trade_pct = 0.25
+max_daily_loss_pct = 1.0
+max_weekly_loss_pct = 3.0
+max_simultaneous_positions = 3

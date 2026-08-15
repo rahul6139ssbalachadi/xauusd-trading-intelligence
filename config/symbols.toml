@@ -1,0 +1,46 @@
+# Canonical symbol registry. All internal code (providers, backtest,
+# strategy) refers to symbols by the canonical name, e.g. symbols.EURUSD.
+# Each provider translates canonical -> its own naming via the
+# per-source key (dukascopy / histdata / xm) in that symbol's table.
+#
+# xm names follow the ".i" suffix pattern confirmed for GOLD.i (broker
+# context: XM). Only GOLD.i itself has been confirmed -- other ".i"
+# names below are an assumed pattern and MUST be verified against the
+# manual XM export before being trusted (Section 31: flag conflicts,
+# never assume).
+
+# Full timeframe set supported by the system (Section 6).
+timeframes = ["M1", "M5", "M15", "M30", "H1", "H4", "D1"]
+
+# Timeframes actually being bootstrapped right now.
+active_timeframes = ["H1", "M15"]
+
+[symbols.EURUSD]
+active = true
+dukascopy = "EURUSD"
+histdata = "EURUSD"
+xm = "EURUSD.i"  # assumed pattern, unconfirmed
+
+[symbols.XAUUSD]
+active = true
+dukascopy = "XAUUSD"
+histdata = "XAUUSD"
+xm = "GOLD.i"  # confirmed
+
+# Registered per Section 5 but not part of the Phase 1 bootstrap.
+# No source names set -- do not guess vendor-specific naming ahead of
+# need.
+[symbols.GBPUSD]
+active = false
+
+[symbols.USDJPY]
+active = false
+
+[symbols.NAS100]
+active = false
+
+[symbols.US30]
+active = false
+
+[symbols.BTCUSD]
+active = false

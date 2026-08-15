@@ -1,0 +1,16 @@
+# Global safety switch (Section 23). Must be flipped explicitly and
+# deliberately -- never implied by any other setting or code path.
+live_trading_enabled = false
+
+[paths]
+data_raw = "data/raw"
+data_processed = "data/processed"
+data_cache = "data/cache"
+db = "db/trading.db"
+
+# Default historical window for bootstrap ingestion (Phase 1 scope).
+# Individual ingestion calls may override this. Empty string = open end
+# (present) -- TOML has no null, this is the documented convention.
+[default_history]
+start = "2018-01-01"
+end = ""

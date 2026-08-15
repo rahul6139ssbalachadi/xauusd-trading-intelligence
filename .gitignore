@@ -1,0 +1,14 @@
+.venv/
+.cache/
+__pycache__/
+*.pyc
+data/raw/*/*
+!data/raw/*/.gitkeep
+data/processed/
+data/cache/
+db/*.db
+db/*.db-journal
+db/*.sqlite
+.env
+*.env
+*.log
