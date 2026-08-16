@@ -204,13 +204,22 @@ def test_find_weekend_rows_flags_saturday():
 
 
 def test_find_weekend_rows_flags_friday_after_close():
+    # GOLD.i#'s actual observed close (confirmed via live MT5 fetch
+    # 2026-08-16) is 23:55 UTC -- the same daily-rollover cutoff as every
+    # other day -- not 21:00 UTC. So the open/closed boundary falls
+    # between Friday 23:55 (still trading) and Saturday 00:00 (closed),
+    # not at any Friday intraday hour.
     df = pd.DataFrame(
         {
-            "timestamp": [pd.Timestamp("2024-01-05 22:00", tz="UTC")],  # Friday, after 21:00 UTC
-            "open": [1.0], "high": [1.1], "low": [0.9], "close": [1.0], "volume": [1.0],
+            "timestamp": [
+                pd.Timestamp("2024-01-05 23:55", tz="UTC"),  # Friday, actual last trading bar
+                pd.Timestamp("2024-01-06 00:00", tz="UTC"),  # immediately after, market closed
+            ],
+            "open": [1.0, 1.0], "high": [1.1, 1.1], "low": [0.9, 0.9], "close": [1.0, 1.0], "volume": [1.0, 1.0],
         }
     )
-    assert len(v.find_weekend_rows(df)) == 1
+    flagged_timestamps = set(v.find_weekend_rows(df)["timestamp"])
+    assert flagged_timestamps == {pd.Timestamp("2024-01-06 00:00", tz="UTC")}
 
 
 def test_find_weekend_rows_does_not_flag_friday_before_close():

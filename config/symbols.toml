@@ -25,7 +25,7 @@ xm = "EURUSD.i"  # assumed pattern, unconfirmed
 active = true
 dukascopy = "XAUUSD"
 histdata = "XAUUSD"
-xm = "GOLD.i"  # confirmed
+xm = "GOLD.i#"  # confirmed via symbols_get() 2026-08-16
 
 # Registered per Section 5 but not part of the Phase 1 bootstrap.
 # No source names set -- do not guess vendor-specific naming ahead of

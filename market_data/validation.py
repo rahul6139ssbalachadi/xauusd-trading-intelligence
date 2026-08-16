@@ -17,6 +17,11 @@ _TIMEFRAME_MINUTES = {
     Timeframe.D1: 1440,
 }
 
+# XM's daily rollover break for GOLD.i#, confirmed via real MT5 fetch
+# 2026-08-16 (XAUUSD M5, 2026-07-17..2026-08-14): every non-Friday day's
+# last bar is 23:55 UTC and the next day's first bar is 01:00 UTC.
+XM_DAILY_ROLLOVER_WINDOW: list[tuple[time, time]] = [(time(23, 55), time(1, 0))]
+
 
 def validate_schema(df: pd.DataFrame) -> list[str]:
     """Structural checks only -- columns present, correct dtypes."""
@@ -117,14 +122,20 @@ def find_gaps(
 
 def find_weekend_rows(
     df: pd.DataFrame,
-    friday_close_hour_utc: int = 21,
+    friday_close_hour_utc: int = 24,
     sunday_open_hour_utc: int = 21,
 ) -> pd.DataFrame:
     """Rows timestamped while FX/CFD markets are conventionally closed:
     all of Saturday, Friday after close, Sunday before reopen.
 
-    Default hours (21:00 UTC, roughly 5pm New York) are a heuristic,
-    not a real broker session calendar -- same caveat as find_gaps().
+    friday_close_hour_utc default of 24 (never matches an hour 0-23)
+    reflects GOLD.i#'s actual observed close: confirmed via real MT5
+    fetch 2026-08-16 that it trades right up to the same 23:55 UTC
+    daily-rollover cutoff on Fridays as every other day -- the earlier
+    21:00 UTC guess was flagging legitimate trading rows. sunday_open_hour_utc
+    remains an unverified heuristic -- same caveat as find_gaps() -- but is
+    currently harmless for GOLD.i#, which produced zero Sunday rows in
+    that fetch (first bar after the weekend was Monday 01:00 UTC).
     24/7 symbols (e.g. BTCUSD) should pass check_weekend=False to
     validate() rather than rely on this producing an empty result.
     """
@@ -215,7 +226,7 @@ def validate(
         schema_issues=[],
         duplicates=find_duplicate_timestamps(df),
         ohlc_violations=find_ohlc_violations(df),
-        gaps=find_gaps(df, timeframe),
+        gaps=find_gaps(df, timeframe, session_break_windows=XM_DAILY_ROLLOVER_WINDOW),
         weekend_rows=weekend_rows,
         conflicts=conflicts,
     )
