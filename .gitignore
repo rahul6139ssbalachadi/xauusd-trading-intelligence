@@ -12,3 +12,4 @@ db/*.sqlite
 .env
 *.env
 *.log
+config/mt5.toml

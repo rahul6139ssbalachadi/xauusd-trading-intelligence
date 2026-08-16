@@ -23,3 +23,17 @@ def load_symbols() -> dict:
 
 def load_risk_limits() -> dict:
     return _load_toml("risk_limits.toml")
+
+
+def load_mt5_config() -> dict:
+    """Load config/mt5.toml. Git-ignored -- raises FileNotFoundError
+    with a clear message if it hasn't been created yet, rather than a
+    bare tomllib traceback."""
+    path = CONFIG_DIR / "mt5.toml"
+    if not path.exists():
+        raise FileNotFoundError(
+            f"{path} not found. This file is git-ignored and must be "
+            f"created locally with terminal_path, allowed_login, and "
+            f"symbol before MT5Provider can be used."
+        )
+    return _load_toml("mt5.toml")
