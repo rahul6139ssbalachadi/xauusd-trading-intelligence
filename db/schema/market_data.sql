@@ -3,14 +3,15 @@
 --
 -- ts_broker_epoch stores the raw integer `time` field exactly as MT5's
 -- copy_rates_range/copy_rates_from_pos return it (epoch seconds). This
--- is intentionally NOT converted or relabeled as UTC here: MT5Provider
--- (market_data/providers/mt5_provider.py) currently treats this epoch
--- as UTC via pd.to_datetime(..., utc=True), but that assumption has
--- NOT been independently verified against a known-UTC reference --
--- MT5/broker servers commonly report time in broker-server time (e.g.
--- EET/EEST, UTC+2/+3), not true UTC. Until that offset is confirmed,
--- the schema stores the untouched broker epoch and nothing else, so no
--- incorrect conversion gets baked into stored data.
+-- is intentionally NOT converted or relabeled as UTC here.
+--
+-- OFFSET VERIFIED 2026-08-18 against live XM Global MT5 terminal
+-- (GOLD.i#, demo login 345982869): symbol_info_tick().time minus UTC
+-- now = +3.00h -> broker runs EEST (UTC+3) in summer, EET (UTC+2) in
+-- winter (DST). Therefore these epochs are BROKER-SERVER TIME, not UTC.
+-- To get true UTC: subtract 3h in summer / 2h in winter. Label hour-
+-- based profiles as broker time and apply the offset where true-UTC
+-- alignment matters. Do NOT relabel the stored epoch as UTC.
 CREATE TABLE market_data (
     symbol            TEXT    NOT NULL,
     timeframe         TEXT    NOT NULL,

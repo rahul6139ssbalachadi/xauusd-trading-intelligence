@@ -1,0 +1,29 @@
+{
+  "name": "XAUUSD_STRUCTURE_BREAK",
+  "version": "V1",
+  "market": "XAUUSD",
+  "bias_timeframe": "M15",
+  "trigger_timeframe": "M5",
+  "entry_rules": {
+    "bias_trend": "up",
+    "bias_min_adx": 20,
+    "trigger_structure": "BOS",
+    "trigger_structure_dir": "up",
+    "vol_regimes_allowed": ["normal", "high"],
+    "rsi_max": 70,
+    "rsi_min": 30,
+    "max_spread_pips": 3.0
+  },
+  "stop": {
+    "type": "atr",
+    "atr_multiple": 1.5
+  },
+  "target": {
+    "type": "risk_reward",
+    "risk_reward": 2.0
+  },
+  "risk_pct": 0.0025,
+  "max_positions": 1,
+  "sessions": ["london", "newyork"],
+  "notes": "M15 EMA20>EMA50 + ADX>20 trend filter; M5 bullish BOS trigger; ATR stop, 2R target; restricted to london/newyork sessions. LONG-only V1 — a hypothesis, NOT a claim of edge. Validated only after Phase 8 backtest."
+}

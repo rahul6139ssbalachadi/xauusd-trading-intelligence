@@ -1176,4 +1176,135 @@ The system should be allowed to conclude:
 
 That is a successful decision.
 
+---
+
+40. IMPLEMENTATION STATUS (living tracker — updated as phases complete)
+
+Auto-appended by the build agent. Do NOT treat as spec; it records the
+actual state of the code in this repo.
+
+Current model in use (free tier): tencent/hy3:free
+  (user default switched to poolside/laguna-s-2.1:free 2026-08-19;
+   takes effect on next session launch)
+
+Test command (MUST use the venv python, NOT bare `pytest` — the system
+interpreter lacks pytest and yields a false "stale" failure):
+  cd D:/rahul_ai/trading
+  ./.venv/Scripts/python.exe -m pytest tests/ -q
+
+PHASE STATUS
+  Phase 1-3  Data layer           DONE + tested (73 tests)
+  Phase 4    Data ingest          DONE + tested
+              - scripts/probe_mt5.py, probe_counts.py, ingest_gold_scalp.py
+              - db/trading.db holds XAUUSD: 34,470 M1 / 35,797 M5 / 47,398 M15
+                bars from MT5 demo (login 345982869, XMGlobal-MT5, symbol GOLD.i#)
+              - broker history depth: ~30d M1, ~180d M5, ~730d M15
+  Phase 5    Indicator library     DONE + tested  (indicators/__init__.py; +11 tests -> 82)
+              - ema, sma, rsi(Wilder), atr(Wilder), macd, adx(+DI/-DI), bollinger
+  Phase 6    Market structure     DONE + tested  (market_structure/__init__.py; +11 tests -> 93)
+              - swing_highs / swing_lows (local extrema, configurable left/right)
+              - classify_swings -> HH/HL/LH/LL (NaN on equal/flat, no false flip)
+              - structure_events -> BOS / CHoCH (up/down) DataFrame
+              - session_of -> asia/london/newyork/quiet (BROKER time, offset=3)
+              - volatility_regime -> low/normal/high via ATR vs rolling median
+              - FULL SUITE: 93 passed, 0 regressions
+  Phase 7    Strategy engine      DONE + tested  (strategy/__init__.py; +10 tests -> 103)
+              - Strategy dataclass: versioned, JSON-serializable, save()/load()
+              - build_features(): attaches P5 indicators + P6 structure per TF
+              - evaluate(): structured rule tree -> BUY/SELL/WAIT + reasons
+                + ATR stop / R:R target; every decision explains WHY
+              - candidate def saved: strategy/defs/XAUUSD_STRUCTURE_BREAK_V1.json
+                (M15 EMA20>50 + ADX>20 bias; M5 bullish BOS trigger;
+                 ATR 1.5x stop, 2R target; london/newyork only; LONG-only)
+              - FULL SUITE: 103 passed, 0 regressions
+  Phase 8    Backtest engine      DONE + tested  (backtest/__init__.py; +9 tests -> 112)
+              - event-driven, NO look-ahead: entry at NEXT bar open; intrabar
+                stop/target touch (closer level wins ties); force-close at end
+              - realistic costs: spread (DB points->pips) + RT slippage + commission
+              - full metrics: trades, win%, profit factor, expectancy, max DD,
+                avg win/loss, Sharpe, Sortino, win/loss streaks, avg duration
+              - HONEST RESULT (V1 on real 2yr gold, M15 bias + M5 trigger):
+                trades=868, win%=20%, PF=0.00, net_pips=-4292.8,
+                maxDD=4288.6, sharpe=-3.35  -> NO EDGE, V1 must be reworked
+              - NOTE (bug fixed this phase): evaluate() bias is now PER-BAR
+                (EMA cross), not the single last-bar bias — earlier code
+                applied the final bar's bias to the whole series
+              - FULL SUITE: 112 passed, 0 regressions
+  Phase 9    Train/Val/Test + walk-forward   DONE + tested  (validation/__init__.py; +7 tests -> 119)
+              - train_val_test_split: 60/20/20 by TIME (no shuffle, no overlap)
+              - walk_forward_windows: rolling (train,test) iloc pairs
+              - run_walk_forward: FIXED strategy measured OOS on each window
+                (strategy NEVER tuned on test/val — measurement only)
+              - summarize_walk_forward: IS vs OOS net/PF/win + degradation
+              - BUG FIXED this phase: evaluate() now aligns M15 bias to M5
+                trigger by TIMESTAMP (as-of merge), not positionally. The
+                old positional match was wrong for different timeframes and
+                only appeared to work when bias series was longer.
+              - HONEST WF RESULT (V1 gold, train_frac .5 / test_frac .25):
+                IS_trades=482/635, OOS_trades=0 in BOTH test windows ->
+                V1's edge is period-dependent and vanishes OOS (ADX mostly
+                <20 + RSI often >70 in 2024-25). Degradation = total.
+                This is a CORRECT finding, not a code bug — the harness
+                exposes what in-sample backtest hid.
+              - FULL SUITE: 119 passed, 0 regressions
+  Phase 10   Risk + position sizing  DONE + tested  (risk/__init__.py; +8 tests -> 127)
+              - fixed-fractional sizing: lots = equity*risk_pct / (stop_dist*100)
+              - hard guards: max_positions, max_risk/trade cap (1%), max/min
+                lots, lot_step; fails safe to 0 lots if unsizeable
+              - AccountState (read-only equity snapshot), RiskConfig
+              - apply_risk_to_backtest: attaches lots + USD risk + USD P&L
+              - HONEST FINDING: with ATR stops, ~5% of real trades have stop
+                distances so large (250-340 pips) that 0.25% risk floors to 0
+                lots -> engine correctly declines to size them (cap respected)
+              - FULL SUITE: 127 passed, 0 regressions
+  Phase 11   Paper trade          DONE + tested  (paper/__init__.py; +4 tests -> 133)
+              - JournalStore: append-only JSONL (+ optional SQLite mirror,
+                non-fatal); JournalEntry dataclass with reasons
+              - paper_run(): generates BUY/SELL/WAIT decisions via evaluate,
+                journals every decision with bias + reasons + planned
+                entry/stop/target/lots/risk (reuses backtest sizing)
+              - summarize_journal(): decision counts + planned risk $
+              - SAFETY: SIMULATION-ONLY. No execution path, no MT5 trade
+                calls, live_trading_enabled stays False. Your demo account
+                (mobile trades) is never touched.
+              - FULL SUITE: 133 passed, 0 regressions
+  Phase 12   Dashboard + journal  DONE + tested  (reporting/__init__.py; +5 tests -> 138)
+              - ExperimentRegistry: mints EXP-/STRAT-/BACKTEST-/PAPER- IDs
+                (CLAUDE.md §4), append-only JSONL
+              - build_report(): merges backtest metrics + journal stats
+              - render_text() / render_html() / write_report(): read-only
+                dashboards (text + HTML), clearly marked "no live trading"
+              - SAFETY: observation only; no execution, no account writes
+              - FULL SUITE: 138 passed, 0 regressions
+
+  ALL 12 PHASES COMPLETE (research/backtest/validation/risk/paper/reporting)
+  Remaining honest gap: NO strategy has shown edge on 2yr gold (V1/V2 both
+  PF 0.00). Before any live consideration the strategy logic itself needs a
+  new hypothesis + parameter search on TRAIN window only (Phase 9 discipline).
+
+  STRATEGY VERSIONS (all backtested read-only on stored DB)
+    V1  XAUUSD_STRUCTURE_BREAK_V1.json  long-only, M15 bias + M5 BOS
+        -> in-sample: 868 trades, PF 0.00, net -4292.8, sharpe -3.35 (NO EDGE)
+        -> walk-forward: OOS_trades=0 in both test windows (edge period-dependent)
+    V2  XAUUSD_STRUCTURE_BREAK_V2.json  TWO-SIDED (up->BUY, down->SELL),
+        per-bar EMA bias, same filters as V1
+        -> 1684 trades, PF 0.00, net -7866.0 (adding shorts did NOT restore edge)
+        CONCLUSION: the structure-break+EMA-ADX logic itself lacks edge on
+        gold 2yr data; needs a different idea (not just long->both).
+
+KNOWN CAVEATS (carried forward, still open)
+  - M1 history only ~30 days -> M1-only findings are low-confidence.
+    Consider GOLD24-7.i# or Dukascopy M1 to extend before M1 backtests.
+  - Broker timezone offset assumed UTC+3 (EEST summer / EET winter);
+    applied consistently in session_of() and analyze_gold.py. Verify once.
+  - All structure functions are FEATURES, not predictors. Per spec section 8,
+    they must be statistically validated inside the Phase 8 backtest before
+    any strategy trusts them.
+
+NEXT STEP
+  Phase 7 (strategy engine) builds on indicators (P5) + structure (P6):
+  a structured strategy representation + at least one candidate rule
+  (e.g. M15 bias + M5 structure break + ATR stop). Then Phase 8 backtest
+  with realistic spread/slippage before trusting anything.
+
 Build for robustness, transparency, reproducibility, and controlled experimentation—not promises of profit.
