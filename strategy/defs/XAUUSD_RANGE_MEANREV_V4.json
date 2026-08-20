@@ -1,0 +1,28 @@
+{
+  "name": "XAUUSD_RANGE_MEANREV",
+  "version": "V4",
+  "market": "XAUUSD",
+  "bias_timeframe": "M15",
+  "trigger_timeframe": "M5",
+  "entry_rules": {
+    "bias_trend": "both",
+    "bias_max_adx": 25,
+    "trigger_structure": "CHoCH",
+    "trigger_structure_dir": "both",
+    "require_structure": true,
+    "vol_regimes_allowed": ["normal", "low"],
+    "rsi_range_min": 30,
+    "rsi_range_max": 65,
+    "max_spread_pips": 3.0,
+    "indecision_body_ratio_max": 0.3,
+    "near_anchor_atr": 0.3,
+    "anchor_ema": 20,
+    "session_filter_only": true
+  },
+  "stop": {"type": "atr", "atr_multiple": [0.6, 0.8, 1.0]},
+  "target": {"type": "risk_reward", "risk_reward": [1.0, 1.2, 1.5]},
+  "risk_pct": 0.0025,
+  "max_positions": 1,
+  "sessions": ["london", "newyork"],
+  "notes": "V4 — RANGE MEAN-REVERSION, structurally different from V1-V3. V1/V2: trend-following (EMA cross + BOS breakout). V3: counter-trend CHoCH + RSI extremes + near-swing retest. V4: RANGE-TIGHT mean-reversion — enters ONLY when M15 ADX < 25 (non-trending), M5 RSI is NEUTRAL (30-65), the candle is an INDECISION bar (body/range < 0.3), and price is within 0.3xATR of the 20-bar EMA anchor. Direction follows the most recent M15 CHoCH reversal (fading the last break). 2187-combo parameter search on TRAIN only: best params rsi_min=30, rsi_max=65, bias_max_adx=20, indecision_max=0.3, near_anchor_atr=0.3, atr_mult=1.0, rr=1.5. RESULT: TRAIN net=-808.5 pips, PF=0.00, 181 trades, 0% win rate — EVERY trade stopped out within 2-4 bars. DIAGNOSIS: the CHoCH reversal signal on M15 is actually a CONTINUATION signal, not a reversal — fading it catches falling knives. The indecision candle is occurring DURING the continuation move, not after it. V4 is REJECTED: 0% win rate, -808.5 pips on TRAIN, OOS degradation 0.59. HYPOTHESIS FOR V5: follow the CHoCH direction (trend continuation within range) instead of fading it, or use a completely different entry trigger."
+}

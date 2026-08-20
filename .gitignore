@@ -13,3 +13,6 @@ db/*.sqlite
 *.env
 *.log
 config/mt5.toml
+
+# Lock files
+*.lock

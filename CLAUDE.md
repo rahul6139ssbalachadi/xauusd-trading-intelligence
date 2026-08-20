@@ -1278,19 +1278,43 @@ PHASE STATUS
               - FULL SUITE: 138 passed, 0 regressions
 
   ALL 12 PHASES COMPLETE (research/backtest/validation/risk/paper/reporting)
-  Remaining honest gap: NO strategy has shown edge on 2yr gold (V1/V2 both
-  PF 0.00). Before any live consideration the strategy logic itself needs a
-  new hypothesis + parameter search on TRAIN window only (Phase 9 discipline).
+  Remaining honest gap: NO strategy has shown edge on 2yr gold (V1/V2/V3 all
+  PF 0.00). The strategy logic itself needs a new hypothesis before any live
+  consideration (Phase 9 discipline: search on TRAIN only, measure on OOS).
 
   STRATEGY VERSIONS (all backtested read-only on stored DB)
-    V1  XAUUSD_STRUCTURE_BREAK_V1.json  long-only, M15 bias + M5 BOS
+    V1  XAUUSD_STRUCTURE_BREAK_V1.json  long-only, M15 EMA bias + M5 BOS
         -> in-sample: 868 trades, PF 0.00, net -4292.8, sharpe -3.35 (NO EDGE)
-        -> walk-forward: OOS_trades=0 in both test windows (edge period-dependent)
+        -> walk-forward: OOS_trades=0 in both test windows (period-dependent)
     V2  XAUUSD_STRUCTURE_BREAK_V2.json  TWO-SIDED (up->BUY, down->SELL),
         per-bar EMA bias, same filters as V1
         -> 1684 trades, PF 0.00, net -7866.0 (adding shorts did NOT restore edge)
-        CONCLUSION: the structure-break+EMA-ADX logic itself lacks edge on
-        gold 2yr data; needs a different idea (not just long->both).
+    V3  XAUUSD_MEANREV_BOS_V3.json  MEAN-REVERSION (CHoCH reversal + RSI
+        exhaustion + ATR-normalized near-swing-extreme retest). A structurally
+        DIFFERENT idea from V1/V2 (trend-following -> counter-trend bounce).
+        432-combo parameter search on TRAIN window only:
+        -> TRAIN: best net=-122.6 pips, PF=0.00, 30 trades, win~30%
+        -> VAL: net=-49.8 pips, PF=0.00, 10 trades, 0% win
+        -> WF OOS: IS_mean=-97.8, OOS_mean=-91.5, 37 OOS trades
+        -> NO EDGE. Mean-reversion bounce logic does not work on this gold data
+           either. V1 trend-following (815 trades, -3865.6) vs V3 mean-rev
+           (30 trades, -122.6): both lose; V1 loses more in volume, V3 in
+           sparsity. Neither shows statistical edge.
+    V4  XAUUSD_RANGE_MEANREV_V4.json  RANGE MEAN-REVERSION (indecision
+        candle + neutral RSI 35-65 + ATR-normalized near-EMA anchor + ADX<25
+        gate, CHoCH direction for entry). 2187-combo param search on TRAIN:
+        -> TRAIN: best net=-808.5 pips, PF=0.00, 30 trades, win~30%
+        (best config: rsi_min=25, rsi_max=80, bias_min_adx=18, atr_mult=1.0, rr=1.5)
+        -> VAL: net=-259.1 pips, PF=0.00, 50 trades
+        -> WF OOS: IS_mean=-711.2, OOS_mean=-293.4, OOS_deg=0.59, 114 OOS trades
+        -> REJECTED. Same directionality as V3 (fading recent structure).
+           DIAGNOSIS: indecision candles appear DURING trend continuation,
+           not at reversals — fading the CHoCH catches falling knives.
+    CONCLUSION: 4 hypotheses tested (V1 trend-long, V2 trend-both, V3 MR-fade,
+    V4 range-MR-fade). All fail with PF=0.00. The CHoCH/EMA structure logic
+    does not generate edge on 2yr XAUUSD M5. Need a fundamentally different
+    idea (momentum continuation WITH the break, multi-TF confluence, or a
+    different asset/resample). Failed experiments preserved per §15.
 
 KNOWN CAVEATS (carried forward, still open)
   - M1 history only ~30 days -> M1-only findings are low-confidence.
@@ -1301,10 +1325,35 @@ KNOWN CAVEATS (carried forward, still open)
     they must be statistically validated inside the Phase 8 backtest before
     any strategy trusts them.
 
+ADDITIONAL INFRASTRUCTURE COMPLETED (beyond Phase 1-12):
+  - Monte Carlo robustness (montecarlo/): shuffle / scatter / jitter
+    perturbations on trade sequences; net percentiles, ruin probability,
+    is_robust flag. Tested with 13 new tests. (+13 tests -> 152 total)
+  - Candle-pattern stats (candles/): doji, hammer, shooting star, engulfing
+    bullish/bearish, inside bar, pin bar. Per-pattern win rate, avg return,
+    MAE/MFE, profit factor, min-samples gate. Tested with 6 tests.
+  - CLI command runner (runner/cli.py): /market, /analyze, /signal,
+    /backtest, /optimize, /strategy-list, /risk-status, /trading-status,
+    /report, /experiments, /papertrade. All read-only, live_trading=false.
+  - V3/V4 research scripts (research/): standalone backtest harnesses for
+    hypotheses not supported by the generic evaluate() engine.
+  - Strategy version files updated: V3 + V4 JSON defs with params/search
+    ranges and honest results documented inline.
+
 NEXT STEP
-  Phase 7 (strategy engine) builds on indicators (P5) + structure (P6):
-  a structured strategy representation + at least one candidate rule
-  (e.g. M15 bias + M5 structure break + ATR stop). Then Phase 8 backtest
-  with realistic spread/slippage before trusting anything.
+  4 strategy versions tested on 2yr XAUUSD M5 data — ALL show PF=0.00
+  (no edge). The current hypotheses exhaust the structure-break and
+  mean-reversion directions. A genuinely new hypothesis is needed before
+  any live consideration (e.g. momentum continuation WITH the break,
+  multi-TF confluence, volatility-expansion breakout, or a different
+  asset/resample where patterns are statistically validated).
+
+  When the user provides their own hypothesis, the infrastructure is ready:
+    - ./.venv/Scripts/python.exe runner/cli.py optimize <STRATNAME>
+      to search parameters on TRAIN only
+    - ./.venv/Scripts/python.exe runner/cli.py report <STRATNAME>
+      to generate text/HTML reports
+    - ./.venv/Scripts/python.exe research/v4_range_meanrev_search.py
+      template for standalone hypothesis backtests
 
 Build for robustness, transparency, reproducibility, and controlled experimentation—not promises of profit.
