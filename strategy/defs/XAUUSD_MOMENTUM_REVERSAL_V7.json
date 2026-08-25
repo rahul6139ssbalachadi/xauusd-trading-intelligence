@@ -1,0 +1,81 @@
+{
+  "name": "XAUUSD_MOMENTUM_REVERSAL",
+  "version": "V7",
+  "market": "XAUUSD",
+  "bias_timeframe": "M15",
+  "trigger_timeframe": "M5",
+  "entry_rules": {
+    "hypothesis": "Momentum-reversal. Fade extreme momentum: identify M5 bars with small body / range ratio (exhaustion), combine with pin bar detection. Enter in reversal direction (bullish pin bar with long lower shadow -> BUY, bearish pin bar with long upper shadow -> SELL). Confirmed by M15 ADX >= min_adx and EMA trend context.",
+    "entry_trigger": {
+      "condition": "Pin bar pattern + momentum exhaustion (body/range in bottom X%)",
+      "buy": "Bullish pin bar (long lower shadow > 2x body) + exhaustion + M5 close > EMA20",
+      "sell": "Bearish pin bar (long upper shadow > 2x body) + exhaustion + M5 close < EMA20"
+    },
+    "context_filters": {
+      "min_adx": 25,
+      "ema_span": 20,
+      "momentum_threshold": 0.05,
+      "pattern_type": "pin_bar",
+      "max_spread_pips": 3.0,
+      "vol_percentile": 0.2
+    },
+    "sessions": ["london", "newyork"]
+  },
+  "stop": {
+    "type": "atr",
+    "atr_multiple": 1.0
+  },
+  "target": {
+    "type": "risk_reward",
+    "risk_reward": 2.0
+  },
+  "risk_pct": 0.0025,
+  "max_positions": 1,
+  "description": "V7: momentum-reversal. Fades extreme momentum using pin bar + exhaustion detection, confirmed by ADX+EMA context. A different DIRECTION from V1-V5 (fade vs ride).",
+  "research_results": {
+    "hypothesis": "Pin bar patterns during momentum exhaustion, confirmed by ADX+EMA, signal trend reversals on M5 XAUUSD.",
+    "grid_search_train": {
+      "combos": 1944,
+      "best_net_pips": -84904.5,
+      "best_pf": 0.00,
+      "best_trades": 192,
+      "best_win_rate": 0.02,
+      "best_params": {
+        "min_adx": 25, "atr_mult_stop": 1.0, "rr": 2.0,
+        "ema_span": 100, "momentum_threshold": 0.05,
+        "pattern_type": "pin_bar", "max_spread_pips": 3.0, "vol_pct": 0.2
+      }
+    },
+    "validation": {
+      "net_pips": -35169.3,
+      "profit_factor": 0.00,
+      "trades": 69,
+      "win_rate": 0.0
+    },
+    "walk_forward": {
+      "windows": 6,
+      "is_mean_net": -45054.0,
+      "oos_mean_net": -16334.5,
+      "degradation": 0.64,
+      "oos_trades": 196
+    },
+    "full_dataset": {
+      "net_pips": -162186.1,
+      "profit_factor": 0.00,
+      "trades": 343,
+      "win_rate": 0.01,
+      "sharpe": -3.66,
+      "max_dd": 161929.8
+    },
+    "monte_carlo": {
+      "net_mean": -146027.6,
+      "net_p5": -150443.8,
+      "pf_mean": 0.00,
+      "pf_p5": 0.00,
+      "ruin_prob": "100%",
+      "is_robust": false
+    },
+    "conclusion": "NO EDGE. Fading momentum with pin bars is catastrophic (-162k pips). Win rate 0-2%. Pin bars fire during trend continuation, not reversals — fading them catches falling knives. The descriptive analysis hint (M15 bottom-10% momentum bars 54.4% win rate) was misleading: that was a raw price-return stat, not a tradable signal with stops. REJECTED."
+  },
+  "notes": "Research script: research/v7_momentum_reversal.py — no MT5 writes, no live trading, no fabrication. All numbers computed from db/trading.db (XAUUSD M15: 47398 bars, M5: 35797 bars)."
+}
