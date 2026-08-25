@@ -1348,6 +1348,19 @@ NEXT STEP
   multi-TF confluence, volatility-expansion breakout, or a different
   asset/resample where patterns are statistically validated).
 
+  USER-PROVIDED Strategy 1 tested (V1 research script):
+  SESSION RANGE BREAKOUT SCALPER (M15, Asian session range breakout).
+  research/v1_session_breakout_search.py — 54-combo grid search on TRAIN:
+  -> Best TRAIN: net=-9.2 pips, PF=0.93, 30 trades, win% 47
+  -> VAL: net=24.6 pips, PF=1.21, 12 trades, win% 50
+  -> Walk-forward (6 windows): IS_mean=-18.1, OOS_mean=-14.6, deg=0.19
+  -> Full dataset: net=42.1, PF=1.20, 37 trades, win% 46, sharpe=0.07
+  -> Monte Carlo: NOT robust (net_p5=-17.5, PF_p5=0.91)
+  -> REJECTED: best TRAIN config has PF<1.0 (losing in-sample); only 37
+    trades over 2 years; MC p5 PF=0.91 (below breakeven). The full-dataset
+    positive net (42.1 pips) is within noise (maxDD=43.1). Needs fundamentally
+    different logic. Hypothesis file saved: strategy/defs/XAUUSD_SESSION_RANGE_BREAKOUT_V1.json
+
   When the user provides their own hypothesis, the infrastructure is ready:
     - ./.venv/Scripts/python.exe runner/cli.py optimize <STRATNAME>
       to search parameters on TRAIN only
