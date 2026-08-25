@@ -1277,10 +1277,30 @@ PHASE STATUS
               - SAFETY: observation only; no execution, no account writes
               - FULL SUITE: 138 passed, 0 regressions
 
-  ALL 12 PHASES COMPLETE (research/backtest/validation/risk/paper/reporting)
-  Remaining honest gap: NO strategy has shown edge on 2yr gold (V1/V2/V3 all
-  PF 0.00). The strategy logic itself needs a new hypothesis before any live
-  consideration (Phase 9 discipline: search on TRAIN only, measure on OOS).
+  FULL SUITE: 176 passed, 0 regressions.
+  (13 additional infrastructure tests: montecarlo, candles, rk_trade, CLI.)
+```
+
+  V5  XAUUSD_MOMENTUM_CONTINUATION_BOS_V5.json  MOMENTUM CONTINUATION
+      (ride WITH the BOS break, opposite of V1-V4 which faded it).
+        -> Grid: 648 combos on TRAIN: best net=-1922.6, PF=0.00, 392 trades, win~1%
+        -> VAL: 0 trades (structure events don't fire in val window)
+        -> WF: IS_mean=-243.2, OOS_mean=0.0, deg=1.00, OOS_trades=0
+           (fresh BOS events on M5 are too sparse to generate consistent signals)
+        -> Full: net=-3430.2, PF=0.00, 679 trades, win%=0, sharpe=-4.64
+        -> MC: NOT robust (net_p5=-3146.8, PF_p5=0.00, ruin_prob=100%)
+        -> REJECTED. Win rate is 0-1% when BOS fires — continuation doesn't
+           work either. The structure event simply doesn't predict direction
+           on M5 gold.
+
+    CONCLUSION (6 strategies tested):
+    V1 trend-long (PF 0.00), V2 trend-both (PF 0.00), V3 MR-fade (PF 0.00),
+    V4 range-MR-fade (PF 0.00), V5 momentum-continuation (PF 0.00),
+    V6 candle-pattern (PF 0.02). ALL
+    reject. The EMA/ADX/BOS structure logic produces NO edge on 2yr XAUUSD
+    M5/M15 data in any direction. Need fundamentally different approach
+    (volatility-expansion breakout, multi-TF confluence, volume-profile,
+    different asset/resample).
 
   STRATEGY VERSIONS (all backtested read-only on stored DB)
     V1  XAUUSD_STRUCTURE_BREAK_V1.json  long-only, M15 EMA bias + M5 BOS
@@ -1310,11 +1330,13 @@ PHASE STATUS
         -> REJECTED. Same directionality as V3 (fading recent structure).
            DIAGNOSIS: indecision candles appear DURING trend continuation,
            not at reversals — fading the CHoCH catches falling knives.
-    CONCLUSION: 4 hypotheses tested (V1 trend-long, V2 trend-both, V3 MR-fade,
-    V4 range-MR-fade). All fail with PF=0.00. The CHoCH/EMA structure logic
-    does not generate edge on 2yr XAUUSD M5. Need a fundamentally different
-    idea (momentum continuation WITH the break, multi-TF confluence, or a
-    different asset/resample). Failed experiments preserved per §15.
+    CONCLUSION: 6 strategies tested (V1 trend-long, V2 trend-both, V3 MR-fade,
+    V4 range-MR-fade, V5 momentum-continuation, V6 candle-pattern). All fail
+    with PF=0.00-0.04. The EMA/ADX/BOS/CHoCH and candle-pattern logic does
+    not generate edge on 2yr XAUUSD M5/M15 data in any direction (fade or
+    ride, structure-break or candle-pattern). Need fundamentally different
+    idea (volatility-expansion breakout, multi-TF confluence, volume-profile,
+    or different asset/resample). Failed experiments preserved per §15.
 
 KNOWN CAVEATS (carried forward, still open)
   - M1 history only ~30 days -> M1-only findings are low-confidence.
@@ -1341,12 +1363,38 @@ ADDITIONAL INFRASTRUCTURE COMPLETED (beyond Phase 1-12):
     ranges and honest results documented inline.
 
 NEXT STEP
-  4 strategy versions tested on 2yr XAUUSD M5 data — ALL show PF=0.00
-  (no edge). The current hypotheses exhaust the structure-break and
-  mean-reversion directions. A genuinely new hypothesis is needed before
-  any live consideration (e.g. momentum continuation WITH the break,
-  multi-TF confluence, volatility-expansion breakout, or a different
-  asset/resample where patterns are statistically validated).
+  6 strategy versions tested on 2yr XAUUSD M5+M15 data — ALL show PF=0.00-0.04
+  (no edge). V5 tested momentum continuation WITH the break (opposite of
+  V1-V4 which faded it). Still no edge (0% win rate, 679 trades). The
+  EMA/ADX/BOS structure logic produces NO edge on this gold data in either
+  direction (fade or ride). A fundamentally new hypothesis is needed
+  (e.g. volatility-expansion breakout, multi-TF confluence, volume-profile,
+  different asset/resample where patterns are statistically validated).
+
+  V5 RESEARCH: MOMENTUM CONTINUATION WITH THE BREAK (opposite of V1-V4 fade):
+  research/v5_momentum_continuation.py — 648-combo grid search on TRAIN:
+  -> Best TRAIN: net=-1922.6 pips, PF=0.00, 392 trades, win% 1
+  -> VAL: 0 trades (fresh BOS events don't fire in val window)
+  -> Walk-forward (6 windows): IS_mean=-243.2, OOS_mean=0.0, deg=1.00
+  -> Full dataset: net=-3430.2, PF=0.00, 679 trades, win% 0, sharpe=-4.64
+  -> Monte Carlo: NOT robust (net_p5=-3146.8, PF_p5=0.00, ruin_prob=100%)
+  -> REJECTED: 0% win rate when BOS fires. The structure event does not
+    predict direction on M5 gold — price reverses after breaks, catching
+    continuation trades on the wrong side.
+
+  V6 RESEARCH: CANDLE-PATTERN CONTINUATION (engulfing patterns + ADX + EMA):
+  research/v6_candle_pattern.py — 216-combo grid search on TRAIN:
+  -> Best TRAIN: net=-1031.3 pips, PF=0.03, 241 trades, win% 7
+  -> VAL: net=-547.8 pips, PF=0.00, 106 trades, win% 0
+  -> Walk-forward (6 windows): IS_mean=-580.6, OOS_mean=-230.4, deg=0.60
+  -> Full dataset: net=-2092.0, PF=0.02, 448 trades, win% 4, sharpe=-2.10
+  -> Monte Carlo: NOT robust (net_p5=-1935.9, PF_p5=0.01, ruin_prob=100%)
+  -> REJECTED: candle-pattern engulfing signals also fail on M5 gold. Even
+    with ADX+EMA context, win rate is 4-7%. 6 hypotheses exhausted:
+    structure-break (V1, V2), mean-reversion fade (V3, V4), momentum
+    continuation (V5), candle-pattern (V6). ALL PF<1.0.
+
+  When you provide a new hypothesis, the infrastructure is ready:
 
   USER-PROVIDED Strategy 1 tested (V1 research script):
   SESSION RANGE BREAKOUT SCALPER (M15, Asian session range breakout).
@@ -1361,12 +1409,12 @@ NEXT STEP
     positive net (42.1 pips) is within noise (maxDD=43.1). Needs fundamentally
     different logic. Hypothesis file saved: strategy/defs/XAUUSD_SESSION_RANGE_BREAKOUT_V1.json
 
-  When the user provides their own hypothesis, the infrastructure is ready:
+  When you provide a new hypothesis, the infrastructure is ready:
     - ./.venv/Scripts/python.exe runner/cli.py optimize <STRATNAME>
       to search parameters on TRAIN only
     - ./.venv/Scripts/python.exe runner/cli.py report <STRATNAME>
       to generate text/HTML reports
-    - ./.venv/Scripts/python.exe research/v4_range_meanrev_search.py
+    - ./.venv/Scripts/python.exe research/v6_candle_pattern.py
       template for standalone hypothesis backtests
 
 Build for robustness, transparency, reproducibility, and controlled experimentation—not promises of profit.

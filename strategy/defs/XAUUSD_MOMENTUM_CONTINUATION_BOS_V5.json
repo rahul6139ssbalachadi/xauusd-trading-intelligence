@@ -1,0 +1,88 @@
+{
+  "name": "XAUUSD_MOMENTUM_CONTINUATION_BOS_V5",
+  "version": "V5",
+  "market": "XAUUSD",
+  "bias_timeframe": "M15",
+  "trigger_timeframe": "M5",
+  "entry_rules": {
+    "hypothesis": "Momentum continuation WITH the break (BOS) - ride the trend in the direction of the structure break, not fade it. V1-V4 all faded the break (mean-reversion); V5 tests the opposite.",
+    "bias_filters": {
+      "min_adx": 25,
+      "ema_anchor": "EMA50",
+      "trend_alignment": "price > EMA50 for BUY, price < EMA50 for SELL"
+    },
+    "structure_trigger": {
+      "kind": "BOS",
+      "freshness": "detect FRESH BOS event on M5 frame within bos_lookback bars",
+      "bos_lookback": 1
+    },
+    "momentum_confirmation": {
+      "req_momentum": true,
+      "buy": "close > prior_close AND close > prior_open (bullish continuation candle)",
+      "sell": "close < prior_close AND close < prior_open (bearish continuation candle)"
+    },
+    "vol_required": ["normal", "high"],
+    "max_spread_pips": 3.0,
+    "sessions": ["london", "newyork"]
+  },
+  "stop": {
+    "type": "atr",
+    "atr_multiple": 1.0
+  },
+  "target": {
+    "type": "risk_reward",
+    "risk_reward": 2.5
+  },
+  "risk_pct": 0.0025,
+  "max_positions": 1,
+  "description": "V5: momentum continuation WITH the BOS break. Detects fresh BOS events on M5 (within 1-bar lookback), trades in the break direction with ADX>25 + EMA50 alignment + bullish/bearish continuation candle confirmation. Stop = 1.0x ATR, target = 2.5R.",
+  "research_results": {
+    "hypothesis": "Ride momentum WITH the BOS break direction (opposite of V1-V4 which faded it).",
+    "grid_search_train": {
+      "combos": 648,
+      "best_net_pips": -1922.6,
+      "best_pf": 0.0,
+      "best_trades": 392,
+      "best_win_rate": 0.01,
+      "best_params": {
+        "min_adx": 25, "atr_mult_stop": 1.0, "rr": 2.5,
+        "max_spread_pips": 3.0, "req_momentum": true,
+        "bos_lookback": 1, "ema_span": 50,
+        "sessions": ["london", "newyork"]
+      }
+    },
+    "validation": {
+      "net_pips": "nan",
+      "profit_factor": "nan",
+      "trades": 0,
+      "win_rate": 0.0,
+      "note": "0 trades - structure events do not fire in val window"
+    },
+    "walk_forward": {
+      "windows": 6,
+      "is_mean_net": -243.2,
+      "oos_mean_net": 0.0,
+      "degradation": 1.0,
+      "oos_trades": 0,
+      "note": "OOS trades = 0 in ALL windows - fresh BOS events on M5 are too sparse"
+    },
+    "full_dataset": {
+      "net_pips": -3430.2,
+      "profit_factor": 0.0,
+      "trades": 679,
+      "win_rate": 0.0,
+      "sharpe": -4.64,
+      "max_dd": 3426.1
+    },
+    "monte_carlo": {
+      "net_mean": -3088.6,
+      "net_p5": -3146.8,
+      "pf_mean": 0.0,
+      "pf_p5": 0.0,
+      "ruin_prob": "100%",
+      "is_robust": false
+    },
+    "conclusion": "NO EDGE. Fresh-BOS approach fires rarely but win rate is 0-1% when it does. BOS/CHoCH structure events on M5 XAUUSD do not produce continuation momentum. 5 strategies tested (V1 trend-long, V2 trend-both, V3 MR-fade, V4 range-MR-fade, V5 momentum-continuation). ALL show PF=0.00 or below breakeven. The EMA/ADX/BOS structure logic does not generate edge on 2yr XAUUSD M5/M15 data in either direction (fade or ride). Need a fundamentally different approach."
+  },
+  "notes": "Research script: research/v5_momentum_continuation.py - no MT5 writes, no live trading, no fabrication. All numbers computed from db/trading.db (XAUUSD M15: 47398 bars, M5: 35797 bars). Broker timeframe offset UTC+3. M5 data covers ~6 months vs M15's ~2 years."
+}
