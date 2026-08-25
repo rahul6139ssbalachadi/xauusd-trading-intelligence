@@ -1,0 +1,23 @@
+======================================================================
+V8 RESEARCH: Volatility-Expansion Breakout (XAUUSD M5+M15)
+======================================================================
+Loaded M15: 47398 bars  (2024-08-13 07:30:00+00:00 to 2026-08-18 07:15:00+00:00)
+Loaded M5:  35797 bars  (2026-02-16 01:00:00+00:00 to 2026-08-18 07:20:00+00:00)
+
+[0] Building features...
+[1] Detecting volatility-regime breakout signals...
+   Default params: BUY signals=9, SELL signals=3
+
+TRAIN: 21478 bars | VAL: 7159 | TEST: 7160
+
+[2] Grid search on TRAIN (3888 combos)...
+
+Top 15 by TRAIN net_pips (min 15 trades):
+
+Top 5 by PROFIT FACTOR (min 15 trades):
+  (none met 15-trade threshold)
+
+  (no config produced >=15 trades in TRAIN)
+
+======================================================================
+RESEARCH COMPLETE — no MT5 writes, no live trading, no fabrication.

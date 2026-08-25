@@ -1363,11 +1363,15 @@ ADDITIONAL INFRASTRUCTURE COMPLETED (beyond Phase 1-12):
     ranges and honest results documented inline.
 
 NEXT STEP
-  6 strategy versions tested on 2yr XAUUSD M5+M15 data — ALL show PF=0.00-0.04
-  (no edge). V5 tested momentum continuation WITH the break (opposite of
-  V1-V4 which faded it). Still no edge (0% win rate, 679 trades). The
-  EMA/ADX/BOS structure logic produces NO edge on this gold data in either
-  direction (fade or ride). A fundamentally new hypothesis is needed
+  8 strategy versions tested on 2yr XAUUSD M5+M15 data — ALL show PF=0.00-0.03
+  (no edge) or too few signals to evaluate. V7 tested momentum-reversal
+  (fade extreme momentum with pin bars) — catastrophic losses (net -162k).
+  V8 tested volatility-expansion breakout — too few signals (12 total) to
+  evaluate. V7 tested a DIFFERENT direction than V1-V6 (fade vs ride).
+  Still no edge. 8 hypotheses exhausted:
+  structure-break (V1, V2), mean-reversion fade (V3, V4), momentum
+  continuation (V5), candle-pattern (V6), momentum-reversal (V7),
+  volatility-expansion (V8). ALL PF<1.0 or inconclusive.
   (e.g. volatility-expansion breakout, multi-TF confluence, volume-profile,
   different asset/resample where patterns are statistically validated).
 
@@ -1383,16 +1387,45 @@ NEXT STEP
     continuation trades on the wrong side.
 
   V6 RESEARCH: CANDLE-PATTERN CONTINUATION (engulfing patterns + ADX + EMA):
-  research/v6_candle_pattern.py — 216-combo grid search on TRAIN:
-  -> Best TRAIN: net=-1031.3 pips, PF=0.03, 241 trades, win% 7
-  -> VAL: net=-547.8 pips, PF=0.00, 106 trades, win% 0
-  -> Walk-forward (6 windows): IS_mean=-580.6, OOS_mean=-230.4, deg=0.60
-  -> Full dataset: net=-2092.0, PF=0.02, 448 trades, win% 4, sharpe=-2.10
-  -> Monte Carlo: NOT robust (net_p5=-1935.9, PF_p5=0.01, ruin_prob=100%)
-  -> REJECTED: candle-pattern engulfing signals also fail on M5 gold. Even
-    with ADX+EMA context, win rate is 4-7%. 6 hypotheses exhausted:
-    structure-break (V1, V2), mean-reversion fade (V3, V4), momentum
-    continuation (V5), candle-pattern (V6). ALL PF<1.0.
+    research/v6_candle_pattern.py — 216-combo grid search on TRAIN:
+    -> Best TRAIN: net=-1031.3 pips, PF=0.03, 241 trades, win% 7
+    -> VAL: net=-547.8 pips, PF=0.00, 106 trades, win% 0
+    -> Walk-forward (6 windows): IS_mean=-580.6, OOS_mean=-230.4, deg=0.60
+    -> Full dataset: net=-2092.0, PF=0.02, 448 trades, win% 4, sharpe=-2.10
+    -> Monte Carlo: NOT robust (net_p5=-1935.9, PF_p5=0.01, ruin_prob=100%)
+    -> REJECTED: candle-pattern engulfing signals also fail on M5 gold. Even
+      with ADX+EMA context, win rate is 4-7%. ALL PF<1.0.
+
+    V7 RESEARCH: MOMENTUM-REVERSAL (pin bar + exhaustion detection + EMA/ADX):
+    research/v7_momentum_reversal.py — 1944-combo grid search on TRAIN:
+    -> Best TRAIN: net=-84904.5 pips, PF=0.00, 192 trades, win% 2
+    -> VAL: net=-35169.3 pips, PF=0.00, 69 trades, win% 0
+    -> Walk-forward (6 windows): IS_mean=-45054.0, OOS_mean=-16334.5, deg=0.64
+    -> Full dataset: net=-162186.1, PF=0.00, 343 trades, win% 1, sharpe=-3.66
+    -> Monte Carlo: NOT robust (net_p5=-150443.8, PF_p5=0.00, ruin_prob=100%)
+    -> REJECTED: fading momentum with pin bars is catastrophic (-162k pips).
+      Win rate 0-2%. The ATR stop (~60 pips) is too tight relative to the
+      massive losses when patterns appear during strong trends — pin bars fire
+      during trend continuation, not reversals.
+
+    V8 RESEARCH: VOLATILITY-EXPANSION BREAKOUT (ATR percentile + M5 BB breakout):
+    research/v8_volatility_breakout.py — 3888-combo grid search on TRAIN:
+    -> Best TRAIN: NO CONFIG produced >=15 trades (only 12 signals total)
+    -> The volatility-compression-then-expansion + BB breakout + ADX>=15 +
+      session filter is too restrictive — only 9 BUY + 3 SELL signals fired
+      across 21,478 TRAIN bars
+    -> INCONCLUSIVE: too few signals to evaluate. No statistical edge to
+      either confirm or reject — the hypothesis simply does not fire often
+      enough on this M5 gold data.
+
+    CONCLUSION: 8 strategies tested (V1 trend-long, V2 trend-both, V3 MR-fade,
+    V4 range-MR-fade, V5 momentum-continuation, V6 candle-pattern, V7
+    momentum-reversal, V8 volatility-expansion). ALL either fail with PF<1.0
+    or produce too few signals to evaluate. The gold M5+M15 data does not
+    support structure-break, mean-reversion, momentum-continuation,
+    candle-pattern, or volatility-expansion hypotheses. Need fundamentally
+    different approach (volume-profile, order-flow, multi-asset correlation,
+    or different time asset/resample where patterns are statistically valid).
 
   When you provide a new hypothesis, the infrastructure is ready:
 
@@ -1414,7 +1447,7 @@ NEXT STEP
       to search parameters on TRAIN only
     - ./.venv/Scripts/python.exe runner/cli.py report <STRATNAME>
       to generate text/HTML reports
-    - ./.venv/Scripts/python.exe research/v6_candle_pattern.py
+    - ./.venv/Scripts/python.exe research/v8_volatility_breakout.py
       template for standalone hypothesis backtests
 
 Build for robustness, transparency, reproducibility, and controlled experimentation—not promises of profit.

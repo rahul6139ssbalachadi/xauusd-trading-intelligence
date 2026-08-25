@@ -1,0 +1,57 @@
+{
+  "name": "XAUUSD_VOLATILITY_EXPANSION_BREAKOUT",
+  "version": "V8",
+  "market": "XAUUSD",
+  "bias_timeframe": "M15",
+  "trigger_timeframe": "M5",
+  "entry_rules": {
+    "hypothesis": "Volatility compression -> expansion breakout. When M15 ATR drops to bottom 20% (compression), wait for ATR to spike above 70th percentile (expansion), then enter in the direction of M5 Bollinger Band breakout. Trades WITH volatility expansion, not against it — fundamentally different from V1-V7 structure/candle logic.",
+    "bias_filters": {
+      "vol_compress_pct": 20,
+      "vol_expand_pct": 70,
+      "adx_min": 15,
+      "bb_std": 2.0
+    },
+    "entry_trigger": {
+      "condition": "M15 ATR >= 70th percentile AND was compressed in prior 10 bars",
+      "buy": "M5 close > M5 Bollinger Upper Band (breakout_up)",
+      "sell": "M5 close < M5 Bollinger Lower Band (breakdown_down)"
+    },
+    "stop": {
+      "type": "swing_low (buy) / swing_high (sell)",
+      "atr_buffer": 0.5
+    },
+    "target": {
+      "type": "atr_multiple",
+      "atrs": []
+    },
+    "max_spread_pips": 3.0,
+    "sessions": ["london", "newyork"]
+  },
+  "stop": {
+    "type": "swing",
+    "description": "Below recent 20-bar swing low (buy) or above (sell)"
+  },
+  "target": {
+    "type": "risk_reward",
+    "risk_reward": 2.0,
+    "reference": "ATR(14)"
+  },
+  "risk_pct": 0.0025,
+  "max_positions": 1,
+  "description": "V8: volatility-expansion breakout. Trades WITH volatility spikes using M15 ATR percentile + M5 Bollinger Band breakout. A fundamentally different hypothesis from V1-V7 (which all used structure-break or candle-pattern entry logic).",
+  "research_results": {
+    "hypothesis": "Volatility compression (M15 ATR in bottom 20%) followed by expansion (M15 ATR above 70th percentile) + M5 Bollinger Band breakout generates directional momentum entry.",
+    "grid_search_train": {
+      "combos": 3888,
+      "result": "NO CONFIG produced >=15 trades in TRAIN window",
+      "best_signal_count": {"buy": 9, "sell": 3, "total": 12, "default_params": true}
+    },
+    "validation": "N/A — no config met minimum 15-trade threshold",
+    "walk_forward": "N/A — insufficient signals to evaluate",
+    "full_dataset": "N/A — insufficient signals",
+    "monte_carlo": "N/A — no trades to simulate",
+    "conclusion": "INCONCLUSIVE / NO EDGE. The volatility-expansion breakout approach is too restrictive — combined with ADX>=15, session filter, and BB breakout confirmation, only 12 signals fired across 21,478 TRAIN bars. 3888 parameter combinations could not reach the 15-trade minimum. The M5+M15 data does not support this hypothesis. V8 is inconclusive and rejected."
+  },
+  "notes": "Research script: research/v8_volatility_breakout.py — no MT5 writes, no live trading, no fabrication. All numbers computed from db/trading.db (XAUUSD M15: 47398 bars, M5: 35797 bars). M5 data covers Feb 2025 to Aug 2026 (~6 months) — shorter than M15 (2yr)."
+}
