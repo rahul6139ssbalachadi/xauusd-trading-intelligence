@@ -1,0 +1,39 @@
+{
+  "name": "XAUUSD_SESSION_RANGE_BREAKOUT",
+  "version": "V1",
+  "market": "XAUUSD",
+  "bias_timeframe": "M15",
+  "trigger_timeframe": "M15",
+  "entry_rules": {
+    "range_type": "asia",
+    "breakout_confirm": true,
+    "atr_min": 1.0,
+    "atr_mult_stop": 0.8,
+    "rr": 2.5,
+    "max_spread_pips": 3.0,
+    "sessions": ["london", "newyork"],
+    "vol_confirm": false,
+    "volume_median_mult": 1.5
+  },
+  "stop": {
+    "type": "range_or_atr",
+    "atr_multiple": 0.8
+  },
+  "target": {
+    "type": "risk_reward",
+    "risk_reward": 2.5
+  },
+  "risk_pct": 0.0025,
+  "max_positions": 1,
+  "sessions": ["london", "newyork"],
+  "description": "Session Range Breakout Scalper: trade close-beyond confirmation of the previous Asian session range (prev day 00:00-07:00 broker time, UTC+3) during London/NY sessions. Stop below range or 0.8x ATR (whichever gives more room). 2.5R target.",
+  "hypothesis": "Price tends to continue in the breakout direction after closing beyond the prior Asian session range during active London/NY liquidity windows.",
+  "research_results": {
+    "train": {"net_pips": -9.2, "profit_factor": 0.93, "trades": 30, "win_rate": 0.47, "params": {"range_type": "asia", "breakout_confirm": true, "atr_min": 1.0, "atr_mult_stop": 0.8, "rr": 2.5, "max_spread_pips": 3.0}},
+    "validation": {"net_pips": 24.6, "profit_factor": 1.21, "trades": 12, "win_rate": 0.50},
+    "walk_forward": {"windows": 6, "is_mean_net": -18.1, "oos_mean_net": -14.6, "degradation": 0.19, "oos_trades": 48},
+    "full_dataset": {"net_pips": 42.1, "profit_factor": 1.20, "trades": 37, "win_rate": 0.46, "sharpe": 0.07, "max_dd": 43.1, "expectancy": 1.14, "longest_loss_streak": 5},
+    "conclusion": "NO EDGE. Best TRAIN config has PF=0.93 (below 1.0 = losing). Walk-forward IS_mean=-18.1, OOS_mean=-14.6 (degradation=0.19 but both negative). Full-dataset PF=1.20 but only 37 trades over 2 years, sharpe=0.07. Small trade count + low profit factor = insufficient statistical edge. The positive full-dataset result (42.1 pips) is within noise given maxDD=43.1 and only 37 trades. REJECTED — needs fundamentally different logic."
+  },
+  "notes": "Research script: research/v1_session_breakout_search.py — no MT5 writes, no live trading, no fabrication. All numbers computed from db/trading.db (M15 XAUUSD, 47398 bars, 2024-08-13 to 2026-08-18, broker UTC+3)."
+}
