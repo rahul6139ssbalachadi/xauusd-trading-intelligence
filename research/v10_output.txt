@@ -1,0 +1,57 @@
+======================================================================
+V10 RESEARCH: Regime-Switching Multi-Strategy Engine (XAUUSD M5/M15)
+======================================================================
+Loaded M5: 35797 bars  (2026-02-16 01:00:00+00:00 -> 2026-08-18 07:20:00+00:00)
+Loaded M15: 47398 bars  (2024-08-13 07:30:00+00:00 -> 2026-08-18 07:15:00+00:00)
+
+[0] Pre-computing M15 regime features...
+  M15 regime distribution (2 years):
+    RANGE: 15229 (32.1%)
+    TREND_UP: 10315 (21.8%)
+    UNSURE: 8734 (18.4%)
+    TREND_DOWN: 8381 (17.7%)
+    ABNORMAL_VOL: 4739 (10.0%)
+
+TRAIN: 21478 bars | VAL: 7159 | TEST: 7159
+
+[1] Grid search on TRAIN (864 combos)...
+
+Top 15 configs by TRAIN net_pips (min 15 trades):
+  net=   -693.7  PF= 0.03  trades= 163  win%= 11
+
+Top 5 by PROFIT FACTOR (min 15 trades):
+  PF= 0.03  net=   -693.7  trades= 163  win%=11.0
+
+[2] Best config: net=-693.7  PF=0.03  trades=163  win%=11
+  Params: atr_mult_stop=2.0, rr=3.0, rsi_oversold=25.0, rsi_overbought=70.0,
+          range_atr_mult=0.3, range_rr=1.2, adx_strong=25.0, adx_weak=15.0
+
+[3] Validation (7159 bars)...
+  VAL: net=-266.0  PF=0.00  trades=52  win%=0
+
+[4] Walk-forward OOS (fixed params, no re-tuning)...
+  W1: IS  net= -380.7 (t92) | OOS net= -103.6 (t25)
+  W2: IS  net= -348.3 (t81) | OOS net= -109.6 (t26)
+  W3: IS  net= -345.6 (t84) | OOS net= -104.3 (t20)
+  W4: IS  net= -317.4 (t72) | OOS net= -139.5 (t27)
+  W5: IS  net= -338.7 (t71) | OOS net= -138.7 (t28)
+  W6: IS  net= -385.9 (t75) | OOS net= -126.5 (t25)
+
+  WF: windows=6 IS_mean=-352.8 OOS_mean=-120.4 deg=0.66 OOS_trades=151
+
+[5] Full-dataset backtest...
+  FULL: net=-1280.2  PF=0.01  trades=280  win%=6  sharpe=-2.01  maxDD=1275.8
+
+[6] Regime breakdown (full dataset signals)...
+  UNSURE: bars=14322, buys=0, sells=0
+  TREND_DOWN: bars=6864, buys=42, sells=548
+  TREND_UP: bars=6653, buys=389, sells=60
+  RANGE: bars=4379, buys=0, sells=0
+  ABNORMAL_VOL: bars=3579, buys=0, sells=0
+
+[7] Monte Carlo robustness...
+  net_mean=-1152.8  net_p5=-1191.5  PF_mean=0.01  PF_p5=0.01
+  ruin_prob=100.00%  robust=False
+
+RESEARCH COMPLETE — no MT5 writes, no live trading, no fabrication.
+All numbers computed from db/trading.db.

@@ -1,0 +1,89 @@
+{
+  "name": "XAUUSD_REGIME_SWITCH_ENGINE",
+  "version": "V10",
+  "market": "XAUUSD",
+  "bias_timeframe": "M15",
+  "trigger_timeframe": "M5",
+  "entry_rules": {
+    "hypothesis": "Regime-switching multi-strategy. Classify market state on M15 (RANGE, TREND_UP, TREND_DOWN, UNSURE, ABNORMAL_VOL via ADX + EMA + ATR percentile), then route M5 entries to the appropriate sub-strategy: trend-following (pullback in trend direction) for TREND regimes, mean-reversion (RSI extremes + range bounce) for RANGE, and WAIT for UNSURE/ABNORMAL. The regime classifier is the gate, not a predictor.",
+    "regime_classification": {
+      "abnormal_vol": "ATR in top 10% (news spike) -> WAIT",
+      "trend_up": "EMA34 > EMA89 AND ADX >= adx_strong -> trend-following buy",
+      "trend_down": "EMA34 < EMA89 AND ADX >= adx_strong -> trend-following sell",
+      "range": "ADX < adx_weak -> mean-reversion sub-strategy",
+      "unsure": "ADX between adx_weak and adx_strong -> WAIT"
+    },
+    "strategy_routing": {
+      "TREND_UP": "trend_signal: pullback to EMA + continuation candle",
+      "TREND_DOWN": "trend_signal: pullback to EMA + continuation candle",
+      "RANGE": "range_signal: RSI extremes + range bounce + tight stop",
+      "UNSURE": "WAIT",
+      "ABNORMAL_VOL": "WAIT"
+    }
+  },
+  "stop": {
+    "type": "strategy-specific",
+    "trend_atr_multiple": 2.0,
+    "range_atr_multiple": 0.3,
+    "description": "ATR-based for trend, tight ATR for range mean-reversion"
+  },
+  "target": {
+    "type": "risk_reward",
+    "risk_reward": 2.5,
+    "description": "R:R based per sub-strategy (trend 1:2.5, range 1:1.2)"
+  },
+  "risk_pct": 0.0025,
+  "max_positions": 1,
+  "description": "V10: Regime-Switching Multi-Strategy Engine. Classifies M15 market regime (5 states), then routes M5 entries to trend-following or mean-reversion sub-strategies. The most sophisticated hypothesis yet — but the complexity did not help; all sub-strategies lose.",
+  "research_results": {
+    "hypothesis": "A regime-switching approach that routes to different sub-strategies based on market state will find edge where single-strategy approaches fail.",
+    "grid_search_train": {
+      "combos": 864,
+      "result": "ALL configs lose. Best TRAIN net=-693.7 pips, PF=0.03",
+      "best_train": {
+        "net_pips": -693.7,
+        "profit_factor": 0.03,
+        "trades": 163,
+        "win_rate": 0.11,
+        "params": {
+          "atr_mult_stop": 2.0, "rr": 3.0,
+          "rsi_oversold": 25.0, "rsi_overbought": 70.0,
+          "range_atr_mult": 0.3, "range_rr": 1.2,
+          "adx_strong": 25.0, "adx_weak": 15.0
+        }
+      }
+    },
+    "validation": {
+      "net_pips": -266.0,
+      "profit_factor": 0.00,
+      "trades": 52,
+      "win_rate": 0.00,
+      "conclusion": "Validation has 0% win rate — complete failure to generalize"
+    },
+    "walk_forward": {
+      "windows": 6,
+      "is_mean_net": -352.8,
+      "oos_mean_net": -120.4,
+      "degradation": 0.66,
+      "oos_trades": 151
+    },
+    "full_dataset": {
+      "net_pips": -1280.2,
+      "profit_factor": 0.01,
+      "trades": 280,
+      "win_rate": 0.06,
+      "sharpe": -2.01,
+      "max_dd": 1275.8
+    },
+    "regime_breakdown": {
+      "RANGE": "15,229 bars (32.1%) — 0 BUY signals, 0 SELL signals (range mean-reversion sub-strategy produces nothing)",
+      "TREND_UP": "10,315 bars (21.8%) — 389 buys, 60 sells (trend sub-strategy fires in uptrend, losses)",
+      "UNSURE": "8,734 bars (18.4%) — 0 signals (correctly abstains)",
+      "TREND_DOWN": "8,381 bars (17.7%) — 42 buys, 548 sells (most activity in downtrend, all losing)",
+      "ABNORMAL_VOL": "4,739 bars (10.0%) — 0 signals (correctly abstains)"
+    },
+    "root_cause": "The regime router is fundamentally broken by construction. The range sub-strategy (RSI extremes + range bounce) produces ZERO signals — the RANGE regime classification and the RSI extreme conditions never co-occur on this data. Most signals come from TREND_DOWN (548 sells), which all lose. The multi-strategy complexity did not help — each sub-strategy inherits the same fundamental problem: no edge on M5/XAUUSD gold after costs.",
+    "conclusion": "NO EDGE. 864-parameter grid, best config PF=0.03, 11% win rate in-sample, 0% in validation. Walk-forward shows consistent losses across all 6 windows. Monte Carlo: 100% ruin probability. The regime-switching meta-strategy produces fewer and worse signals than the simpler strategies. REJECTED."
+  },
+  "notes": "Research script: research/v10_regime_switch.py — no MT5 writes, no live trading, no fabrication. All numbers computed from db/trading.db (XAUUSD M15: 47398 bars, M5: 35797 bars)."
+}

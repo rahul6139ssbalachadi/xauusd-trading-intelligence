@@ -1418,14 +1418,43 @@ NEXT STEP
       either confirm or reject — the hypothesis simply does not fire often
       enough on this M5 gold data.
 
-    CONCLUSION: 8 strategies tested (V1 trend-long, V2 trend-both, V3 MR-fade,
+    V9 RESEARCH: ATR EXPANSION TREND SCALPER (H1 trend + M5 pullback + ATR filter):
+    research/v9_atr_expansion_trend.py — 864-combo grid search on TRAIN:
+    -> Best TRAIN: net=-276.1 pips, PF=0.06, 73 trades, win% 14
+    -> VAL: net=-143.5 pips, PF=0.00, 27 trades, win% 0
+    -> Walk-forward (6 windows): IS_mean=-160.2, OOS_mean=-58.7, deg=0.63
+    -> Full dataset: net=-548.1, PF=0.03, 123 trades, win% 8, sharpe=-1.58
+    -> REJECTED: no config had positive TRAIN net + >=15 trades. Adding H1 trend
+      confluence + ATR expansion filter does not improve over V1-V8 — still
+      catastrophic win rates.
+
+    V10 RESEARCH: REGIME-SWITCHING MULTI-STRATEGY ENGINE (M15 regime + M5 routing):
+    research/v10_regime_switch.py — 864-combo grid search on TRAIN:
+    -> Regime distribution (M15, 2yr): RANGE=32.1%, TREND_UP=21.8%, UNSURE=18.4%,
+      TREND_DOWN=17.7%, ABNORMAL_VOL=10.0%
+    -> Best TRAIN: net=-693.7 pips, PF=0.03, 163 trades, win% 11
+    -> VAL: net=-266.0 pips, PF=0.00, 52 trades, win% 0
+    -> Walk-forward (6 windows): IS_mean=-352.8, OOS_mean=-120.4, deg=0.66
+    -> Full dataset: net=-1280.2, PF=0.01, trades=280, win% 6, sharpe=-2.01
+    -> ROOT CAUSE: the range mean-reversion sub-strategy produces ZERO signals
+      (RSI extremes never co-occur with RANGE regime). 87% of signals come from
+      TREND_DOWN (548 sells), all losing. Multi-strategy complexity did not help.
+    -> REJECTED: most complex strategy yet still has PF=0.01-0.03. The regime
+      router is broken by construction — the sub-strategies inherit the same
+      fundamental flaw (no edge on M5 gold after costs). More complexity = worse.
+
+    CONCLUSION: 10 strategies tested (V1 trend-long, V2 trend-both, V3 MR-fade,
     V4 range-MR-fade, V5 momentum-continuation, V6 candle-pattern, V7
-    momentum-reversal, V8 volatility-expansion). ALL either fail with PF<1.0
-    or produce too few signals to evaluate. The gold M5+M15 data does not
-    support structure-break, mean-reversion, momentum-continuation,
-    candle-pattern, or volatility-expansion hypotheses. Need fundamentally
+    momentum-reversal, V8 volatility-expansion, V9 ATR-expansion-trend,
+    V10 regime-switch-engine).
+    ALL either fail with PF<1.0 or produce too few signals to evaluate.
+    Descriptive probes also confirm: H4 trend shows weak drift (+0.06% at
+    34-bar horizon) but completely swallowed by 0.11% round-trip costs.
+    EMA pullbacks, volume regimes, session open ranges — all ~50% win rate.
+    The gold M5/M15 data does not support ANY trend-following, mean-reversion,
+    momentum, candle-pattern, or volatility-based hypothesis. Need fundamentally
     different approach (volume-profile, order-flow, multi-asset correlation,
-    or different time asset/resample where patterns are statistically valid).
+    or different timeframe/asset where patterns are statistically valid).
 
   When you provide a new hypothesis, the infrastructure is ready:
 

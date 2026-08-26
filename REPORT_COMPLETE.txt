@@ -1,0 +1,118 @@
+================================================================================
+XAUUSD TRADING SYSTEM — COMPLETE REPORT
+Version: 2026-08-28
+================================================================================
+
+1. SYSTEM ARCHITECTURE
+================================================================================
+
+Directory structure:
+  market_data/    — MT5Provider (read-only, demo-guarded), CSVProvider, SQLite storage
+  indicators/     — EMA, SMA, RSI (Wilder), ATR (Wilder), ADX (+DI/-DI), Bollinger Bands
+  market_structure/ — Swing highs/lows, HH/HL/LH/LL, BOS/CHoCH, sessions, volatility regime
+  strategy/       — Strategy dataclass (versioned, JSON-serializable), evaluate() -> BUY/SELL/WAIT
+  backtest/       — Event-driven backtest engine (intrabar SL/TP, spread+slippage+commission)
+  validation/     — Train/val/test split (60/20/20), walk-forward windows, IS/OOS degradation
+  risk/           — Fixed-fractional sizing, hard guards (max_positions, risk caps)
+  paper/          — Simulation-only journal (JournalStore JSONL), paper_run() decision logger
+  reporting/      — ExperimentRegistry (EXP-/STRAT-/BACKTEST-/PAPER- IDs), text/HTML reports
+  montecarlo/     — Shuffle/scatter/jitter robustness, ruin probability, is_robust flag
+  candles/        — Candle-pattern stats (doji, hammer, engulfing, inside bar, pin bar)
+  research/       — Standalone research scripts (V1-V10 grid search harnesses + probes)
+  rk_trade/       — Multi-user live analysis platform (analysis-only, no execution)
+  runner/         — CLI command runner (/market, /analyze, /signal, /backtest, etc.)
+  db/             — SQLite database (db/trading.db)
+  config/         — settings.toml, mt5.toml, symbols.toml, risk_limits.toml
+  scripts/        — analyze_gold.py, ingest_gold_scalp.py, probe_mt5.py, etc.
+  tests/          — 176 pytest tests (unit + integration + real-data smoke)
+
+2. DATA INVENTORY (db/trading.db, XAUUSD from XM Global MT5 demo)
+================================================================================
+
+  Timeseries table: market_data (118,181 rows)
+  Columns: symbol, timeframe, source, ts_broker_epoch, open, high, low, close,
+           tick_volume, spread
+
+  M1:   34,470 bars  (2026-07-14 -> 2026-08-18, ~35 days)
+  M5:   35,797 bars  (2026-02-16 -> 2026-08-18, ~183 days)
+  M15:  47,398 bars  (2024-08-13 -> 2026-08-18, ~734 days / 2 years)
+  H1:      516 bars  (2026-07-17 -> 2026-08-18, ~32 days)
+
+  Data conventions (verified):
+  - Broker time = UTC+3 (EEST summer) / UTC+2 (EET winter)
+  - Spread stored in POINTS (XAUUSD point = 0.01)
+  - Spread conversion: $ = points * 0.01, pips = $ / 0.10
+  - M1 has only ~30 days — low confidence for M1-only strategies
+
+3. TEST SUITE STATUS
+================================================================================
+
+  176 tests passed, 0 failures, 0 regressions
+  Runtime: ~130-140 seconds
+  Command: ./venv/Scripts/python.exe -m pytest tests/ -q
+
+  Test coverage:
+    - test_market_data.py:   73 tests (data layer, providers, storage, validation)
+    - test_indicators.py:    +11 tests (EMA, SMA, RSI, ATR, MACD, ADX, Bollinger)
+    - test_market_structure: +11 tests (swings, BOS/CHoCH, sessions, vol regime)
+    - test_strategy.py:      +10 tests (Strategy dataclass, evaluate, V1/V2 rules)
+    - test_backtest.py:       +9 tests (intrabar exit, costs, metrics, no look-ahead)
+    - test_validation.py:     +7 tests (split, walk-forward, degradation)
+    - test_risk.py:           +8 tests (lot sizing, guards, USD conversion)
+    - test_paper.py:          +4 tests (JournalStore, paper_run, safety)
+    - test_reporting.py:      +5 tests (ExperimentRegistry, report builders)
+    - test_montecarlo.py:     +7 tests (robustness simulation)
+    - test_candles.py:        +6 tests (pattern detection)
+    - test_rk_trade.py:      +15 tests (multi-user platform)
+    - Infrastructure: +13 tests (CLI, etc.)
+
+4. SAFETY
+================================================================================
+
+  - live_trading_enabled = false in config/settings.toml (NEVER changed)
+  - MT5Provider is hard-wired read-only (cannot call order_send)
+  - Demo account guard: connect() only succeeds on XMGlobal-MT5 demo (login 345982869)
+  - All backtesting is simulation — does NOT connect to MT5 or place trades
+  - User's live demo account with open trades is never touched
+
+5. HYPOTHESIS RESULTS: ALL 10 STRATEGIES REJECTED (NO EDGE)
+================================================================================
+
+===========================================================================================
+STRATEGY                              TIME  GRID   TRAIN              VAL             W-F OOS       FULL              MC
+===========================================================================================
+V1  Structure Break (long-only)      M15/M5  72    net=-4292.8 PF=0.00  30 trades     IS-635/-3865  OOS=0 both  PF=0.00  ruin=100%
+V2  Structure Break (two-sided)      M15/M5 72+   net=-7866.0 PF=0.00  N/A            W2: 0 trades OOS          PF=0.00  N/A
+V3  Mean-Reversion (fade CHoCH)       M15/M5 432   net=-122.6  PF=0.00  net=-49.8     IS-97.8/-91.5               PF=0.00  N/A
+V4  Range Mean-Reversion              M15/M5 2187  net=-808.5  PF=0.00  net=-259.1    IS-711/-293 (deg=0.59)      PF=0.00  N/A
+V5  Momentum Continuation (with BOS)  M5     648   net=-1922.6 PF=0.00  0 trades      IS-243/0 (deg=1.00)         PF=0.00  ruin=100%
+V6  Candle Pattern (engulfing)        M5     216   net=-1031.3 PF=0.03  net=-547.8    IS-581/-230 (deg=0.60)      PF=0.02  ruin=100%
+V7  Momentum Reversal (pin bar fade)  M5     1944  net=-84904.5 PF=0.00  net=-35169    IS-45054/-16335 (deg=0.64)  PF=0.00  ruin=100%
+V8  Volatility Expansion Breakout     M5     3888  12 signals only     N/A            N/A                          N/A    N/A
+V9  ATR Expansion Trend Scalper       M5/H1  864   net=-276.1  PF=0.06  net=-143.5    IS-160/-59 (deg=0.63)         PF=0.03  ruin=100%
+V10 Regime-Switching Engine           M5/M15 864   net=-693.7  PF=0.03  net=-266.0    IS-353/-120 (deg=0.66)       PF=0.01  ruin=100%
+===========================================================================================
+
+User Strategy 1: Session Range Breakout Scalper
+  M15     54     net=-9.2    PF=0.93  net=24.6      IS-18/-15 (deg=0.19)      net=42.1 PF=1.20  PF_p5=0.91 not robust
+
+CONCLUSION:
+  10 strategy variants tested on 2-year XAUUSD M5/M15 data. ALL rejected:
+  - PF ranges from 0.00 to 0.08 (profit factor < 1.0 = losing)
+  - Win rates: 0-17% in-sample, 0% in validation for most
+  - Walk-forward degradation: 0.19-1.00 (all lose money OOS)
+  - Monte Carlo ruin probability: 100% for all with sufficient trades
+  - V8 produced only 12 signals (inconclusive, not enough data)
+
+  The gold M5/M15 data does not support ANY tested hypothesis:
+  structure-break, mean-reversion, momentum-continuation, candle-pattern,
+  momentum-reversal, volatility-expansion, ATR-expansion-trend, or
+  regime-switching approaches.
+
+  Descriptive probes confirm: momentum continuation (~50% win), volume
+  regimes (~51% win), EMA pullbacks (~51% win), and H4 trend drift
+  (+0.06% over 34 bars, swallowed by 0.11% round-trip costs) all show
+  no exploitable edge after trading costs.
+
+  The system infrastructure is complete and tested (176 tests).
+  All strategies are rejected. No live trading. live_trading_enabled=false.

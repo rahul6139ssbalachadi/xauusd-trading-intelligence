@@ -1,0 +1,82 @@
+{
+  "name": "XAUUSD_ATR_EXPANSION_TREND",
+  "version": "V9",
+  "market": "XAUUSD",
+  "bias_timeframe": "H1",
+  "trigger_timeframe": "M5",
+  "entry_rules": {
+    "hypothesis": "ATR-expansion trend scalper. Trade with the H1 trend direction only when M5 volatility is expanding (ATR14 > 50-bar ATR mean). Entry on pullback to EMA21 with continuation candle confirmation. Stops are ATR-based, targets at fixed R:R. Filters: London/NY session, spread < 3 pips, trend-aligned (price above fast EMA for buy).",
+    "bias_filters": {
+      "trend_filter": "H1 EMA34 vs EMA89 (up/down)",
+      "atr_expand_threshold": 1.0,
+      "max_spread_pips": 3.0,
+      "sessions": ["london", "newyork"]
+    },
+    "entry_trigger": {
+      "condition": "M5 H1-trend-aligned + ATR expanding + pullback to EMA(pull) within pullback_threshold*ATR + continuation candle (close > open for buy)",
+      "buy": "H1 up + price > EMA(fast) + ATR expanding + pullback to EMA(pull) + close > open",
+      "sell": "H1 down + price < EMA(fast) + ATR expanding + pullback to EMA(pull) + close < open"
+    },
+    "stop": {
+      "type": "atr",
+      "atr_multiple": 2.0
+    },
+    "target": {
+      "type": "risk_reward",
+      "risk_reward": 2.5
+    }
+  },
+  "stop": {
+    "type": "atr",
+    "description": "ATR-based stop below pullback low (buy) or above (sell)"
+  },
+  "target": {
+    "type": "risk_reward",
+    "risk_reward": 2.5
+  },
+  "risk_pct": 0.0025,
+  "max_positions": 1,
+  "description": "V9: ATR Expansion Trend Scalper. Trades M5 continuation pullbacks in the direction of H1 trend, only when volatility is expanding. A different hypothesis from V1-V8: combines H1 higher-timeframe trend with M5 pullback timing + ATR expansion filter, rather than structure-break or pure candle patterns.",
+  "research_results": {
+    "hypothesis": "M5 pullback entries in the direction of H1 EMA trend, filtered by ATR expansion, produce positive expectancy after trading costs.",
+    "grid_search_train": {
+      "combos": 864,
+      "result": "NO config with positive TRAIN net and >=15 trades",
+      "best_train": {
+        "net_pips": -276.1,
+        "profit_factor": 0.06,
+        "trades": 73,
+        "win_rate": 0.14,
+        "params": {
+          "ema_fast": 13, "ema_slow": 34, "ema_pull": 21,
+          "atr_mult_stop": 2.0, "rr": 2.5, "atr_expand_threshold": 1.0,
+          "pullback_threshold": 0.5, "max_spread_pips": 3.0,
+          "sessions": ["london", "newyork"]
+        }
+      }
+    },
+    "validation": {
+      "net_pips": -143.5,
+      "profit_factor": 0.00,
+      "trades": 27,
+      "win_rate": 0.00
+    },
+    "walk_forward": {
+      "windows": 6,
+      "is_mean_net": -160.2,
+      "oos_mean_net": -58.7,
+      "degradation": 0.63,
+      "oos_trades": 74
+    },
+    "full_dataset": {
+      "net_pips": -548.1,
+      "profit_factor": 0.03,
+      "trades": 123,
+      "win_rate": 0.08,
+      "sharpe": -1.58,
+      "max_dd": 546.8
+    },
+    "conclusion": "NO EDGE. Best TRAIN config has PF=0.06 and 14% win rate. Validation has 0% win rate (27 trades, 0 winners). Walk-forward shows consistent losses across all 6 windows (OOS mean -58.7 pips). Full dataset: PF=0.03, 8% win rate, sharpe=-1.58. The ATR-expansion pullback filter produces extremely few signals with catastrophic win rates. Adding H1 trend confluence + ATR expansion does not improve over V1-V8 — the fundamental issue remains: M5/M15 gold price action has no exploitable edge after costs. REJECTED."
+  },
+  "notes": "Research script: research/v9_atr_expansion_trend.py — no MT5 writes, no live trading, no fabrication. All numbers computed from db/trading.db (XAUUSD M15: 47398 bars, M5: 35797 bars). H1 resampled from M15."
+}

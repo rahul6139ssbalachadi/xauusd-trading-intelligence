@@ -1,0 +1,61 @@
+======================================================================
+V9 RESEARCH: ATR Expansion Trend Scalper (XAUUSD M5/H1)
+======================================================================
+Loaded M5: 35797 bars  (2026-02-16 01:00:00+00:00 -> 2026-08-18 07:20:00+00:00)
+Loaded M15: 47398 bars
+Resampled H1: 11858 bars  (2024-08-13 07:00:00+00:00 -> 2026-08-18 07:00:00+00:00)
+
+[0] Computing M5 features + H1 trend alignment...
+
+  ATR expanding (>1.0): 16306/35735 = 45.6%
+
+TRAIN: 21478 bars | VAL: 7159 | TEST: 7159
+
+[1] Grid search on TRAIN (864 combos)...
+
+Top 15 configs by TRAIN net_pips (min 15 trades):
+  net=   -276.1  PF= 0.06  trades=  73  win%= 14  expand=1.0 pull=0.5  ema_fast=13 ema_slow=34 ema_pull=21 stop=2.0 rr=2.5 spread=3.0 sessions=[london,newyork]
+  net=   -276.1  PF= 0.06  trades=  73  win%= 14  expand=1.0 pull=0.5  ema_fast=13 ema_slow=34 ema_pull=21 stop=2.0 rr=2.5 spread=5.0 sessions=[london,newyork]
+  net=   -280.6  PF= 0.07  trades=  73  win%= 15  expand=1.0 pull=0.5  ema_fast=13 ema_slow=34 ema_pull=21 stop=2.0 rr=3.0 spread=3.0 sessions=[london,newyork]
+  net=   -280.6  PF= 0.07  trades=  73  win%= 15  expand=1.0 pull=0.5  ema_fast=13 ema_slow=34 ema_pull=21 stop=2.0 rr=3.0 spread=5.0 sessions=[london,newyork]
+  net=   -290.8  PF= 0.02  trades=  79  win%=   6  expand=1.0 pull=0.5  ema_fast=13 ema_slow=34 ema_pull=21 stop=2.0 rr=2.0 spread=3.0 sessions=[london,newyork]
+  net=   -313.1  PF= 0.05  trades=  79  win%= 13  expand=1.0 pull=0.5  ema_fast=13 ema_slow=55 ema_pull=21 stop=2.0 rr=2.5 spread=3.0 sessions=[london,newyork]
+  net=   -317.5  PF= 0.07  trades=  79  win%= 14  expand=1.0 pull=0.5  ema_fast=13 ema_slow=55 ema_pull=21 stop=2.0 rr=3.0 spread=3.0 sessions=[london,newyork]
+  net=   -332.0  PF= 0.08  trades=  87  win%= 17  expand=1.0 pull=0.5  ema_fast=21 ema_slow=34 ema_pull=21 stop=2.0 rr=3.0 spread=3.0 sessions=[london,newyork]
+  net=   -333.6  PF= 0.02  trades=  81  win%=   7  expand=1.0 pull=0.5  ema_fast=13 ema_slow=34 ema_pull=21 stop=1.5 rr=3.0 spread=3.0 sessions=[london,newyork]
+  net=   -334.1  PF= 0.06  trades=  88  win%= 15  expand=1.0 pull=0.5  ema_fast=21 ema_slow=34 ema_pull=21 stop=2.0 rr=2.5 spread=3.0 sessions=[london,newyork]
+
+Top 5 by PROFIT FACTOR (min 15 trades):
+  PF= 0.08  net=   -332.0  trades=  87  win%=17.2  ema_fast=21 ema_slow=34 ema_pull=21 stop=2.0 rr=3.0 spread=3.0 sessions=[london,newyork]
+  PF= 0.08  net=   -494.0  trades= 120  win%=15.0  ema_fast=21 ema_slow=34 ema_pull=21 stop=2.0 rr=3.0 spread=3.0 sessions=[london,newyork,asia]
+  PF= 0.08  net=   -371.0  trades=  93  win%=16.1  ema_fast=21 ema_slow=55 ema_pull=21 stop=2.0 rr=3.0 spread=3.0 sessions=[london,newyork]
+
+[2] Measuring best-by-net config on VAL + OOS...
+  Best TRAIN: net=-276.1  PF=0.06  trades=73  win%=14
+  Params: ema_fast=13, ema_slow=34, ema_pull=21, atr_mult_stop=2.0, rr=2.5,
+          atr_expand_threshold=1.0, pullback_threshold=0.5, max_spread_pips=3.0,
+          sessions=[london, newyork]
+
+[3] Validation (7159 bars)...
+  VAL: net=-143.5  PF=0.00  trades=27  win%=0
+
+[4] Walk-forward OOS (fixed params, no re-tuning)...
+  W1: IS  net= -116.5 (t35) | OOS net=  -62.2 (t17)
+  W2: IS  net= -151.7 (t41) | OOS net=  -38.5 (t10)
+  W3: IS  net= -145.0 (t40) | OOS net=  -59.2 (t11)
+  W4: IS  net= -159.6 (t38) | OOS net=  -88.3 (t17)
+  W5: IS  net= -186.0 (t38) | OOS net=  -55.3 (t10)
+  W6: IS  net=  -202.7 (t38) | OOS net=  -48.5 (t9)
+
+  WF: windows=6 IS_mean=-160.2 OOS_mean=-58.7 deg=0.63 OOS_trades=74
+
+[5] Full-dataset backtest...
+  FULL: net=-548.1  PF=0.03  trades=123  win%=8  sharpe=-1.58  maxDD=546.8
+
+[6] Looking for ANY config with positive TRAIN net and >=15 trades...
+  No config with positive TRAIN net and >=15 trades.
+
+======================================================================
+RESEARCH COMPLETE — no MT5 writes, no live trading, no fabrication.
+All numbers computed from db/trading.db.
+======================================================================
