@@ -1,0 +1,9 @@
+# Core dependencies for XAUUSD Trading Intelligence System
+# Python 3.11+ required
+
+pandas>=2.1
+numpy>=1.26
+MetaTrader5>=5.0
+
+# Development/Testing
+pytest>=8.0
