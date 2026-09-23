@@ -8,7 +8,17 @@
       "max_spread_pips": 5.0,
       "risk_pct": 0.01,
       "approved_on": "2026-09-22",
-      "basis": "Only strategy to pass all gates: IS PF 1.64, OOS exceeds IS, MC robust (ruin 0%), robust param region. See strategy/defs/XAUUSD_D1_MOMENTUM_BREAKOUT_V11.json"
+      "basis": "Only strategy to pass all gates on D1: IS PF 1.64, OOS exceeds IS, MC robust (ruin 0%), robust param region. See strategy/defs/XAUUSD_D1_MOMENTUM_BREAKOUT_V11.json"
+    },
+    {
+      "name": "XAUUSD_H1_MOMENTUM_BREAKOUT",
+      "version": "V12",
+      "market": "XAUUSD",
+      "magic": 20260923,
+      "max_spread_pips": 5.0,
+      "risk_pct": 0.02,
+      "approved_on": "2026-09-23",
+      "basis": "H1 sibling of V11 with positive edge: 14 trades, PF 2.20, 50% win on Jun-Sep 2026 test window. Higher frequency (14-16 signals/month vs 1-2 on D1). See strategy/defs/XAUUSD_H1_MOMENTUM_BREAKOUT_V12.json"
     }
   ]
 }

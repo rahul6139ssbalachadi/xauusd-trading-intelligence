@@ -1,18 +1,15 @@
-.venv/
 .cache/
+.pytest_cache/
 __pycache__/
 *.pyc
-data/raw/*/*
-!data/raw/*/.gitkeep
-data/processed/
-data/cache/
-db/*.db
-db/*.db-journal
-db/*.sqlite
-.env
-*.env
+*.pyo
+*.egg-info/
+.venv/
+venv/
+*.db
+*.sqlite
 *.log
 config/mt5.toml
-
-# Lock files
+data/cache/
+data/processed/
 *.lock
