@@ -577,7 +577,7 @@ class ClientDetailScreen extends StatelessWidget {
         title: Text(clientName),
       ),
       body: FutureBuilder(
-        future: context.read(apiProvider).getList('/api/admin/clients/$clientId/trades'),
+        future: ref.read(apiProvider).getList('/api/admin/clients/$clientId/trades'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingIndicator();
