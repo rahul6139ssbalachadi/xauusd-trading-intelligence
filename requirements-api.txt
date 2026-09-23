@@ -1,0 +1,8 @@
+# API dependencies
+fastapi>=0.104
+uvicorn[standard]>=0.24
+python-jose[cryptography]>=3.3
+passlib[bcrypt]>=1.7
+python-multipart>=0.0.6
+pydantic>=2.5
+pydantic-settings>=2.1
