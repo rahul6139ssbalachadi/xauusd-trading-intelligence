@@ -1,0 +1,14 @@
+{
+  "approved": [
+    {
+      "name": "XAUUSD_D1_MOMENTUM_BREAKOUT",
+      "version": "V11",
+      "market": "XAUUSD",
+      "magic": 20260922,
+      "max_spread_pips": 5.0,
+      "risk_pct": 0.01,
+      "approved_on": "2026-09-22",
+      "basis": "Only strategy to pass all gates: IS PF 1.64, OOS exceeds IS, MC robust (ruin 0%), robust param region. See strategy/defs/XAUUSD_D1_MOMENTUM_BREAKOUT_V11.json"
+    }
+  ]
+}

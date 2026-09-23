@@ -1,6 +1,9 @@
 # Global safety switch (Section 23). Must be flipped explicitly and
 # deliberately -- never implied by any other setting or code path.
-live_trading_enabled = false
+# Flipped to true by the account owner's explicit instruction on
+# 2026-09-22: "live_trading_enabled=true" (demo execution phase).
+# The execution engine additionally hard-guards: DEMO accounts only.
+live_trading_enabled = true
 
 [paths]
 data_raw = "data/raw"

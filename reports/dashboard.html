@@ -1,0 +1,87 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Trading AI Dashboard — XAUUSD Research System</title>
+<style>
+body{font-family:'Segoe UI',monospace;background:#0e1116;color:#d8dee6;
+     margin:0;padding:2rem}
+h1{color:#6cf;margin-bottom:0} h2{color:#8ad;border-bottom:1px solid #333;
+     padding-bottom:.3rem;margin-top:2rem}
+.sub{color:#889;margin-top:.2rem}
+table{border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+td,th{border:1px solid #2a3140;padding:.45rem .8rem;text-align:left}
+th{background:#161b24;color:#9ab}
+.cards{display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0}
+.card{background:#161b24;border:1px solid #2a3140;border-radius:8px;
+      padding:1rem 1.4rem;min-width:200px}
+.card .big{font-size:1.6rem;color:#6cf;font-weight:600}
+.card .lbl{color:#889;font-size:.85rem}
+.ok{color:#6c6} .bad{color:#f87} .warn{color:#fc6}
+.footer{color:#667;margin-top:2.5rem;font-size:.85rem;border-top:1px solid #222;
+        padding-top:1rem}
+</style></head><body>
+<h1>Trading AI Dashboard</h1>
+<div class="sub">XAUUSD research system — generated 2026-09-22 06:39 UTC · READ-ONLY ·
+live trading DISABLED (live_trading_enabled=false)</div>
+
+<h2>Current Market — XAUUSD (D1)</h2>
+<div class="cards">
+  <div class="card"><div class="big">4,456.22</div>
+    <div class="lbl">Close (D1 bar 2026-08-28)</div></div>
+  <div class="card"><div class="big">TREND_UP</div>
+    <div class="lbl">D1 regime — EMA21 4,423 vs EMA55 4,331</div></div>
+  <div class="card"><div class="big">82</div>
+    <div class="lbl">V11 BUY signals journaled</div></div>
+  <div class="card"><div class="big">WAIT</div>
+    <div class="lbl">Current decision (V11 paper)</div></div>
+</div>
+
+<h2>Active Strategy — V11 D1 Momentum Breakout (PAPER TRADING)</h2>
+<table>
+<tr><th>Gate</th><th>Result</th><th>Status</th></tr>
+<tr><td>Train (IS)</td><td>+3,593 pips · PF 1.64 · 44 trades · 55% win</td><td class="ok">PASS</td></tr>
+<tr><td>Validation</td><td>+4,555 pips · PF 3.43 · 14 trades · 64% win</td><td class="ok">PASS</td></tr>
+<tr><td>Walk-forward (OOS)</td><td>OOS mean +7,428 vs IS +3,108 (degradation −1.39)</td><td class="ok">PASS</td></tr>
+<tr><td>Monte Carlo</td><td>net_p5 +12,154 · PF_p5 1.79 · ruin 0% · robust</td><td class="ok">PASS</td></tr>
+<tr><td>Param sensitivity</td><td>All nearby params positive (robust region)</td><td class="ok">PASS</td></tr>
+<tr><td>Paper trading</td><td>2577 decisions · 82 BUY · 2495 WAIT
+    · 2016-09-02 → 2026-08-28</td><td class="warn">IN PROGRESS</td></tr>
+<tr><td>Live execution</td><td>Disabled by design — requires explicit user approval</td><td class="bad">OFF</td></tr>
+</table>
+
+<h2>Strategy Leaderboard — all 12 hypotheses</h2>
+<table>
+<tr><th>Strategy</th><th>Ver</th><th>TF</th><th>Trades</th><th>Win%</th>
+<th>PF</th><th>Net pips</th><th>Status</th><th>Verdict</th></tr>
+<tr><td>D1 MOMENTUM BREAKOUT</td><td>V11</td><td>D1</td><td>82</td><td>58.5%</td><td>2.1</td><td>+17,994</td><td style='color:#6c6'>PAPER_TRADING</td><td style='color:#999'>First edge found. OOS exceeds IS; MC robust (ruin 0%).</td></tr>
+<tr><td>SESSION RANGE BREAKOUT</td><td>V1u</td><td>M15</td><td>37</td><td>46%</td><td>1.2</td><td>+42</td><td style='color:#f87'>REJECTED</td><td style='color:#999'>Positive net within noise; MC p5 PF 0.91.</td></tr>
+<tr><td>ATR EXPANSION TREND</td><td>V9</td><td>M5</td><td>123</td><td>8%</td><td>0.06</td><td>-548</td><td style='color:#f87'>REJECTED</td><td style='color:#999'>No config positive on TRAIN.</td></tr>
+<tr><td>REGIME SWITCH ENGINE</td><td>V10</td><td>M5/M15</td><td>280</td><td>6%</td><td>0.01</td><td>-1,280</td><td style='color:#f87'>REJECTED</td><td style='color:#999'>Range sub-strategy never fired; complexity hurt.</td></tr>
+<tr><td>CANDLE PATTERN CONT</td><td>V6</td><td>M5</td><td>448</td><td>4%</td><td>0.02</td><td>-2,092</td><td style='color:#f87'>REJECTED</td><td style='color:#999'>Engulfing + ADX + EMA still 4% win.</td></tr>
+<tr><td>MOMENTUM CONTINUATION</td><td>V5</td><td>M5</td><td>679</td><td>1%</td><td>0.0</td><td>-3,430</td><td style='color:#f87'>REJECTED</td><td style='color:#999'>Price reverses after BOS, not continues.</td></tr>
+<tr><td>STRUCTURE BREAK (2-sided)</td><td>V2</td><td>M5/M15</td><td>1684</td><td>0%</td><td>0.0</td><td>-7,866</td><td style='color:#f87'>REJECTED</td><td style='color:#999'>Adding shorts did not restore edge.</td></tr>
+<tr><td>STRUCTURE BREAK (long)</td><td>V1</td><td>M5/M15</td><td>868</td><td>20%</td><td>0.0</td><td>-4,293</td><td style='color:#f87'>REJECTED</td><td style='color:#999'>0 trades OOS in walk-forward.</td></tr>
+<tr><td>MOMENTUM REVERSAL</td><td>V7</td><td>M5</td><td>343</td><td>1%</td><td>0.0</td><td>-162,186</td><td style='color:#f87'>REJECTED</td><td style='color:#999'>Worst result. Pin bars fire mid-trend.</td></tr>
+<tr><td>VOLATILITY EXPANSION</td><td>V8</td><td>M5</td><td>12</td><td>0%</td><td>0.0</td><td>n/a</td><td style='color:#fc6'>INCONCLUSIVE</td><td style='color:#999'>Only 12 signals — too few to evaluate.</td></tr>
+<tr><td>RANGE MEAN-REVERSION</td><td>V4</td><td>M5</td><td>114</td><td>0%</td><td>0.0</td><td>-293</td><td style='color:#f87'>REJECTED</td><td style='color:#999'>Indecision candles appear mid-trend.</td></tr>
+<tr><td>MEAN-REV BOS</td><td>V3</td><td>M5</td><td>47</td><td>0%</td><td>0.0</td><td>-91</td><td style='color:#f87'>REJECTED</td><td style='color:#999'>Counter-trend bounce fails after costs.</td></tr>
+
+</table>
+
+<h2>Risk &amp; Safety Status</h2>
+<table>
+<tr><td>Risk per trade</td><td>0.25–1.0% (capped, fixed-fractional sizing)</td></tr>
+<tr><td>Max positions</td><td>1 (V11) · engine guard 3</td></tr>
+<tr><td>Kill switch</td><td>INACTIVE — manual reset only</td></tr>
+<tr><td>Live trading</td><td class="bad">DISABLED (live_trading_enabled=false)</td></tr>
+<tr><td>MT5 connection</td><td>Read-only, demo-guarded, fail-closed</td></tr>
+<tr><td>Test suite</td><td class="ok">179 passed / 0 failed</td></tr>
+</table>
+
+<div class="footer">
+Generated by scripts/build_dashboard.py from strategy/defs/*.json,
+paper/journal_v11_d1.jsonl and db/trading.db. Backtest and paper results
+are historical simulations — not forward guarantees. The system's honest
+conclusion for 11 of 12 hypotheses was NO EDGE; that is a finding, not a
+failure.
+</div>
+</body></html>

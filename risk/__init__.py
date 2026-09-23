@@ -110,17 +110,22 @@ def can_open(
 
 def apply_risk_to_backtest(trades, equity_start: float = 10_000.0,
                            cfg: RiskConfig | None = None,
-                           contract_multiplier: float = CONTRACT_MULTIPLIER):
+                           contract_multiplier: float = CONTRACT_MULTIPLIER,
+                           risk_pct: float = 0.0025):
     """Attach lot size + USD risk to an existing list of Trade objects.
 
     Mutates each Trade in place, adding `lots` and `risk_usd`. Net P&L is
     also converted to USD (net_pips * PIP * lots) so the equity curve is in
     dollars, enabling dollar-denominated drawdown / expectancy.
+
+    `risk_pct` defaults to 0.25% but can be overridden (e.g. from a
+    strategy's own risk_pct field) so wide-stop strategies like V11 get the
+    risk fraction they actually declare.
     """
     cfg = cfg or RiskConfig()
     for t in trades:
         stop_dist = abs(t.entry_price - t.stop)
-        t.lots = compute_lot_size(equity_start, 0.0025, stop_dist,
+        t.lots = compute_lot_size(equity_start, risk_pct, stop_dist,
                                   contract_multiplier, cfg)
         t.risk_usd = risk_per_trade_usd(t.lots, stop_dist, contract_multiplier)
         # recompute net in USD

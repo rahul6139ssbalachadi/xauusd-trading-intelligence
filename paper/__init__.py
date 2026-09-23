@@ -141,7 +141,8 @@ def paper_run(
     # reuse backtest to get sized trades (entry/stop/target/lots/risk) in
     # chronological order; map by exit/entry bar back to the decision frame
     res = run_backtest(strat, bias_df, trigger_df, slippage_pips=slippage_pips)
-    sized = apply_risk_to_backtest(res.trades, equity_start=equity, cfg=cfg)
+    sized = apply_risk_to_backtest(res.trades, equity_start=equity, cfg=cfg,
+                                    risk_pct=strat.risk_pct)
     # index trades by their entry bar (iloc in trigger_df)
     trade_by_entry = {t.entry_bar: t for t in sized}
 

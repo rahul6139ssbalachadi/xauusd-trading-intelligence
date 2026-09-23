@@ -48,6 +48,9 @@ class Trade:
     cost_pips: float          # total round-trip cost in pips
     net_pips: float           # points->pips, minus cost
     duration_bars: int
+    lots: float = 0.0         # position size in lots
+    risk_usd: float = 0.0     # actual USD risk after lot rounding
+    net_usd: float = 0.0      # net P&L in USD
 
 
 @dataclass

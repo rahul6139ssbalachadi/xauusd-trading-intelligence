@@ -1125,7 +1125,25 @@ PHASE 13
 Risk engine
 
 PHASE 14
-Optional live MT5 execution
+Phase 14   Live MT5 execution      DONE + tested (execution/; +27 tests -> 206)
+            - ExecutionEngine: full §23 checklist (10 spec checks + 2
+              engine extras), risk veto, journal (execution/journal.jsonl)
+            - MT5Gateway: the ONLY order_send path in the repo; DEMO-only
+              + login-guarded, refuses REAL accounts at connect()
+            - Kill switch (§24): file-based, manual reset only; triggers
+              on daily-loss breach / 3 consecutive losses
+            - run_v11_daily.py: D1 bar-close runner using VALIDATED frozen
+              V11 params (min_atr_pct=0.005 per def JSON); pulls fresh
+              bars from terminal, sizes via Phase 10 risk engine
+            - CROSS-CHECKED: live runner logic reproduces all 82/82
+              historical paper-journal BUY signals exactly
+            - live_trading_enabled=true (owner's explicit instruction,
+              2026-09-22). ENGINE RULES: demo-only; declines if ANY
+              position open on GOLD.i# (manual mobile trades never
+              interfered with); one position at a time
+            - Gap (known): max_holding_d1=8 time-exit is NOT broker-side;
+              needs a daily position-age check (SL/TP are broker-side)
+            - FULL SUITE: 206 passed, 0 regressions
 
 Do not skip directly to live trading.
 
@@ -1363,19 +1381,23 @@ ADDITIONAL INFRASTRUCTURE COMPLETED (beyond Phase 1-12):
     ranges and honest results documented inline.
 
 NEXT STEP
-  8 strategy versions tested on 2yr XAUUSD M5+M15 data — ALL show PF=0.00-0.03
-  (no edge) or too few signals to evaluate. V7 tested momentum-reversal
-  (fade extreme momentum with pin bars) — catastrophic losses (net -162k).
-  V8 tested volatility-expansion breakout — too few signals (12 total) to
-  evaluate. V7 tested a DIFFERENT direction than V1-V6 (fade vs ride).
-  Still no edge. 8 hypotheses exhausted:
-  structure-break (V1, V2), mean-reversion fade (V3, V4), momentum
-  continuation (V5), candle-pattern (V6), momentum-reversal (V7),
-  volatility-expansion (V8). ALL PF<1.0 or inconclusive.
-  (e.g. volatility-expansion breakout, multi-TF confluence, volume-profile,
-  different asset/resample where patterns are statistically validated).
+  V11 D1 Momentum Breakout is the FIRST strategy to show edge on XAUUSD.
+  It survives all validation gates: IS positive (PF 1.64), OOS positive
+  (degeneration negative — OOS exceeds IS), Monte Carlo robust (net_p5=12154,
+  ruin_prob=0%, is_robust=True), and parameter sensitivity shows a robust region
+  (not a single lucky combo). The edge comes from switching from M5/M15
+  (where 0.11% cost floor swallowed all drift) to D1 (where 0.013% costs
+  and 200-400 pip ranges leave room for edge).
 
-  V5 RESEARCH: MOMENTUM CONTINUATION WITH THE BREAK (opposite of V1-V4 fade):
+  NEXT STEPS:
+  1. Paper trade V11 (Phase 11 harness) — run paper_run() against the D1
+     signals to build the audit trail before any live consideration
+  2. Consider running V11 on EURUSD/GBPUSD (other symbols in config) to test
+     if the D1 momentum edge generalizes to other assets
+  3. The strategy def is saved at strategy/defs/XAUUSD_D1_MOMENTUM_BREAKOUT_V11.json
+  4. All 176 tests pass, data extended to 10-year H1/D1
+
+  V5-V10 research (all REJECTED, no edge on M5/M15 gold):
   research/v5_momentum_continuation.py — 648-combo grid search on TRAIN:
   -> Best TRAIN: net=-1922.6 pips, PF=0.00, 392 trades, win% 1
   -> VAL: 0 trades (fresh BOS events don't fire in val window)
@@ -1455,6 +1477,37 @@ NEXT STEP
     momentum, candle-pattern, or volatility-based hypothesis. Need fundamentally
     different approach (volume-profile, order-flow, multi-asset correlation,
     or different timeframe/asset where patterns are statistically valid).
+
+  DATA EXTENSION (2026-08-27):
+  Extended DB with 10-year H1 (59,313 bars) and 10-year D1 (2,577 bars) from
+  the XM demo terminal. M5 extended to full 180-day depth. The broker only
+  provides ~30 days of M1 history (session hours); GOLD24-7.i# exists but has
+  only July 2026 history on this account. The 10-year H1/D1 data revealed a
+  fundamentally different cost regime: round-trip costs on D1 are ~0.013%
+  (vs 0.11% on M15), and D1 price ranges (~200-400 pips over 8 bars) are
+  large enough to leave room for edge.
+
+  V11 RESEARCH: D1 MOMENTUM BREAKOUT (first strategy to show edge):
+  Uses D1 (daily) as primary TF — trades WITH the confirmed D1 long bias
+  (54.1% up days over 10 years) using top-momentum daily bars (top 5% body
+  return) as entry trigger. EMA21>EMA55 trend filter. 1.5x D1-ATR stop,
+  2R target, multi-day holding (up to 8 D1 bars). STRUCTURALLY DIFFERENT
+  from V1-V10 (all M5/M15 scalping — cost floor swallowed all drift).
+    research/v11_d1_momentum.py — 243-combo grid search on TRAIN:
+    -> Best TRAIN: net=+3592.8 pips, PF=1.64, 44 trades, win%=55
+    -> VAL: net=+4555.3 pips, PF=3.43, 14 trades, win%=64
+    -> Walk-forward (2 windows): IS_mean=+3108.0, OOS_mean=+7427.7,
+       degradation=-1.39 (OOS EXCEEDS IS — not overfitting)
+    -> Full dataset: net=+17994.0 pips, PF=2.10, 82 trades, win%=58.5,
+       sharpe=0.28, sortino=0.59, maxDD=3005.4
+    -> Monte Carlo: net_mean=16163, net_p5=12154, PF_p5=1.79, ruin_prob=0%,
+       robust=True
+    -> Parameter sensitivity: ALL nearby params positive — body_pct
+       (0.80-0.98 all net positive), rr (1.5-4.0 all positive), atr_mult
+       (0.5-2.0 all positive), holding (1-21d all positive). ROBUST region.
+    -> REQUIRES PAPER TRADING before any further consideration. 82 trades
+       over 10 years is low frequency but justified by D1 context.
+    -> Hypothesis file: strategy/defs/XAUUSD_D1_MOMENTUM_BREAKOUT_V11.json
 
   When you provide a new hypothesis, the infrastructure is ready:
 
