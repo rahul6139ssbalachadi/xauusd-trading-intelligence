@@ -1,23 +1,43 @@
-"""Phase 1: FastAPI Auth + Trading API with JWT"""
+"""Phase 1: FastAPI Auth + Trading API — self-improved with proper async DB handling"""
 from __future__ import annotations
 
+import os
 import sqlite3
 from datetime import datetime, timedelta, timezone
+from contextlib import contextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, Depends, HTTPException, Query, status
+from fastapi import FastAPI, Depends, HTTPException, Query, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, field_validator
+from collections import defaultdict
+import time
 
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-SECRET_KEY = "your-secret-key-change-in-production"
+SECRET_KEY = os.getenv("TRADING_SECRET_KEY", "dev-secret-change-in-production")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("TRADING_TOKEN_EXPIRE_MINUTES", "30"))
+ALLOWED_ORIGINS = os.getenv("TRADING_ALLOWED_ORIGINS", "*").split(",")
+
+# Rate limiting
+RATE_LIMIT_WINDOW = 60
+RATE_LIMIT_MAX = 5
+rate_limit_store: dict[str, list[float]] = defaultdict(list)
+
+
+def check_rate_limit(client_ip: str) -> None:
+    now = time.time()
+    window = rate_limit_store[client_ip]
+    rate_limit_store[client_ip] = [t for t in window if now - t < RATE_LIMIT_WINDOW]
+    if len(rate_limit_store[client_ip]) >= RATE_LIMIT_MAX:
+        raise HTTPException(status_code=429, detail="Too many requests")
+    rate_limit_store[client_ip].append(now)
+
 
 # ---------------------------------------------------------------------------
 # App setup
@@ -29,13 +49,30 @@ app = FastAPI(title="Trading Intelligence API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-DB_PATH = Path(__file__).resolve().parents[1] / "db" / "trading.db"
+
+# ---------------------------------------------------------------------------
+# DB helpers - synchronous context manager for sync SQLite
+# ---------------------------------------------------------------------------
+def get_db_path() -> Path:
+    """Get DB path from environment or default."""
+    return Path(os.getenv("TRADING_DB_PATH", Path(__file__).resolve().parents[1] / "db" / "trading.db"))
+
+
+@contextmanager
+def get_db():
+    """Synchronous database connection context manager."""
+    conn = sqlite3.connect(get_db_path())
+    conn.row_factory = sqlite3.Row
+    try:
+        yield conn
+    finally:
+        conn.close()
 
 
 # ---------------------------------------------------------------------------
@@ -54,10 +91,24 @@ class TokenData(BaseModel):
 
 
 class UserCreate(BaseModel):
-    email: str
+    email: EmailStr
     password: str
     role: str = "client"
     client_id: int | None = None
+
+    @field_validator("password")
+    @classmethod
+    def password_strength(cls, v):
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters")
+        return v
+
+    @field_validator("role")
+    @classmethod
+    def role_valid(cls, v):
+        if v not in ("client", "admin"):
+            raise ValueError("Role must be 'client' or 'admin'")
+        return v
 
 
 class UserOut(BaseModel):
@@ -108,18 +159,6 @@ class ClientOut(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# DB helpers
-# ---------------------------------------------------------------------------
-def get_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    try:
-        yield conn
-    finally:
-        conn.close()
-
-
-# ---------------------------------------------------------------------------
 # Security helpers
 # ---------------------------------------------------------------------------
 def verify_password(plain: str, hashed: str) -> bool:
@@ -151,7 +190,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> TokenData:
         client_id = payload.get("client_id")
         if user_id is None or email is None or role is None:
             raise credentials_exception
-        return TokenData(user_id=user_id, email=email, role=role, client_id=client_id)
+        return TokenData(user_id=int(user_id), email=email, role=role, client_id=client_id)
     except JWTError:
         raise credentials_exception
 
@@ -160,32 +199,36 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> TokenData:
 # Auth endpoints
 # ---------------------------------------------------------------------------
 @app.post("/api/auth/login", response_model=Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    conn = next(get_db())
-    cur = conn.execute("SELECT * FROM users WHERE email = ?", (form_data.username,))
-    user = cur.fetchone()
+async def login(
+    request: Request,
+    form_data: OAuth2PasswordRequestForm = Depends(),
+):
+    check_rate_limit(request.client.host)
+    with get_db() as conn:
+        cur = conn.execute("SELECT * FROM users WHERE email = ?", (form_data.username,))
+        user = cur.fetchone()
 
-    if not user or not verify_password(form_data.password, user["password_hash"]):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+        if not user or not verify_password(form_data.password, user["password_hash"]):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect email or password",
+            )
+
+        access_token = create_access_token(
+            data={
+                "sub": str(user["id"]),
+                "email": user["email"],
+                "role": user["role"],
+                "client_id": user["client_id"],
+            },
+            expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
         )
 
-    access_token = create_access_token(
-        data={
-            "sub": user["id"],
-            "email": user["email"],
-            "role": user["role"],
-            "client_id": user["client_id"],
-        },
-        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
-    )
-
-    conn.execute(
-        "UPDATE users SET last_login = ? WHERE id = ?",
-        (datetime.now(timezone.utc).isoformat(), user["id"]),
-    )
-    conn.commit()
+        conn.execute(
+            "UPDATE users SET last_login = ? WHERE id = ?",
+            (datetime.now(timezone.utc).isoformat(), user["id"]),
+        )
+        conn.commit()
 
     return Token(access_token=access_token)
 
@@ -198,24 +241,24 @@ async def register(
     if current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
 
-    conn = next(get_db())
-    existing = conn.execute("SELECT id FROM users WHERE email = ?", (user_data.email,)).fetchone()
-    if existing:
-        raise HTTPException(status_code=400, detail="Email already registered")
+    with get_db() as conn:
+        existing = conn.execute("SELECT id FROM users WHERE email = ?", (user_data.email,)).fetchone()
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already registered")
 
-    client_id = user_data.client_id
-    if client_id is None and user_data.role == "client":
-        conn.execute("INSERT INTO clients (name) VALUES (?)", (f"Client_{user_data.email}",))
-        client_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        client_id = user_data.client_id
+        if client_id is None and user_data.role == "client":
+            conn.execute("INSERT INTO clients (name) VALUES (?)", (f"Client_{user_data.email}",))
+            client_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
 
-    conn.execute(
-        "INSERT INTO users (email, password_hash, role, client_id) VALUES (?, ?, ?, ?)",
-        (user_data.email, get_password_hash(user_data.password), user_data.role, client_id),
-    )
-    conn.commit()
+        conn.execute(
+            "INSERT INTO users (email, password_hash, role, client_id) VALUES (?, ?, ?, ?)",
+            (user_data.email, get_password_hash(user_data.password), user_data.role, client_id),
+        )
+        conn.commit()
 
-    new_user = conn.execute("SELECT * FROM users WHERE email = ?", (user_data.email,)).fetchone()
-    conn.close()
+        new_user = conn.execute("SELECT * FROM users WHERE email = ?", (user_data.email,)).fetchone()
+
     return UserOut(
         id=new_user["id"],
         email=new_user["email"],
@@ -243,20 +286,18 @@ async def get_trades(
     offset: int = Query(0, ge=0),
     current_user: TokenData = Depends(get_current_user),
 ):
-    conn = next(get_db())
+    with get_db() as conn:
+        if current_user.role == "admin":
+            rows = conn.execute(
+                "SELECT * FROM trades ORDER BY entry_time DESC LIMIT ? OFFSET ?",
+                (limit, offset),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT * FROM trades WHERE client_id = ? ORDER BY entry_time DESC LIMIT ? OFFSET ?",
+                (current_user.client_id, limit, offset),
+            ).fetchall()
 
-    if current_user.role == "admin":
-        rows = conn.execute(
-            "SELECT * FROM trades ORDER BY entry_time DESC LIMIT ? OFFSET ?",
-            (limit, offset),
-        ).fetchall()
-    else:
-        rows = conn.execute(
-            "SELECT * FROM trades WHERE client_id = ? ORDER BY entry_time DESC LIMIT ? OFFSET ?",
-            (current_user.client_id, limit, offset),
-        ).fetchall()
-
-    conn.close()
     return [dict(r) for r in rows]
 
 
@@ -265,9 +306,8 @@ async def get_trade(
     trade_id: int,
     current_user: TokenData = Depends(get_current_user),
 ):
-    conn = next(get_db())
-    row = conn.execute("SELECT * FROM trades WHERE id = ?", (trade_id,)).fetchone()
-    conn.close()
+    with get_db() as conn:
+        row = conn.execute("SELECT * FROM trades WHERE id = ?", (trade_id,)).fetchone()
 
     if not row:
         raise HTTPException(status_code=404, detail="Trade not found")
@@ -284,36 +324,31 @@ async def get_equity(
     days: int = Query(90, ge=1, le=365),
     current_user: TokenData = Depends(get_current_user),
 ):
-    conn = next(get_db())
+    with get_db() as conn:
+        if current_user.role == "admin":
+            rows = conn.execute(
+                "SELECT date, equity FROM equity_curve ORDER BY date DESC LIMIT ?",
+                (days,),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT date, equity FROM equity_curve WHERE client_id = ? ORDER BY date DESC LIMIT ?",
+                (current_user.client_id, days),
+            ).fetchall()
 
-    if current_user.role == "admin":
-        rows = conn.execute(
-            "SELECT date, equity FROM equity_curve ORDER BY date DESC LIMIT ?",
-            (days,),
-        ).fetchall()
-    else:
-        rows = conn.execute(
-            "SELECT date, equity FROM equity_curve WHERE client_id = ? ORDER BY date DESC LIMIT ?",
-            (current_user.client_id, days),
-        ).fetchall()
-
-    conn.close()
     return [{"date": r["date"], "equity": r["equity"]} for r in rows]
 
 
 @app.get("/api/summary", response_model=SummaryOut)
 async def get_summary(current_user: TokenData = Depends(get_current_user)):
-    conn = next(get_db())
-
-    if current_user.role == "admin":
-        row = conn.execute("SELECT * FROM performance_summary LIMIT 1").fetchone()
-    else:
-        row = conn.execute(
-            "SELECT * FROM performance_summary WHERE client_id = ?",
-            (current_user.client_id,),
-        ).fetchone()
-
-    conn.close()
+    with get_db() as conn:
+        if current_user.role == "admin":
+            row = conn.execute("SELECT * FROM performance_summary LIMIT 1").fetchone()
+        else:
+            row = conn.execute(
+                "SELECT * FROM performance_summary WHERE client_id = ?",
+                (current_user.client_id,),
+            ).fetchone()
 
     if not row:
         return SummaryOut(
@@ -339,18 +374,17 @@ async def list_clients(current_user: TokenData = Depends(get_current_user)):
     if current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
 
-    conn = next(get_db())
-    rows = conn.execute("""
-        SELECT c.id, c.name,
-               COUNT(t.id) as total_trades,
-               COALESCE(SUM(t.pnl_usd), 0) as net_pnl_usd,
-               COALESCE(AVG(CASE WHEN t.pnl_pips > 0 THEN 1.0 ELSE 0.0 END), 0) as win_rate
-        FROM clients c
-        LEFT JOIN trades t ON t.client_id = c.id
-        GROUP BY c.id
-        ORDER BY c.name
-    """).fetchall()
-    conn.close()
+    with get_db() as conn:
+        rows = conn.execute("""
+            SELECT c.id, c.name,
+                   COUNT(t.id) as total_trades,
+                   COALESCE(SUM(t.pnl_usd), 0) as net_pnl_usd,
+                   COALESCE(AVG(CASE WHEN t.pnl_pips > 0 THEN 1.0 ELSE 0.0 END), 0) as win_rate
+            FROM clients c
+            LEFT JOIN trades t ON t.client_id = c.id
+            GROUP BY c.id
+            ORDER BY c.name
+        """).fetchall()
 
     return [ClientOut(
         id=r["id"], name=r["name"], total_trades=r["total_trades"],
@@ -367,12 +401,12 @@ async def get_client_trades(
     if current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
 
-    conn = next(get_db())
-    rows = conn.execute(
-        "SELECT * FROM trades WHERE client_id = ? ORDER BY entry_time DESC LIMIT ?",
-        (client_id, limit),
-    ).fetchall()
-    conn.close()
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT * FROM trades WHERE client_id = ? ORDER BY entry_time DESC LIMIT ?",
+            (client_id, limit),
+        ).fetchall()
+
     return [dict(r) for r in rows]
 
 
@@ -381,11 +415,11 @@ async def get_risk_state(current_user: TokenData = Depends(get_current_user)):
     if current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
 
-    conn = next(get_db())
-    rows = conn.execute(
-        "SELECT * FROM risk_state ORDER BY timestamp DESC LIMIT 10"
-    ).fetchall()
-    conn.close()
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT * FROM risk_state ORDER BY timestamp DESC LIMIT 10"
+        ).fetchall()
+
     return [dict(r) for r in rows]
 
 
