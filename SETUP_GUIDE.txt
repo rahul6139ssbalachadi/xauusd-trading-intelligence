@@ -1,0 +1,100 @@
+XAUUSD TRADING INTELLIGENCE SYSTEM — PC SETUP GUIDE
+=======================================================
+
+WHAT YOU HAVE:
+- FastAPI backend with JWT auth (port 8000)
+- Client Dashboard + Admin Dashboard
+- V11 D1 + V12 H1 live trading (demo-only)
+- Flutter mobile project (iOS/Android/Windows/macOS)
+- Telegram bridge for notifications
+
+=======================================================
+STEP 1: START THE SYSTEM
+=======================================================
+Open Git Bash and run:
+
+cd D:/rahul_ai/trading
+
+# Terminal 1: Start the API backend
+PYTHONPATH=D:/rahul_ai/trading .venv/Scripts/python.exe api/main.py
+
+# Terminal 2: Start Telegram bridge (notifications)
+D:/rahul_ai/hermes/hermes-agent/venv/Scripts/python.exe D:/rahul_ai/hermes/hermes_telegram_bridge.py
+
+=======================================================
+STEP 2: ACCESS DASHBOARDS
+=======================================================
+
+Client Dashboard: http://localhost:8000/dashboard
+Admin Dashboard:  http://localhost:8000/admin
+Phone (same WiFi): http://10.191.47.51:8000/dashboard
+
+Login credentials:
+  Admin:  admin@trading.local     / admin123
+  Client: client1@trading.local   / client123
+  Client: client2@trading.local   / client123
+
+=======================================================
+STEP 3: LIVE TRADING STATUS
+=======================================================
+
+live_trading_enabled = true
+
+V11 (D1): ~1-2 trades/month, 1% risk — APPROVED
+V12 (H1): ~14-16 trades/month, 2% risk — APPROVED
+
+Cron schedule:
+  V11 daily at 21:05 IST
+  Daily update at 15:30 IST
+
+SAFETY FEATURES:
+- Demo-only (refuses REAL accounts)
+- One position per strategy at a time
+- Kill switch on 3 consecutive losses
+- Max spread filter (refuses if >5 pips)
+- All decisions journaled to execution/journal.jsonl
+
+=======================================================
+STEP 4: BUILD FLUTTER .EXE
+=======================================================
+
+1. Enable Developer Mode:
+   Settings → Privacy & security → For developers → Developer Mode ON
+   OR run as Admin: D:\rahul_ai\trading\enable_dev_mode.bat
+
+2. Install Visual Studio C++ workload:
+   Open Visual Studio Installer → Modify BuildTools 2022
+   → Check "Desktop development with C++" → Modify (~20 min download)
+
+3. Build:
+   cd D:\rahul_ai\trading\mobile
+   flutter build windows --release
+   Output: build\windows\runner\Release\trading_app.exe
+
+=======================================================
+STEP 5: TELEGRAM NOTIFICATIONS
+=======================================================
+
+The bridge is running. Cron jobs deliver to @Hermes_6139_bot automatically.
+Send a message to the bot to test two-way communication.
+
+=======================================================
+QUICK COMMANDS
+=======================================================
+
+Run all tests:     .venv/Scripts/python.exe -m pytest tests/ -q
+V11 dry-run:       .venv/Scripts/python.exe execution/run_v11_daily.py --dry-run
+V12 dry-run:       .venv/Scripts/python.exe execution/run_v12_hourly.py --dry-run
+Build HTML dash:   .venv/Scripts/python.exe scripts/build_dashboard.py
+
+=======================================================
+TROUBLESHOOTING
+=======================================================
+
+API not starting? → Check port 8000: netstat -ano | findstr :8000
+Login fails? → Passwords: admin123 / client123
+No trades? → WAIT is normal — engine trades on signal only
+Flutter build fails? → Need VS C++ workload installed
+
+=======================================================
+END OF GUIDE
