@@ -25,7 +25,7 @@ edge. Statistical validation happens in the Phase 8 backtest.
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 from typing import Literal
 
@@ -80,7 +80,19 @@ class Strategy:
     @classmethod
     def load(cls, path: Path) -> "Strategy":
         data = json.loads(Path(path).read_text())
-        return cls(**data)
+        # Backwards-compat: provide defaults for missing required fields
+        defaults = {
+            "sessions": ["all"],
+            "notes": "",
+            "max_positions": 1,
+        }
+        for k, v in defaults.items():
+            if k not in data:
+                data[k] = v
+        # Filter to only known fields
+        valid = {f.name for f in fields(cls)}
+        filtered = {k: v for k, v in data.items() if k in valid}
+        return cls(**filtered)
 
 
 # --------------------------------------------------------------------------

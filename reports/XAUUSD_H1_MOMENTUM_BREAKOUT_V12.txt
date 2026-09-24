@@ -1,0 +1,20 @@
+============================================================
+  STRATEGY REPORT — XAUUSD_H1_MOMENTUM_BREAKOUT V12
+============================================================
+  Trades         : 0
+  Win rate       : 0%
+  Net pips       : n/a
+  Profit factor  : n/a
+  Expectancy     : n/a pips
+  Max drawdown   : n/a pips
+  Sharpe         : n/a
+  Sortino        : n/a
+  Avg win / loss : n/a / n/a
+  Win/Loss streak: n/a / n/a
+------------------------------------------------------------
+  Journal        : 0 decisions
+    BUY/SELL/WAIT: n/a/n/a/n/a
+    Planned risk : $0.00
+------------------------------------------------------------
+  Notes          : Read-only auto-generated report
+============================================================

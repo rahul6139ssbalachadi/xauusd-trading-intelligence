@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Intelligence - Client Dashboard</title>
+<style>
+:root {
+  --bg: #0f1117;
+  --card: #1a1d27;
+  --border: #2a2d3a;
+  --text: #e1e4ed;
+  --muted: #8b8fa3;
+  --accent: #4f8cff;
+  --green: #22c55e;
+  --red: #ef4444;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+.hidden { display: none !important; }
+
+/* Login */
+.login-box {
+  max-width: 400px;
+  margin: 100px auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 40px;
+}
+.login-box h1 { font-size: 24px; margin-bottom: 8px; }
+.login-box p { color: var(--muted); margin-bottom: 24px; }
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+}
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+.login-box button:hover { opacity: 0.9; }
+.error { color: var(--red); font-size: 13px; margin-top: 8px; }
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+.header h1 { font-size: 20px; }
+.header button {
+  padding: 8px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+/* Metrics */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.card .label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.card .value { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.card .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* Trades table */
+.trades-table {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.trades-table h3 { padding: 16px 20px; font-size: 16px; border-bottom: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 12px 20px; text-align: left; font-size: 13px; }
+th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; }
+tr { border-bottom: 1px solid var(--border); }
+tr:last-child { border-bottom: none; }
+.pnl-positive { color: var(--green); }
+.pnl-negative { color: var(--red); }
+.buy { color: var(--green); }
+.sell { color: var(--red); }
+
+/* Equity chart placeholder */
+.chart-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+  .header { flex-direction: column; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<div id="loginView" class="container">
+  <div class="login-box">
+    <h1>Trading Intelligence</h1>
+    <p>Client Dashboard</p>
+    <input type="email" id="email" placeholder="Email" value="">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Sign In</button>
+    <div id="loginError" class="error"></div>
+  </div>
+</div>
+
+<div id="dashboardView" class="container hidden">
+  <div class="header">
+    <h1>Trading Dashboard</h1>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="metrics" id="metrics">
+    <div class="card">
+      <div class="label">Total Trades</div>
+      <div class="value" id="totalTrades">-</div>
+    </div>
+    <div class="card">
+      <div class="label">Win Rate</div>
+      <div class="value" id="winRate">-</div>
+    </div>
+    <div class="card">
+      <div class="label">Net P&L</div>
+      <div class="value" id="netPnl">-</div>
+    </div>
+    <div class="card">
+      <div class="label">Max Drawdown</div>
+      <div class="value" id="maxDd">-</div>
+    </div>
+  </div>
+
+  <div class="chart-box">Equity chart (connect to API for live data)</div>
+
+  <div class="trades-table">
+    <h3>Recent Trades</h3>
+    <table>
+      <thead>
+        <tr><th>Symbol</th><th>Dir</th><th>Entry</th><th>Exit</th><th>P&L</th><th>Time</th></tr>
+      </thead>
+      <tbody id="tradesBody">
+        <tr><td colspan="6" style="text-align:center;color:var(--muted);">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8000';
+
+async function login() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const errEl = document.getElementById('loginError');
+  errEl.textContent = '';
+
+  const params = new URLSearchParams();
+  params.append('username', email);
+  params.append('password', password);
+
+  try {
+    const res = await fetch(`${API}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params
+    });
+    if (!res.ok) throw new Error('Invalid credentials');
+    const data = await res.json();
+    localStorage.setItem('token', data.access_token);
+    showDashboard();
+  } catch (e) {
+    errEl.textContent = e.message;
+  }
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  document.getElementById('loginView').classList.remove('hidden');
+  document.getElementById('dashboardView').classList.add('hidden');
+}
+
+async function showDashboard() {
+  document.getElementById('loginView').classList.add('hidden');
+  document.getElementById('dashboardView').classList.remove('hidden');
+
+  const token = localStorage.getItem('token');
+  const headers = { 'Authorization': `Bearer ${token}` };
+
+  try {
+    // Get summary
+    const summaryRes = await fetch(`${API}/api/summary`, { headers });
+    if (summaryRes.ok) {
+      const s = await summaryRes.json();
+      document.getElementById('totalTrades').textContent = s.total_trades || 0;
+      document.getElementById('winRate').textContent = s.win_rate ? (s.win_rate * 100).toFixed(1) + '%' : '0%';
+      document.getElementById('netPnl').textContent = s.net_pnl_usd ? '$' + s.net_pnl_usd.toFixed(2) : '$0.00';
+      document.getElementById('maxDd').textContent = s.max_drawdown_pct ? s.max_drawdown_pct.toFixed(2) + '%' : '0%';
+    }
+
+    // Get trades
+    const tradesRes = await fetch(`${API}/api/trades?limit=20`, { headers });
+    if (tradesRes.ok) {
+      const trades = await tradesRes.json();
+      const tbody = document.getElementById('tradesBody');
+      if (trades.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);">No trades yet</td></tr>';
+      } else {
+        tbody.innerHTML = trades.map(t => `
+          <tr>
+            <td>${t.symbol}</td>
+            <td class="${t.direction === 'BUY' ? 'buy' : 'sell'}">${t.direction}</td>
+            <td>${t.entry_price?.toFixed(2) || '-'}</td>
+            <td>${t.exit_price?.toFixed(2) || 'Open'}</td>
+            <td class="${t.pnl_usd > 0 ? 'pnl-positive' : t.pnl_usd < 0 ? 'pnl-negative' : ''}">$${t.pnl_usd?.toFixed(2) || '0.00'}</td>
+            <td>${t.entry_time ? new Date(t.entry_time).toLocaleDateString() : '-'}</td>
+          </tr>
+        `).join('');
+      }
+    }
+  } catch (e) {
+    console.error('Dashboard error:', e);
+  }
+}
+
+// Auto-login if token exists
+if (localStorage.getItem('token')) {
+  showDashboard();
+}
+</script>
+</body>
+</html>

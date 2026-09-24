@@ -423,6 +423,21 @@ async def get_risk_state(current_user: TokenData = Depends(get_current_user)):
     return [dict(r) for r in rows]
 
 
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
+
+# Serve dashboard
+@app.get("/")
+@app.get("/dashboard")
+async def serve_dashboard():
+    return FileResponse("reports/client_dashboard.html", media_type="text/html")
+
+@app.get("/admin")
+async def serve_admin():
+    return FileResponse("reports/dashboard.html", media_type="text/html")
+
+
 # ---------------------------------------------------------------------------
 # Health check
 # ---------------------------------------------------------------------------
