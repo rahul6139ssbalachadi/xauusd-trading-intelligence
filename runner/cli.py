@@ -24,6 +24,7 @@ Run:  python runner/cli.py <command> [args]
 from __future__ import annotations
 
 import argparse
+import json
 import sqlite3
 import sys
 from pathlib import Path
@@ -273,6 +274,31 @@ def cmd_report(strat_name: str, fmt: str = "text"):
     print(render_text(report))
 
 
+def cmd_proposals():
+    """List self-improvement proposals (§25). Read-only inspection.
+
+    Promotion is deliberately NOT offered here: adding to approved.json is
+    a human decision made via self_improvement.promote(), never a CLI flag.
+    """
+    from self_improvement import PROPOSALS_DIR
+
+    files = sorted(PROPOSALS_DIR.glob("*.json"))
+    if not files:
+        print(f"No proposals yet ({PROPOSALS_DIR})")
+        print("Run research/gate_check_v11.py to validate a candidate.")
+        return
+    for f in files:
+        d = json.loads(f.read_text(encoding="utf-8"))
+        v = d.get("verdict", {})
+        mark = "ACCEPTED" if v.get("accepted") else "REJECTED"
+        print(f"{f.name}")
+        print(f"  {d['strategy']} {d['candidate_version']} "
+              f"(supersedes {d['base_version']})  {d['created_at']}")
+        print(f"  status={d['status']}  gate={mark}  "
+              f"approved_by={d.get('approved_by')}")
+        print(f"  {v.get('reason', '')}")
+
+
 # ---------------------------------------------------------------------------
 # Argument parsing
 # ---------------------------------------------------------------------------
@@ -310,6 +336,9 @@ def main():
 
     p = sub.add_parser("papertrade", help="run paper trading over historical window")
     p.add_argument("strat", help="strategy name")
+
+    p = sub.add_parser("proposals",
+                       help="list self-improvement proposals (§25), read-only")
 
     args = parser.parse_args()
 
@@ -352,6 +381,8 @@ def main():
                         equity=10000.0)
         print(f"Paper-traded {len(dec)} bars for {strat.name} {strat.version}")
         print(summarize_journal(journal))
+    elif args.cmd == "proposals":
+        cmd_proposals()
     else:
         parser.print_help()
 

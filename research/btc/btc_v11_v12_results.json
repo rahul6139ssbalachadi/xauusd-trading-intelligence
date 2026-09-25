@@ -1,0 +1,241 @@
+{
+  "generated": "2026-09-25T17:11:35+00:00",
+  "commit": "aa7cab9",
+  "results": {
+    "V11": {
+      "quality": {
+        "D1": {
+          "timeframe": "D1",
+          "bars": 268,
+          "start": "2026-01-01",
+          "end": "2026-09-25",
+          "duplicates": 0,
+          "gaps": 0,
+          "ohlc_violations": 0,
+          "min_close": 58722.9,
+          "max_close": 97554.3,
+          "mean_spread_usd": 21.21268656716418
+        },
+        "H1": {
+          "timeframe": "H1",
+          "bars": 6426,
+          "start": "2026-01-01",
+          "end": "2026-09-25",
+          "duplicates": 0,
+          "gaps": 0,
+          "ohlc_violations": 0,
+          "min_close": 58289.8,
+          "max_close": 97634.8,
+          "mean_spread_usd": 21.23832866479925
+        }
+      },
+      "params": {
+        "body_pct_threshold": 0.95,
+        "trend_filter": true,
+        "min_atr_pct": 0.005,
+        "rr": 2.0,
+        "atr_mult_stop": 1.5,
+        "max_holding_d1": 8
+      },
+      "base": {
+        "name": "V11",
+        "cost_case": "BASE",
+        "spread_usd": 21.21268656716418,
+        "slippage_usd": 5.0,
+        "cost_pips_roundtrip": 52.42537313432836,
+        "n_signals": 5,
+        "metrics": {
+          "total_trades": 5,
+          "win_rate": 0.6,
+          "lose_rate": 0.4,
+          "net_pips": 1226.4778137639219,
+          "gross_win_pips": 8825.552595985677,
+          "gross_loss_pips": 7599.074782221755,
+          "profit_factor": 1.1613983082036907,
+          "expectancy_pips": 245.29556275278438,
+          "max_drawdown_pips": 4920.70015535608,
+          "avg_win_pips": 2941.850865328559,
+          "avg_loss_pips": 3799.5373911108777,
+          "sharpe": 0.06177212898758973,
+          "sortino": 1.5835777746618533,
+          "longest_win_streak": 2,
+          "longest_loss_streak": 1,
+          "avg_duration_bars": 4.2
+        },
+        "mc": {
+          "net_p5": -3835.574135782906,
+          "profit_factor_p5": 0.4918964768051962,
+          "ruin_prob": 0.156,
+          "is_robust": false
+        }
+      },
+      "cost_stress": [
+        {
+          "cost_case": "BASE (real spread)",
+          "spread_usd": 21.21268656716418,
+          "cost_pips_roundtrip": 52.42537313432836,
+          "net_pips": 1226.4778137639219,
+          "pf": 1.1613983082036907,
+          "trades": 5,
+          "win": 0.6
+        },
+        {
+          "cost_case": "STRESS 1.5x spread",
+          "spread_usd": 31.81902985074627,
+          "cost_pips_roundtrip": 83.63805970149254,
+          "net_pips": 1070.4143809281018,
+          "pf": 1.1397134189418223,
+          "trades": 5,
+          "win": 0.6
+        },
+        {
+          "cost_case": "STRESS 2x spread",
+          "spread_usd": 42.42537313432836,
+          "cost_pips_roundtrip": 124.85074626865672,
+          "net_pips": 864.3509480922812,
+          "pf": 1.1116166400247882,
+          "trades": 5,
+          "win": 0.6
+        }
+      ],
+      "walk_forward": {
+        "is_net_pips": 0.0,
+        "oos_net_pips": 1256.197272028157,
+        "is_trades": 0,
+        "oos_trades": 5,
+        "is_pf": 0.0,
+        "oos_pf": 1.165568249762082,
+        "is_win": 0.0,
+        "oos_win": 0.6,
+        "degradation": NaN
+      },
+      "regime": {
+        "low_vol": {
+          "n": 5,
+          "net": 1226.4778137639219,
+          "avg": 245.29556275278438
+        }
+      }
+    },
+    "V12": {
+      "quality": {
+        "D1": {
+          "timeframe": "D1",
+          "bars": 268,
+          "start": "2026-01-01",
+          "end": "2026-09-25",
+          "duplicates": 0,
+          "gaps": 0,
+          "ohlc_violations": 0,
+          "min_close": 58722.9,
+          "max_close": 97554.3,
+          "mean_spread_usd": 21.21268656716418
+        },
+        "H1": {
+          "timeframe": "H1",
+          "bars": 6426,
+          "start": "2026-01-01",
+          "end": "2026-09-25",
+          "duplicates": 0,
+          "gaps": 0,
+          "ohlc_violations": 0,
+          "min_close": 58289.8,
+          "max_close": 97634.8,
+          "mean_spread_usd": 21.23832866479925
+        }
+      },
+      "params": {
+        "body_pct_threshold": 0.95,
+        "trend_filter": true,
+        "min_atr_pct": 0.004,
+        "rr": 3.0,
+        "atr_mult_stop": 0.8,
+        "max_holding_h1": 8
+      },
+      "base": {
+        "name": "V12",
+        "cost_case": "BASE",
+        "spread_usd": 21.23832866479925,
+        "slippage_usd": 5.0,
+        "cost_pips_roundtrip": 52.4766573295985,
+        "n_signals": 104,
+        "metrics": {
+          "total_trades": 104,
+          "win_rate": 0.34615384615384615,
+          "lose_rate": 0.6538461538461539,
+          "net_pips": 2882.2708245178505,
+          "gross_win_pips": 32057.52512082178,
+          "gross_loss_pips": 29175.25429630401,
+          "profit_factor": 1.0987916264669166,
+          "expectancy_pips": 27.71414254344087,
+          "max_drawdown_pips": 10202.331955385896,
+          "avg_win_pips": 890.4868089117161,
+          "avg_loss_pips": 429.0478572985884,
+          "sharpe": 0.03953480213947773,
+          "sortino": 0.18986814311624786,
+          "longest_win_streak": 3,
+          "longest_loss_streak": 8,
+          "avg_duration_bars": 3.5961538461538463
+        },
+        "mc": {
+          "net_p5": -929.4121046149239,
+          "profit_factor_p5": 0.9659048653570724,
+          "ruin_prob": 0.089,
+          "is_robust": false
+        }
+      },
+      "cost_stress": [
+        {
+          "cost_case": "BASE (real spread)",
+          "spread_usd": 21.23832866479925,
+          "cost_pips_roundtrip": 52.4766573295985,
+          "net_pips": 2882.2708245178505,
+          "pf": 1.0987916264669166,
+          "trades": 104,
+          "win": 0.34615384615384615
+        },
+        {
+          "cost_case": "STRESS 1.5x spread",
+          "spread_usd": 31.857492997198875,
+          "cost_pips_roundtrip": 83.71498599439775,
+          "net_pips": -366.5153566212682,
+          "pf": 0.9882900424140758,
+          "trades": 104,
+          "win": 0.34615384615384615
+        },
+        {
+          "cost_case": "STRESS 2x spread",
+          "spread_usd": 42.4766573295985,
+          "cost_pips_roundtrip": 124.953314659197,
+          "net_pips": -4655.301537760392,
+          "pf": 0.8636175702088063,
+          "trades": 104,
+          "win": 0.3269230769230769
+        }
+      ],
+      "walk_forward": {
+        "is_net_pips": 1570.7333289446833,
+        "oos_net_pips": 1301.4179491377145,
+        "is_trades": 74,
+        "oos_trades": 30,
+        "is_pf": 1.0769802478394201,
+        "oos_pf": 1.1483221123191008,
+        "is_win": 0.35135135135135137,
+        "oos_win": 0.3333333333333333,
+        "degradation": 0.17145837224190796
+      },
+      "regime": {
+        "high_vol": {
+          "n": 65,
+          "net": 3347.8468300894856,
+          "avg": 51.505335847530546
+        },
+        "low_vol": {
+          "n": 39,
+          "net": -465.57600557163096,
+          "avg": -11.937846296708486
+        }
+      }
+    }
+  }
+}

@@ -7,9 +7,16 @@ __pycache__/
 .venv/
 venv/
 *.db
+*.db.*
 *.sqlite
 *.log
 config/mt5.toml
 data/cache/
 data/processed/
 *.lock
+
+# Editor / local-only
+.vscode/
+
+# 1.6MB voice memo, not source
+telegram_guide.mp3
