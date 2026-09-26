@@ -86,12 +86,12 @@ def main() -> int:
         with urllib.request.urlopen(
                 f"https://api.telegram.org/bot{token}/sendMessage",
                 data=data, timeout=30) as r:
-            body = r.read().decode()
+            ok = '"ok":true' in r.read().decode().replace(" ", "")
     except Exception as exc:  # noqa: BLE001
         print(f"TELEGRAM FAILED: {type(exc).__name__}: {exc}")
         return 1
-    print("Telegram: sent" if '"ok":true' in body.replace(" ", "") else f"Telegram: FAILED {body[:200]}")
-    return 0 if '"ok":true' in body.replace(" ", "") else 1
+    print("Telegram: sent" if ok else "TELEGRAM FAILED: API rejected the message")
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":
