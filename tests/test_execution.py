@@ -104,7 +104,9 @@ def _clean_kill_switch(tmp_path, monkeypatch):
 @pytest.fixture
 def engine():
     gw = FakeGateway()
-    settings = {"live_trading_enabled": True}
+    # The correct ARMED state for a demo runner: demo orders permitted,
+    # real-money explicitly forbidden.
+    settings = {"demo_execution_enabled": True, "live_trading_enabled": False}
     approved = {"XAUUSD_D1_MOMENTUM_BREAKOUT:V11": {
         "max_spread_pips": 5.0, "risk_pct": 0.01}}
     eng = ExecutionEngine(
@@ -136,19 +138,87 @@ class TestKillSwitch:
 
 
 # ---------------------------------------------------------------------------
-# Gate 1: live_trading_enabled
+# Gate 1: demo_execution_enabled / live_trading_enabled separation
 # ---------------------------------------------------------------------------
-class TestLiveSwitch:
-    def test_disabled_switch_blocks(self, engine):
-        engine.settings = {"live_trading_enabled": False}
+class TestDemoVsLiveSeparation:
+    """DEMO and LIVE are separate switches with OPPOSITE polarity. These
+    cases are the entire safety argument, so they are pinned explicitly
+    rather than inferred from the checklist tests.
+
+    Invariant: no combination of these two settings, and no account, lets a
+    real-money order through.
+    """
+
+    def _armed(self, engine, **over):
+        engine.settings = {"demo_execution_enabled": True,
+                           "live_trading_enabled": False, **over}
+
+    def test_correct_demo_account_can_execute(self, engine):
+        self._armed(engine)
         res = engine.execute(make_request())
-        assert res.decision == "BLOCKED"
+        assert res.ok is True, res.reason
+        assert res.decision == "EXECUTED"
+        assert len(engine.gateway.orders_sent) == 1
+        sent = engine.gateway.orders_sent[0]
+        assert sent["sl"] == 4400.0 and sent["tp"] == 4550.0
+        assert sent["magic"] == 20260922
+
+    def test_wrong_login_is_rejected(self, engine):
+        self._armed(engine)
+        engine.gateway.account = FakeAccount(login=999999999)
+        res = engine.execute(make_request())
+        assert res.ok is False and res.decision == "BLOCKED"
+        assert engine.gateway.orders_sent == []
+        assert any(n == "account_login_expected" and not ok
+                   for n, ok, _ in res.checks)
+
+    def test_real_account_is_rejected(self, engine):
+        self._armed(engine)
+        engine.gateway.account = FakeAccount(trade_mode=2)      # REAL
+        res = engine.execute(make_request())
+        assert res.ok is False and res.decision == "BLOCKED"
+        assert engine.gateway.orders_sent == []
+        assert any(n == "account_is_demo" and not ok
+                   for n, ok, _ in res.checks)
+
+    def test_live_switch_cannot_enable_execution(self, engine):
+        """live_trading_enabled=true must BLOCK, never grant. This is the
+        requirement the old single-switch design could not satisfy."""
+        self._armed(engine, live_trading_enabled=True)
+        res = engine.execute(make_request())
+        assert res.ok is False and res.decision == "BLOCKED"
+        assert engine.gateway.orders_sent == []
+        assert any(n == "live_trading_forbidden" and not ok
+                   for n, ok, _ in res.checks)
+
+    def test_live_switch_blocks_whatever_demo_says(self, engine):
+        """Belt and braces: no value of demo_execution_enabled rescues a
+        live=true configuration."""
+        for demo in (True, False, None):
+            engine.gateway.orders_sent.clear()
+            self._armed(engine, demo_execution_enabled=demo,
+                        live_trading_enabled=True)
+            res = engine.execute(make_request())
+            assert res.ok is False, f"live=true executed with demo={demo}"
+            assert engine.gateway.orders_sent == []
+
+    def test_demo_switch_off_blocks(self, engine):
+        self._armed(engine, demo_execution_enabled=False)
+        res = engine.execute(make_request())
+        assert res.ok is False
+        assert any(n == "demo_execution_enabled" and not ok
+                   for n, ok, _ in res.checks)
         assert engine.gateway.orders_sent == []
 
-    def test_missing_switch_blocks(self, engine):
-        engine.settings = {}
-        res = engine.execute(make_request())
-        assert res.decision == "BLOCKED"
+    def test_repo_config_is_demo_armed_and_live_forbidden(self):
+        """The committed config must be demo-armed with live forbidden, so
+        flipping live_trading_enabled to true in settings.toml fails CI."""
+        from market_data import config as cfg
+        s = cfg.load_settings()
+        assert s["live_trading_enabled"] is False, \
+            "live_trading_enabled MUST be false in this demo-only build"
+        assert s["demo_execution_enabled"] is True, \
+            "demo_execution_enabled should be true on the demo runner"
 
 
 # ---------------------------------------------------------------------------
@@ -178,7 +248,8 @@ class TestChecklist:
         names = [n for n, _, _ in check.checks]
         # the 10 spec checks + 2 engine extras
         assert "kill_switch_inactive" in names
-        assert "live_trading_enabled" in names
+        assert "demo_execution_enabled" in names
+        assert "live_trading_forbidden" in names
         assert "account_is_demo" in names
         assert "symbol_exists" in names
         assert "market_open" in names
@@ -291,7 +362,8 @@ class TestExecution:
 
     def test_every_decision_journaled(self, engine):
         engine.execute(make_request())
-        engine.settings = {"live_trading_enabled": False}
+        engine.settings = {"demo_execution_enabled": False,
+                           "live_trading_enabled": False}
         engine.execute(make_request())
         lines = execution.JOURNAL.read_text().strip().splitlines()
         assert len(lines) == 2
@@ -299,7 +371,7 @@ class TestExecution:
         assert events[0]["event"] == "EXECUTED"
         assert events[0]["ticket"] == 500_001
         assert events[1]["event"] == "BLOCKED"
-        assert "live_trading_enabled" in events[1]["reason"]
+        assert "demo_execution_enabled" in events[1]["reason"]
 
 
 # ---------------------------------------------------------------------------

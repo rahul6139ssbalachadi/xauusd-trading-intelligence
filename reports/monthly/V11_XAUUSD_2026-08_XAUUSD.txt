@@ -1,0 +1,20 @@
+============================================================================================================
+MONTHLY BACKTEST  V11 (XAUUSD_D1_MOMENTUM_BREAKOUT)  symbol=XAUUSD  tf=D1
+============================================================================================================
+  data      : 2016-09-02 03:00:00+00:00 .. 2026-08-28 03:00:00+00:00  (2577 bars)  mean spread 0.13 XAUUSD price units
+  timezone  : broker server time = UTC+3 (assumption: summer EEST applied year-round)
+  logic     : execution/run_v11_daily.py:PARAMS + research/v11_d1_momentum.py:compute_d1_signals
+  commit    : fc44c75   run 2026-09-26T10:35:49.553737+00:00
+  balance   : $10,000.00   risk/trade 1.0%   max positions 1
+  costs     : spread measured, slippage 1.0 pip/side, commission $0.0/lot, swap $0 (NOT modelled)
+  guard     : order_capable=False, live_switch=False (not modified)
+------------------------------------------------------------------------------------------------------------
+Month      Sig  BUY SELL  Trd   Win%     PF       Net$    MaxDD$   AvgR  SL  TP End   Costs$  Skip
+------------------------------------------------------------------------------------------------------------
+2026-08      1    1    0    0    n/a    n/a        n/a       n/a    n/a   0   0   0      n/a     1
+------------------------------------------------------------------------------------------------------------
+TOTAL        1              0    n/a              0.00                                  0.00     1
+============================================================================================================
+NOTE: every signal was declined by position sizing. The D1 stop is 1500-3200 pips wide; at the strategy's 1% risk on a small balance that floors below the 0.01 minimum lot. Raise --balance (e.g. --balance 100000) or the engine will never force a trade it cannot size.
+============================================================================================================
+Simulated research only. No order was placed; no live/demo trade exists from this run.

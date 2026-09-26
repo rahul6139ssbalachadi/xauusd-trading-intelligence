@@ -1,0 +1,26 @@
+============================================================================================================
+MONTHLY BACKTEST  V11 (XAUUSD_D1_MOMENTUM_BREAKOUT)  symbol=BTCUSD  tf=D1
+============================================================================================================
+  data      : 2026-01-01 03:00:00+00:00 .. 2026-09-25 03:00:00+00:00  (268 bars)  mean spread 21.21 BTCUSD price units
+  timezone  : broker server time = UTC+3 (assumption: summer EEST applied year-round)
+  logic     : execution/run_v11_daily.py:PARAMS + research/v11_d1_momentum.py:compute_d1_signals
+  commit    : fc44c75   run 2026-09-26T06:27:02.797429+00:00
+  balance   : $100,000.00   risk/trade 1.0%   max positions 1
+  costs     : spread measured, slippage 1.0 pip/side, commission $0.0/lot, swap $0 (NOT modelled)
+  guard     : order_capable=False, live_switch=True (not modified)
+------------------------------------------------------------------------------------------------------------
+Month      Sig  BUY SELL  Trd   Win%     PF       Net$    MaxDD$   AvgR  SL  TP End   Costs$  Skip
+------------------------------------------------------------------------------------------------------------
+2026-01      0    0    0    0    n/a    n/a        n/a       n/a    n/a   0   0   0      n/a     0
+2026-02      0    0    0    0    n/a    n/a        n/a       n/a    n/a   0   0   0      n/a     0
+2026-03      0    0    0    0    n/a    n/a        n/a       n/a    n/a   0   0   0      n/a     0
+2026-04      0    0    0    0    n/a    n/a        n/a       n/a    n/a   0   0   0      n/a     0
+2026-05      0    0    0    0    n/a    n/a        n/a       n/a    n/a   0   0   0      n/a     0
+2026-06      0    0    0    0    n/a    n/a        n/a       n/a    n/a   0   0   0      n/a     0
+2026-07      0    0    0    0    n/a    n/a        n/a       n/a    n/a   0   0   0      n/a     0
+2026-08      2    2    0    1  100.0    n/a   1,949.82       0.0   1.98   0   1   0    17.34     1
+2026-09      3    3    0    2   50.0   0.73    -268.55       0.0  -0.13   1   0   1    23.72     1
+------------------------------------------------------------------------------------------------------------
+TOTAL        5              3   66.7          1,681.26                                 41.07     2
+============================================================================================================
+Simulated research only. No order was placed; no live/demo trade exists from this run.

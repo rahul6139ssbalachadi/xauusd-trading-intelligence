@@ -219,7 +219,10 @@ def cmd_risk_status():
     settings = load_settings()
     cfg = RiskConfig()
     print("--- RISK STATUS ---")
-    print(f"  live_trading_enabled : {settings.get('live_trading_enabled', False)}")
+    print(f"  demo_execution_enabled : {settings.get('demo_execution_enabled', False)}"
+          "   <- permits DEMO orders (verified DEMO account only)")
+    print(f"  live_trading_enabled   : {settings.get('live_trading_enabled', False)}"
+          "   <- must stay False; True BLOCKS execution")
     print(f"  max_risk_per_trade   : {cfg.max_risk_per_trade_pct*100:.2f}%")
     print(f"  max_positions        : {cfg.max_positions}")
     print(f"  max_lots             : {cfg.max_lots}")
@@ -237,7 +240,10 @@ def cmd_trading_status():
     """Show trading/kill-switch status."""
     settings = load_settings()
     print("--- TRADING STATUS ---")
-    print(f"  live_trading_enabled : {settings.get('live_trading_enabled', False)}")
+    print(f"  demo_execution_enabled : {settings.get('demo_execution_enabled', False)}"
+          "   <- DEMO orders permitted (DEMO account only)")
+    print(f"  live_trading_enabled   : {settings.get('live_trading_enabled', False)}"
+          "   <- must stay False; True BLOCKS execution")
     print(f"  Kill switch          : INACTIVE (read-only; manual reset only)")
     print(f"  DB path              : {DB}")
     print(f"  Strategy defs        : {DEFS}")

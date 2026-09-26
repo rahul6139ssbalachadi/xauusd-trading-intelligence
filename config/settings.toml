@@ -1,9 +1,23 @@
-# Global safety switch (Section 23). Must be flipped explicitly and
-# deliberately -- never implied by any other setting or code path.
-# Flipped to true by the account owner's explicit instruction on
-# 2026-09-22: "live_trading_enabled=true" (demo execution phase).
-# The execution engine additionally hard-guards: DEMO accounts only.
-live_trading_enabled = true
+# TWO SWITCHES, DELIBERATELY SEPARATE, WITH OPPOSITE POLARITY.
+#
+# demo_execution_enabled
+#   Permits the execution engine to place orders. Those orders can ONLY
+#   ever reach an account the MT5 gateway has already verified is
+#   ACCOUNT_TRADE_MODE_DEMO with the login in config/mt5.toml. This switch
+#   does NOT enable real-money trading.
+#
+# live_trading_enabled
+#   Real-money switch. PERMANENTLY FALSE in this build.
+#   It is NOT a permission: setting it to true does not grant anything —
+#   the execution engine treats true as a misconfiguration and BLOCKS.
+#   Do not change this line.
+#
+# History: until 2026-09-26 a single `live_trading_enabled` flag was both
+# "run orders" and "real-money allowed", which made the second meaning
+# ambiguous. The split removes the ambiguity.
+demo_execution_enabled = true
+
+live_trading_enabled = false
 
 [paths]
 data_raw = "data/raw"

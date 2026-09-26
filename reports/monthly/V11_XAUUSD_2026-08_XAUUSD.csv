@@ -1,0 +1,2 @@
+period,signals,buy_signals,sell_signals,trades,wins,losses,win_rate,net_pnl,gross_profit,gross_loss,profit_factor,max_drawdown,avg_r,r_multiple,expectancy,avg_trade,largest_winner,largest_loser,consec_wins,consec_losses,sl_exits,tp_exits,other_exits,start_balance,end_balance,return_pct,total_costs,skipped
+2026-08,1,1,0,0,0,0,,,,,,,,,,,,,,,0,0,0,10000.0,10000.0,0.0,,1

@@ -1,0 +1,184 @@
+[
+  {
+    "label": "V11 D1 deployed (baseline)",
+    "timeframe": "D1",
+    "strategy": "V11",
+    "is_trades": 47,
+    "oos_trades": 15,
+    "is_net_pips": 7708.406730070566,
+    "oos_net_pips": 4564.6837072641565,
+    "is_pf": 2.3511637720852288,
+    "oos_pf": 1.8205680704919165,
+    "oos_degradation": 0.4078304548387044,
+    "mc_ruin_prob": 0.0075,
+    "mc_robust": true,
+    "params": {
+      "body_pct": 0.95,
+      "min_atr": 0.005,
+      "atr_mult": 1.5,
+      "rr": 2.0,
+      "max_hold": 8,
+      "risk_pct": 0.01
+    },
+    "accepted": true,
+    "gate_failures": [],
+    "gate_reason": "<bound method Verdict.reason of Verdict(accepted=True, results=[GateResult(name='sample_size', passed=True, detail='47 trades (min 30)'), GateResult(name='profit_factor', passed=True, detail='PF 2.3511637720852288 (min 1.2)'), GateResult(name='oos_sample', passed=True, detail='15 OOS trades (min 10)'), GateResult(name='oos_net', passed=True, detail='OOS net 4564.6837072641565 pips (min 0.0)'), GateResult(name='oos_degradation', passed=True, detail='degradation 0.41 (max 0.5)'), GateResult(name='mc_robust', passed=True, detail='robust=True, net_p5=1389.8314137834227, ruin_prob=0.0075'), GateResult(name='ruin_prob', passed=True, detail='ruin 0.8% (max 5.0%)')])>"
+  },
+  {
+    "label": "V11 D1 hold=2d",
+    "timeframe": "D1",
+    "strategy": "V11",
+    "is_trades": 56,
+    "oos_trades": 17,
+    "is_net_pips": 3547.6541504636607,
+    "oos_net_pips": 7622.03210374985,
+    "is_pf": 1.700941270442101,
+    "oos_pf": 3.8195959901213588,
+    "oos_degradation": -1.1484710122472586,
+    "mc_ruin_prob": 0.0,
+    "mc_robust": true,
+    "params": {
+      "body_pct": 0.95,
+      "min_atr": 0.005,
+      "atr_mult": 1.5,
+      "rr": 2.0,
+      "max_hold": 2,
+      "risk_pct": 0.01
+    },
+    "accepted": true,
+    "gate_failures": [],
+    "gate_reason": "<bound method Verdict.reason of Verdict(accepted=True, results=[GateResult(name='sample_size', passed=True, detail='56 trades (min 30)'), GateResult(name='profit_factor', passed=True, detail='PF 1.700941270442101 (min 1.2)'), GateResult(name='oos_sample', passed=True, detail='17 OOS trades (min 10)'), GateResult(name='oos_net', passed=True, detail='OOS net 7622.03210374985 pips (min 0.0)'), GateResult(name='oos_degradation', passed=True, detail='degradation -1.15 (max 0.5)'), GateResult(name='mc_robust', passed=True, detail='robust=True, net_p5=4170.228311224423, ruin_prob=0.0'), GateResult(name='ruin_prob', passed=True, detail='ruin 0.0% (max 5.0%)')])>"
+  },
+  {
+    "label": "V11 D1 hold=3d rr=1.5",
+    "timeframe": "D1",
+    "strategy": "V11",
+    "is_trades": 55,
+    "oos_trades": 18,
+    "is_net_pips": 2441.32581703227,
+    "oos_net_pips": 7438.844117433063,
+    "is_pf": 1.4113946148376049,
+    "oos_pf": 2.8352548173425407,
+    "oos_degradation": -2.0470509366406024,
+    "mc_ruin_prob": 0.0,
+    "mc_robust": true,
+    "params": {
+      "body_pct": 0.95,
+      "min_atr": 0.005,
+      "atr_mult": 1.5,
+      "rr": 1.5,
+      "max_hold": 3,
+      "risk_pct": 0.01
+    },
+    "accepted": true,
+    "gate_failures": [],
+    "gate_reason": "<bound method Verdict.reason of Verdict(accepted=True, results=[GateResult(name='sample_size', passed=True, detail='55 trades (min 30)'), GateResult(name='profit_factor', passed=True, detail='PF 1.4113946148376049 (min 1.2)'), GateResult(name='oos_sample', passed=True, detail='18 OOS trades (min 10)'), GateResult(name='oos_net', passed=True, detail='OOS net 7438.844117433063 pips (min 0.0)'), GateResult(name='oos_degradation', passed=True, detail='degradation -2.05 (max 0.5)'), GateResult(name='mc_robust', passed=True, detail='robust=True, net_p5=4239.659211249485, ruin_prob=0.0'), GateResult(name='ruin_prob', passed=True, detail='ruin 0.0% (max 5.0%)')])>"
+  },
+  {
+    "label": "V11 D1 hold=13d",
+    "timeframe": "D1",
+    "strategy": "V11",
+    "is_trades": 46,
+    "oos_trades": 15,
+    "is_net_pips": 8460.034421044382,
+    "oos_net_pips": 8201.274674890665,
+    "is_pf": 2.4260330207125254,
+    "oos_pf": 2.375559128281486,
+    "oos_degradation": 0.030586133965371465,
+    "mc_ruin_prob": 0.001,
+    "mc_robust": true,
+    "params": {
+      "body_pct": 0.95,
+      "min_atr": 0.005,
+      "atr_mult": 1.5,
+      "rr": 2.0,
+      "max_hold": 13,
+      "risk_pct": 0.01
+    },
+    "accepted": true,
+    "gate_failures": [],
+    "gate_reason": "<bound method Verdict.reason of Verdict(accepted=True, results=[GateResult(name='sample_size', passed=True, detail='46 trades (min 30)'), GateResult(name='profit_factor', passed=True, detail='PF 2.4260330207125254 (min 1.2)'), GateResult(name='oos_sample', passed=True, detail='15 OOS trades (min 10)'), GateResult(name='oos_net', passed=True, detail='OOS net 8201.274674890665 pips (min 0.0)'), GateResult(name='oos_degradation', passed=True, detail='degradation 0.03 (max 0.5)'), GateResult(name='mc_robust', passed=True, detail='robust=True, net_p5=4103.861570815373, ruin_prob=0.001'), GateResult(name='ruin_prob', passed=True, detail='ruin 0.1% (max 5.0%)')])>"
+  },
+  {
+    "label": "V12 H1 deployed (baseline)",
+    "timeframe": "H1",
+    "strategy": "V12",
+    "is_trades": 50,
+    "oos_trades": 61,
+    "is_net_pips": -44.56563595721997,
+    "oos_net_pips": 3060.167643072625,
+    "is_pf": 0.980541147007429,
+    "oos_pf": 1.4228111308999922,
+    "oos_degradation": 69.66653145060427,
+    "mc_ruin_prob": 0.0005,
+    "mc_robust": true,
+    "params": {
+      "body_pct": 0.95,
+      "min_atr": 0.004,
+      "atr_mult": 0.8,
+      "rr": 3.0,
+      "max_hold": 8,
+      "risk_pct": 0.02
+    },
+    "accepted": false,
+    "gate_failures": [
+      "profit_factor: PF 0.980541147007429 (min 1.2)",
+      "oos_degradation: degradation 69.67 (max 0.5)"
+    ],
+    "gate_reason": "<bound method Verdict.reason of Verdict(accepted=False, results=[GateResult(name='sample_size', passed=True, detail='50 trades (min 30)'), GateResult(name='profit_factor', passed=False, detail='PF 0.980541147007429 (min 1.2)'), GateResult(name='oos_sample', passed=True, detail='61 OOS trades (min 10)'), GateResult(name='oos_net', passed=True, detail='OOS net 3060.167643072625 pips (min 0.0)'), GateResult(name='oos_degradation', passed=False, detail='degradation 69.67 (max 0.5)'), GateResult(name='mc_robust', passed=True, detail='robust=True, net_p5=1341.1987506639393, ruin_prob=0.0005'), GateResult(name='ruin_prob', passed=True, detail='ruin 0.1% (max 5.0%)')])>"
+  },
+  {
+    "label": "V12 H1 hold=16h",
+    "timeframe": "H1",
+    "strategy": "V12",
+    "is_trades": 50,
+    "oos_trades": 60,
+    "is_net_pips": 220.14595479196691,
+    "oos_net_pips": 3217.450840056637,
+    "is_pf": 1.084371607165876,
+    "oos_pf": 1.4290097508943,
+    "oos_degradation": -13.61508045013617,
+    "mc_ruin_prob": 0.0015,
+    "mc_robust": true,
+    "params": {
+      "body_pct": 0.95,
+      "min_atr": 0.004,
+      "atr_mult": 0.8,
+      "rr": 3.0,
+      "max_hold": 16,
+      "risk_pct": 0.02
+    },
+    "accepted": false,
+    "gate_failures": [
+      "profit_factor: PF 1.084371607165876 (min 1.2)"
+    ],
+    "gate_reason": "<bound method Verdict.reason of Verdict(accepted=False, results=[GateResult(name='sample_size', passed=True, detail='50 trades (min 30)'), GateResult(name='profit_factor', passed=False, detail='PF 1.084371607165876 (min 1.2)'), GateResult(name='oos_sample', passed=True, detail='60 OOS trades (min 10)'), GateResult(name='oos_net', passed=True, detail='OOS net 3217.450840056637 pips (min 0.0)'), GateResult(name='oos_degradation', passed=True, detail='degradation -13.62 (max 0.5)'), GateResult(name='mc_robust', passed=True, detail='robust=True, net_p5=1515.9947711257407, ruin_prob=0.0015'), GateResult(name='ruin_prob', passed=True, detail='ruin 0.1% (max 5.0%)')])>"
+  },
+  {
+    "label": "V12 H1 hold=16h rr=2.5",
+    "timeframe": "H1",
+    "strategy": "V12",
+    "is_trades": 51,
+    "oos_trades": 63,
+    "is_net_pips": 218.45418569568102,
+    "oos_net_pips": 4624.442202878919,
+    "is_pf": 1.0885646722025597,
+    "oos_pf": 1.657660759595042,
+    "oos_degradation": -20.168933834579974,
+    "mc_ruin_prob": 0.0,
+    "mc_robust": true,
+    "params": {
+      "body_pct": 0.95,
+      "min_atr": 0.004,
+      "atr_mult": 0.8,
+      "rr": 2.5,
+      "max_hold": 16,
+      "risk_pct": 0.02
+    },
+    "accepted": false,
+    "gate_failures": [
+      "profit_factor: PF 1.0885646722025597 (min 1.2)"
+    ],
+    "gate_reason": "<bound method Verdict.reason of Verdict(accepted=False, results=[GateResult(name='sample_size', passed=True, detail='51 trades (min 30)'), GateResult(name='profit_factor', passed=False, detail='PF 1.0885646722025597 (min 1.2)'), GateResult(name='oos_sample', passed=True, detail='63 OOS trades (min 10)'), GateResult(name='oos_net', passed=True, detail='OOS net 4624.442202878919 pips (min 0.0)'), GateResult(name='oos_degradation', passed=True, detail='degradation -20.17 (max 0.5)'), GateResult(name='mc_robust', passed=True, detail='robust=True, net_p5=2493.87691077284, ruin_prob=0.0'), GateResult(name='ruin_prob', passed=True, detail='ruin 0.0% (max 5.0%)')])>"
+  }
+]

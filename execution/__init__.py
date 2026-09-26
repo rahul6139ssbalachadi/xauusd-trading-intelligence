@@ -122,12 +122,23 @@ class ExecutionEngine:
 
     def __init__(self, gateway, settings: dict | None = None,
                  approved: dict[str, dict] | None = None,
-                 risk_limits: dict | None = None):
+                 risk_limits: dict | None = None,
+                 allowed_login: int | None = None):
         self.gateway = gateway
         self.settings = settings or cfg.load_settings()
         self.approved = approved if approved is not None else load_approved()
         self.risk_limits = risk_limits or cfg.load_risk_limits()
         self._journal_path = JOURNAL
+        # The demo login that must be connected for any order to pass.
+        # Falls back to config/mt5.toml (git-ignored, created per machine).
+        # None disables the per-order re-check — acceptable only for a test
+        # double; MT5Gateway always sets it.
+        self.allowed_login = allowed_login or getattr(gateway, "allowed_login", None)
+        if not self.allowed_login:
+            try:
+                self.allowed_login = cfg.load_mt5_config().get("allowed_login")
+            except FileNotFoundError:
+                self.allowed_login = None
 
     # -- journaling ---------------------------------------------------------
     def _journal(self, event: dict) -> None:
@@ -144,16 +155,45 @@ class ExecutionEngine:
         checks.append(("kill_switch_inactive", ks,
                        "inactive" if ks else "TRIPPED — manual reset required"))
 
-        # 1. live trading switch (Gate 1)
-        lte = self.settings.get("live_trading_enabled") is True
-        checks.append(("live_trading_enabled", lte,
-                       "true" if lte else "false — engine disabled"))
+        # 1. Gate 1 — two switches with OPPOSITE polarity. This is the whole
+        #    safety argument:
+        #      demo_execution_enabled  may permit orders, but only on an
+        #                               account already verified DEMO with
+        #                               the expected login (checks 2/2b).
+        #      live_trading_enabled    is NOT a permission. It is asserted
+        #                               FALSE; true is treated as a
+        #                               misconfiguration and BLOCKS, so it
+        #                               can never authorise a real account.
+        #    The old design used live_trading_enabled as the on/off switch,
+        #    so setting it true also meant "real money allowed" on paper.
+        demo_ok = self.settings.get("demo_execution_enabled") is True
+        checks.append((
+            "demo_execution_enabled", demo_ok,
+            "true" if demo_ok else "false — DEMO execution disabled"))
+
+        live_flag = self.settings.get("live_trading_enabled") is True
+        checks.append((
+            "live_trading_forbidden", not live_flag,
+            "FORBIDDEN — this build is DEMO-only and can never trade live"
+            if live_flag else
+            "false — real-money execution permanently disabled"))
 
         # 2. account is DEMO (hard rule: never a real account)
         acc = self.gateway.account_info()
         demo = acc is not None and acc.trade_mode == self.gateway.ACCOUNT_TRADE_MODE_DEMO
         checks.append(("account_is_demo", demo,
                        f"login={getattr(acc, 'login', None)} mode={getattr(acc, 'trade_mode', None)}"))
+
+        # 2b. the connected account is the EXPECTED demo login. connect()
+        #     already refuses a mismatch, but that is a connect-time
+        #     guarantee; re-checking per order catches a re-login between
+        #     connect and send. Skipped when no expected login is configured
+        #     (test doubles), where connect() is the only enforcement.
+        if acc is not None and self.allowed_login:
+            checks.append((
+                "account_login_expected",
+                getattr(acc, "login", None) == self.allowed_login,
+                f"{getattr(acc, 'login', None)} vs expected {self.allowed_login}"))
 
         # 3. symbol exists on broker
         sym = self.gateway.symbol_info(req.broker_symbol)
