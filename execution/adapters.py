@@ -250,8 +250,37 @@ class MT5ExecutionAdapter(ExecutionAdapter):
 
     name = "mt5"
 
+    def _mt5_config(self) -> dict:
+        """Resolve connection settings from BOTH sources.
+
+        Env vars are the deployment path (a container has no config/mt5.toml,
+        which is git-ignored). config/mt5.toml is the established local path
+        on Windows. The adapter must honour both, or it reports "unavailable"
+        on a Windows box that is fully and correctly configured.
+
+        Precedence: explicit env var, then config/mt5.toml, then empty.
+        An unresolvable config yields {} and available() returns False, which
+        is the correct fail-closed outcome.
+        """
+        cfg: dict = {}
+        try:
+            from market_data import config as mdcfg
+            cfg = mdcfg.load_mt5_config()
+        except FileNotFoundError:
+            # No TOML and no env terminal path. Not an error: the adapter is
+            # simply not configured, and must stay disabled.
+            pass
+        except Exception:  # noqa: BLE001
+            # A malformed TOML must disable the adapter, not crash startup.
+            pass
+        return {
+            "terminal_path": self.cfg.mt5_terminal_path or cfg.get("terminal_path", ""),
+            "allowed_login": self.cfg.mt5_login or cfg.get("allowed_login", ""),
+        }
+
     def available(self) -> bool:
-        if not self.cfg.mt5_terminal_path:
+        conf = self._mt5_config()
+        if not conf.get("terminal_path"):
             return False
         try:
             import MetaTrader5  # noqa: F401
@@ -262,25 +291,31 @@ class MT5ExecutionAdapter(ExecutionAdapter):
     def _connect(self):
         from execution.mt5_gateway import MT5Gateway
 
-        if not self.cfg.mt5_terminal_path:
-            raise RuntimeError("MT5_TERMINAL_PATH is not set")
+        conf = self._mt5_config()
+        if not conf.get("terminal_path"):
+            raise RuntimeError("MT5_TERMINAL_PATH is not set and "
+                               "config/mt5.toml is absent")
+        raw_login = conf.get("allowed_login") or 0
         try:
-            login = int(self.cfg.mt5_login) if self.cfg.mt5_login else 0
-        except ValueError:
-            raise RuntimeError(f"MT5_LOGIN is not a number: {self.cfg.mt5_login!r}")
+            login = int(raw_login)
+        except (TypeError, ValueError):
+            raise RuntimeError(f"allowed_login is not a number: {raw_login!r}")
+        if not login:
+            raise RuntimeError("allowed_login is not configured; refusing to "
+                               "connect without an expected account")
         gw = MT5Gateway(
-            terminal_path=self.cfg.mt5_terminal_path,
+            terminal_path=conf["terminal_path"],
             allowed_login=login,
         )
         gw.connect()
         return gw
 
     def place(self, intent: OrderIntent) -> ExecutionResult:
-        if not self.cfg.mt5_terminal_path:
+        if not self._mt5_config().get("terminal_path"):
             return ExecutionResult(
                 status="UNAVAILABLE",
-                reason="MT5_TERMINAL_PATH is not set; "
-                       "the MT5 adapter is disabled by configuration.",
+                reason="MT5_TERMINAL_PATH is not set and config/mt5.toml is "
+                       "absent; the MT5 adapter is disabled by configuration.",
                 adapter=self.name,
             )
         try:
@@ -322,11 +357,15 @@ class MT5ExecutionAdapter(ExecutionAdapter):
             gw.disconnect()
 
     def status(self) -> dict:
+        conf = self._mt5_config()
         return {
             "adapter": self.name,
             "available": self.available(),
-            "terminal_configured": bool(self.cfg.mt5_terminal_path),
-            "login_configured": bool(self.cfg.mt5_login),
+            "terminal_configured": bool(conf.get("terminal_path")),
+            "login_configured": bool(conf.get("allowed_login")),
+            # Never the value itself: the account number is not a secret, but
+            # it is identifying and has no business in a public health payload.
+            "source": "env" if self.cfg.mt5_terminal_path else "config/mt5.toml",
         }
 
 
