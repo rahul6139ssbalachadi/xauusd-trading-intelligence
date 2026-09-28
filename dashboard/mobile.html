@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Trading AI — Mobile</title>
+<style>
+:root{
+  --bg:#0b0d13; --card:#161a24; --card2:#1e2430; --border:#2a3140;
+  --text:#e6e9f0; --muted:#8b93a7; --accent:#4f8cff;
+  --green:#22c55e; --red:#ef4444; --amber:#f59e0b; --grey:#64748b;
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-size:15px; line-height:1.45; padding-bottom:calc(24px + var(--safe-b));
+}
+header{
+  position:sticky; top:0; z-index:20;
+  background:rgba(11,13,19,.94); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+  padding:calc(10px + var(--safe-t)) 14px 10px;
+}
+h1{font-size:17px;font-weight:650;letter-spacing:-.2px}
+.sub{color:var(--muted);font-size:12px;margin-top:2px}
+
+#modeBanner{
+  margin:12px 14px 0; padding:10px 12px; border-radius:10px;
+  font-weight:700; font-size:14px; text-align:center; letter-spacing:.3px;
+  border:1px solid; display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.demo{background:rgba(34,197,94,.12); border-color:rgba(34,197,94,.4); color:var(--green)}
+.live{background:rgba(239,68,68,.14); border-color:rgba(239,68,68,.5); color:var(--red)}
+.unknown{background:var(--card); border-color:var(--border); color:var(--muted)}
+.banner-sub{font-weight:400;font-size:12px;opacity:.9;margin-left:6px}
+
+.wrap{padding:12px 14px 0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:12px}
+.card h2{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:650;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.kv{background:var(--card2);border-radius:8px;padding:9px 10px}
+.kv .k{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+.kv .v{font-size:16px;font-weight:650;margin-top:2px;word-break:break-word}
+
+.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.3px}
+.p-ok{background:rgba(34,197,94,.15);color:var(--green)}
+.p-degraded{background:rgba(245,158,11,.15);color:var(--amber)}
+.p-down{background:rgba(239,68,68,.15);color:var(--red)}
+.p-unknown{background:rgba(100,116,139,.18);color:var(--grey)}
+.sig-BUY{background:rgba(34,197,94,.18);color:var(--green)}
+.sig-SELL{background:rgba(239,68,68,.18);color:var(--red)}
+.sig-WAIT{background:rgba(100,116,139,.2);color:var(--muted)}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px;padding:6px 4px;border-bottom:1px solid var(--border)}
+td{padding:8px 4px;border-bottom:1px solid rgba(42,49,64,.55);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.pos{color:var(--green)} .neg{color:var(--red)}
+
+.btn{
+  background:var(--card2); border:1px solid var(--border); color:var(--text);
+  padding:12px 14px; border-radius:10px; font-size:14px; font-weight:600;
+  width:100%; margin-bottom:8px; text-align:center;
+}
+.btn:active{background:#252c3a}
+.btn.warn{border-color:rgba(245,158,11,.45); color:var(--amber)}
+.btn:disabled{opacity:.5}
+.note{color:var(--muted);font-size:12px;margin-top:6px;line-height:1.5}
+.hint{background:rgba(79,140,255,.08);border:1px solid rgba(79,140,255,.25);
+      border-radius:8px;padding:9px 10px;font-size:12px;color:#a9c6ff;margin-top:8px}
+pre.log{background:#0a0c11;border:1px solid var(--border);border-radius:8px;padding:9px;
+        font-size:11px;overflow-x:auto;max-height:260px;white-space:pre-wrap;word-break:break-word;color:#c3cad9}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+form{display:flex;flex-direction:column;gap:9px;margin-top:10px}
+input{background:var(--card2);border:1px solid var(--border);color:var(--text);
+      padding:12px;border-radius:9px;font-size:16px;width:100%}
+input:focus{outline:none;border-color:var(--accent)}
+button.primary{background:var(--accent);color:#fff;border:none;padding:13px;border-radius:9px;
+               font-size:15px;font-weight:650;width:100%}
+.err{color:var(--red);font-size:13px;margin-top:8px}
+#loginView{display:none;padding:20px 18px}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--grey);margin-right:6px;vertical-align:middle}
+.dot.ok{background:var(--green)} .dot.degraded{background:var(--amber)} .dot.down{background:var(--red)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Trading AI</h1>
+  <div class="sub" id="hdrSub">connecting…</div>
+</header>
+
+<div id="loginView">
+  <h2 style="font-size:18px;margin-bottom:4px">Sign in</h2>
+  <p class="muted small" style="margin-bottom:14px">XAUUSD trading intelligence</p>
+  <form id="loginForm" autocomplete="on">
+    <input id="email" type="email" placeholder="Email" autocomplete="username" required>
+    <input id="password" type="password" placeholder="Password" autocomplete="current-password" required>
+    <button class="primary" type="submit">Sign in</button>
+  </form>
+  <div class="err" id="loginErr"></div>
+  <div class="hint">Your credentials are sent only to this server and are never
+  displayed or stored beyond this session.</div>
+</div>
+
+<div id="mainView" style="display:none">
+  <div id="modeBanner" class="unknown">MODE: …</div>
+
+  <div class="wrap">
+    <!-- SYSTEM -->
+    <div class="card">
+      <h2>System</h2>
+      <div class="grid">
+        <div class="kv"><div class="k">API</div><div class="v"><span id="st-api" class="pill p-unknown">…</span></div></div>
+        <div class="kv"><div class="k">Worker</div><div class="v"><span id="st-worker" class="pill p-unknown">…</span></div></div>
+        <div class="kv"><div class="k">Database</div><div class="v"><span id="st-db" class="pill p-unknown">…</span></div></div>
+        <div class="kv"><div class="k">Market data</div><div class="v"><span id="st-md" class="pill p-unknown">…</span></div></div>
+      </div>
+      <div class="note" id="sysNote"></div>
+    </div>
+
+    <!-- SIGNALS -->
+    <div class="card">
+      <h2>Latest signals</h2>
+      <div id="sigBox"><p class="muted small">Loading…</p></div>
+    </div>
+
+    <!-- TRADES -->
+    <div class="card">
+      <h2>Trades</h2>
+      <div id="tradeBox"><p class="muted small">Loading…</p></div>
+    </div>
+
+    <!-- STRATEGIES -->
+    <div class="card">
+      <h2>Strategies</h2>
+      <div id="stratBox"><p class="muted small">Loading…</p></div>
+    </div>
+
+    <!-- PERFORMANCE -->
+    <div class="card">
+      <h2>Performance</h2>
+      <div id="perfBox"><p class="muted small">Loading…</p></div>
+    </div>
+
+    <!-- ERRORS -->
+    <div class="card">
+      <h2>Recent errors</h2>
+      <div id="errBox"><p class="muted small">Loading…</p></div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="card">
+      <h2>Controls</h2>
+      <button class="btn" data-act="refresh-data">Refresh data</button>
+      <button class="btn warn" data-act="pause-strategy">Pause strategy…</button>
+      <button class="btn" data-act="resume-strategy">Resume strategy…</button>
+      <button class="btn" data-act="restart-worker">Restart worker</button>
+      <div class="note" id="ctrlNote"></div>
+      <div class="hint">
+        <strong>These controls cannot enable live trading.</strong> No such
+        endpoint exists in this API. Live trading is disabled in the server
+        environment and cannot be changed from a phone.
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div class="card">
+      <h2>Logs</h2>
+      <button class="btn" id="logBtn">View recent logs</button>
+      <pre class="log" id="logBox" style="display:none"></pre>
+    </div>
+
+    <div class="card">
+      <h2>Session</h2>
+      <div class="kv"><div class="k">Signed in as</div><div class="v small" id="whoami">…</div></div>
+      <div style="height:8px"></div>
+      <button class="btn" id="logoutBtn">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// The API base is derived from the page's own origin. The old dashboard
+// hard-coded http://localhost:8000, which on a phone means "the phone".
+const API = window.location.origin;
+const TOKEN_KEY = 'trading_ai_token';
+let token = localStorage.getItem(TOKEN_KEY) || null;
+
+// Live push over WebSocket; falls back to polling if it cannot connect.
+let ws = null, pollTimer = null;
+
+const $ = id => document.getElementById(id);
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function saveToken(t){ token = t; localStorage.setItem(TOKEN_KEY, t); }
+function clearToken(){ token = null; localStorage.removeItem(TOKEN_KEY); }
+
+async function api(path, opts){
+  opts = opts || {};
+  const h = Object.assign({}, opts.headers || {});
+  if (token) h['Authorization'] = 'Bearer ' + token;
+  if (opts.body) h['Content-Type'] = 'application/json';
+  const r = await fetch(API + path, Object.assign({}, opts, {headers:h}));
+  if (r.status === 401){ clearToken(); showLogin(); throw new Error('Session expired'); }
+  return r;
+}
+
+// ---------------------------------------------------------------- login
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('loginErr').textContent = '';
+  const fd = new URLSearchParams({
+    username: $('email').value, password: $('password').value
+  });
+  try{
+    const r = await fetch(API + '/api/auth/login', {
+      method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body: fd.toString()
+    });
+    if (!r.ok){
+      $('loginErr').textContent = 'Sign-in failed. Check your email and password.';
+      return;
+    }
+    const d = await r.json();
+    saveToken(d.access_token);
+    $('password').value = '';
+    showMain();
+  }catch(err){
+    $('loginErr').textContent = 'Cannot reach the server. ' + err.message;
+  }
+});
+
+function showLogin(){
+  $('loginView').style.display = 'block';
+  $('mainView').style.display = 'none';
+  stop();
+}
+function showMain(){
+  $('loginView').style.display = 'none';
+  $('mainView').style.display = 'block';
+  refreshAll();
+  connectWs();
+}
+$('logoutBtn').addEventListener('click', () => { clearToken(); showLogin(); });
+
+// ---------------------------------------------------------------- health
+function setPill(el, state, label){
+  el.className = 'pill p-' + (['ok','degraded','down'].includes(state) ? state : 'unknown');
+  el.textContent = label || state;
+}
+
+async function loadHealth(){
+  try{
+    const h = await (await api('/health')).json();
+    const b = $('modeBanner');
+    if (h.mode === 'LIVE'){
+      b.className = 'live';
+      b.innerHTML = 'MODE: LIVE' + (h.live_trading_enabled
+        ? '<span class="banner-sub">execution BLOCKED</span>' : '');
+    }else{
+      b.className = 'demo';
+      b.innerHTML = 'MODE: DEMO' +
+        '<span class="banner-sub">LIVE TRADING DISABLED</span>';
+    }
+    setPill($('st-api'), h.status === 'down' ? 'down' : 'ok',
+            h.status === 'healthy' ? 'UP' : h.status.toUpperCase());
+    setPill($('st-worker'), h.worker);
+    setPill($('st-db'), h.database);
+    setPill($('st-md'), h.market_data);
+
+    const notes = [];
+    const checks = h.checks || {};
+    if (checks.forward_data && checks.forward_data.state !== 'ok')
+      notes.push('⚠ ' + checks.forward_data.detail);
+    if (checks.market_data && checks.market_data.state !== 'ok')
+      notes.push('⚠ ' + checks.market_data.detail);
+    if (checks.worker && checks.worker.state !== 'ok')
+      notes.push('⚠ ' + checks.worker.detail);
+    if (checks.execution && checks.execution.state !== 'ok')
+      notes.push('• ' + checks.execution.detail);
+    $('sysNote').innerHTML = notes.map(esc).join('<br>');
+    $('hdrSub').textContent = 'mode ' + h.mode + ' · ' + (h.status || '');
+  }catch(e){
+    setPill($('st-api'), 'down', 'DOWN');
+    $('hdrSub').textContent = 'server unreachable';
+  }
+}
+
+// ---------------------------------------------------------------- signals
+async function loadSignals(){
+  const box = $('sigBox');
+  try{
+    const d = await (await api('/api/signals?limit=8')).json();
+    if (!d.present){ box.innerHTML = '<p class="muted small">No decision journal yet — the runners have not executed.</p>'; return; }
+    if (!d.count){ box.innerHTML = '<p class="muted small">Journal present but empty.</p>'; return; }
+    const rows = d.signals.map(s => {
+      const dec = (s.decision || s.signal || s.event || '?').toUpperCase();
+      const dir = (s.direction || dec).toUpperCase();
+      return `<tr>
+        <td><span class="pill sig-${esc(dir)}">${esc(dir)}</span></td>
+        <td>${esc(s.strategy||'')} ${esc(s.version||'')}</td>
+        <td class="num small">${s.entry!=null?esc(s.entry):''}</td>
+        <td class="num small">${s.stop!=null?esc(s.stop):''}</td>
+        <td class="num small">${s.target!=null?esc(s.target):''}</td>
+      </tr>`;
+    }).join('');
+    box.innerHTML = `<table><thead><tr><th>Signal</th><th>Strategy</th>
+      <th class="num">Entry</th><th class="num">SL</th><th class="num">TP</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+      <div class="note">${d.total_decisions} total decisions recorded. Every
+      decision, including blocks, is written here.</div>`;
+  }catch(e){ box.innerHTML = '<p class="muted small">Could not load signals.</p>'; }
+}
+
+// ---------------------------------------------------------------- trades
+async function loadTrades(){
+  const box = $('tradeBox');
+  try{
+    const d = await (await api('/api/trades?limit=20')).json();
+    if (!d || !d.length){ box.innerHTML = '<p class="muted small">No trades recorded.</p>'; return; }
+    const rows = d.map(t => {
+      const p = t.pnl_usd;
+      const cls = p>0?'pos':(p<0?'neg':'muted');
+      return `<tr>
+        <td>${esc(t.direction||'')}</td>
+        <td class="small">${esc(t.strategy||'')} ${esc(t.version||'')}</td>
+        <td class="num">${esc(t.lots)}</td>
+        <td class="num small">${esc(t.entry_price)}</td>
+        <td class="num small ${cls}">${p!=null?esc(p):'—'}</td>
+        <td class="small">${esc(t.status||'')}</td>
+      </tr>`;
+    }).join('');
+    box.innerHTML = `<table><thead><tr><th>Dir</th><th>Strategy</th>
+      <th class="num">Lots</th><th class="num">Entry</th>
+      <th class="num">P/L</th><th>Status</th></tr></thead>
+      <tbody>${rows}</tbody></table>`;
+  }catch(e){ box.innerHTML = '<p class="muted small">Could not load trades.</p>'; }
+}
+
+// ---------------------------------------------------------------- strategies
+async function loadStrategies(){
+  const box = $('stratBox');
+  try{
+    const d = await (await api('/api/strategies')).json();
+    const approved = new Set(d.live_approved || []);
+    const rows = (d.strategies||[]).map(s => {
+      const live = s.live_approved || [...approved].some(a => (s.name||'').startsWith(a.replace(/ V\d+$/,'')));
+      return `<tr>
+        <td class="small">${esc(s.name||s.file)}</td>
+        <td class="small">${esc(s.timeframes||'')}</td>
+        <td>${live ? '<span class="pill p-ok">APPROVED</span>'
+                  : '<span class="pill p-unknown">research</span>'}</td>
+      </tr>`;
+    }).join('');
+    box.innerHTML = rows
+      ? `<table><thead><tr><th>Strategy</th><th>TF</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>
+         <div class="note">Rejected strategies (V1–V10) are listed on purpose:
+         the project preserves failed experiments as evidence.</div>`
+      : '<p class="muted small">No strategy definitions found.</p>';
+  }catch(e){ box.innerHTML = '<p class="muted small">Could not load strategies.</p>'; }
+}
+
+// ---------------------------------------------------------------- performance
+async function loadPerformance(){
+  const box = $('perfBox');
+  try{
+    const d = await (await api('/api/performance')).json();
+    let html = '';
+    if (d.summary && d.summary.length){
+      html += '<div class="grid" style="margin-bottom:10px">';
+      d.summary.forEach(s => {
+        html += `<div class="kv"><div class="k">Net P/L</div>
+          <div class="v ${s.net_pnl_usd>0?'pos':(s.net_pnl_usd<0?'neg':'')}">$${Number(s.net_pnl_usd||0).toFixed(2)}</div></div>
+          <div class="kv"><div class="k">Win rate</div>
+          <div class="v">${Number(s.win_rate||0).toFixed(1)}%</div></div>`;
+      });
+      html += '</div>';
+    }
+    html += `<div class="hint">${esc(d.provenance||'')}</div>`;
+    if (d.studies && d.studies.length)
+      html += `<div class="note">${d.studies.length} backtest study report(s) available.</div>`;
+    box.innerHTML = html;
+  }catch(e){ box.innerHTML = '<p class="muted small">Could not load performance.</p>'; }
+}
+
+// ---------------------------------------------------------------- errors
+async function loadErrors(){
+  const box = $('errBox');
+  try{
+    const d = await (await api('/api/errors?lines=15')).json();
+    if (!d.present || !d.errors || !d.errors.length){
+      box.innerHTML = '<p class="muted small">No ERROR/CRITICAL lines recorded.</p>';
+      return;
+    }
+    box.innerHTML = '<pre class="log">' +
+      d.errors.slice(-10).map(l => esc(l)).join('\n') + '</pre>';
+  }catch(e){ box.innerHTML = '<p class="muted small">Could not load errors.</p>'; }
+}
+
+// ---------------------------------------------------------------- controls
+async function askStrategy(){
+  const v = window.prompt('Strategy name (e.g. V11 or V12). Leave blank for all.', 'V11');
+  return v;
+}
+document.querySelectorAll('[data-act]').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const act = btn.dataset.act;
+    let target = null;
+    if (act === 'pause-strategy' || act === 'resume-strategy'){
+      target = await askStrategy();
+      if (target === null) return;
+    } else if (act === 'restart-worker'){
+      if (!window.confirm('Restart the worker at its next tick?')) return;
+    }
+    btn.disabled = true;
+    try{
+      const r = await api('/api/control/' + act, {
+        method:'POST',
+        body: JSON.stringify({action: act, target: target})
+      });
+      const d = await r.json();
+      $('ctrlNote').textContent = (d.effect || '') + '  (' + new Date().toLocaleTimeString() + ')';
+    }catch(e){
+      $('ctrlNote').textContent = 'Control failed: ' + e.message;
+    }finally{ btn.disabled = false; }
+  });
+});
+
+$('logBtn').addEventListener('click', async () => {
+  const b = $('logBox');
+  if (b.style.display === 'none'){
+    try{
+      const d = await (await api('/api/logs?lines=60&file=journal')).json();
+      b.textContent = (d.lines && d.lines.length) ? d.lines.join('\n')
+        : (d.note || 'No log content.');
+      b.style.display = 'block';
+    }catch(e){ b.textContent = 'Could not load logs.'; b.style.display='block'; }
+  } else { b.style.display = 'none'; }
+});
+
+// ---------------------------------------------------------------- realtime
+function connectWs(){
+  if (ws) { try{ ws.close(); }catch(e){} ws = null; }
+  try{
+    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    ws = new WebSocket(proto + '//' + window.location.host + '/ws');
+    ws.onmessage = ev => {
+      try{ applySnapshot(JSON.parse(ev.data)); }catch(e){}
+    };
+    ws.onerror = () => { ws = null; };
+    ws.onclose = () => { ws = null; };
+  }catch(e){ ws = null; }
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(() => { if (!ws) loadHealth(); }, 20000);
+}
+function stop(){ if (ws) { try{ws.close();}catch(e){} } ws = null;
+  if (pollTimer) clearInterval(pollTimer); pollTimer = null; }
+
+function applySnapshot(s){
+  if (!s) return;
+  setPill($('st-api'), s.status === 'down' ? 'down' : 'ok', s.status === 'healthy' ? 'UP' : String(s.status).toUpperCase());
+  setPill($('st-worker'), s.worker);
+  setPill($('st-db'), s.database);
+  setPill($('st-md'), s.market_data);
+  const b = $('modeBanner');
+  if (s.mode === 'LIVE') b.className='live';
+  else b.className='demo';
+}
+
+// ---------------------------------------------------------------- boot
+async function refreshAll(){
+  await loadHealth();
+  await loadSignals();
+  await loadTrades();
+  await loadStrategies();
+  await loadPerformance();
+  await loadErrors();
+  try{
+    const me = await (await api('/api/auth/me')).json();
+    $('whoami').textContent = me.email + ' (' + me.role + ')';
+  }catch(e){}
+}
+
+if (token){ showMain(); } else { showLogin(); }
+setInterval(() => { if (token && !document.hidden) { loadHealth(); loadSignals(); } }, 30000);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && token) refreshAll();
+});
+</script>
+</body>
+</html>

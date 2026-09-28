@@ -1,10 +1,11 @@
 """Phase 1: FastAPI Auth + Trading API — self-improved with proper async DB handling"""
 from __future__ import annotations
 
+import logging
 import os
 import sqlite3
 from datetime import datetime, timedelta, timezone
-from contextlib import contextmanager
+from contextlib import asynccontextmanager, contextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, Depends, HTTPException, Query, Request, status
@@ -19,14 +20,34 @@ import time
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-SECRET_KEY = os.getenv("TRADING_SECRET_KEY", "dev-secret-change-in-production")
+# Server-ready settings, read from the environment with safe defaults so a
+# container starts with no .env at all. See appconfig/__init__.py and
+# .env.example. The dev default is retained for local development ONLY;
+# require_production_readiness() refuses it when ENVIRONMENT=production.
+from appconfig import get_config, require_production_readiness, ConfigError
+
+_app_cfg = get_config()
+
+# Backwards-compatible module-level names. Existing code and tests import
+# SECRET_KEY / ALGORITHM / ALLOWED_ORIGINS from here.
+SECRET_KEY = os.getenv("TRADING_SECRET_KEY") or _app_cfg.api_secret_key
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("TRADING_TOKEN_EXPIRE_MINUTES", "30"))
-ALLOWED_ORIGINS = os.getenv("TRADING_ALLOWED_ORIGINS", "*").split(",")
+ACCESS_TOKEN_EXPIRE_MINUTES = _app_cfg.token_expire_minutes
+
+# CORS: same-origin only by default. The previous default was "*", which is
+# not merely loose but invalid when paired with allow_credentials=True —
+# browsers reject the combination outright, so a split-origin deployment
+# silently failed. Empty ALLOWED_ORIGINS now means "no cross-origin access",
+# which is the correct posture behind a reverse proxy that serves the
+# dashboard and the API from one host. Widen deliberately, never with "*".
+ALLOWED_ORIGINS = list(_app_cfg.allowed_origins)
 
 # Rate limiting
 RATE_LIMIT_WINDOW = 60
 RATE_LIMIT_MAX = 5
+# Cap the stored windows so a long-lived process cannot grow this dict
+# without bound. An IP that stays at the limit is simply forgotten.
+RATE_LIMIT_MAX_TRACKED_IPS = 4096
 rate_limit_store: dict[str, list[float]] = defaultdict(list)
 
 
@@ -36,6 +57,11 @@ def check_rate_limit(client_ip: str) -> None:
     rate_limit_store[client_ip] = [t for t in window if now - t < RATE_LIMIT_WINDOW]
     if len(rate_limit_store[client_ip]) >= RATE_LIMIT_MAX:
         raise HTTPException(status_code=429, detail="Too many requests")
+    if len(rate_limit_store) > RATE_LIMIT_MAX_TRACKED_IPS:
+        # Evict the least-recently-active entries rather than refusing
+        # service to a new client.
+        for ip in sorted(rate_limit_store, key=lambda k: rate_limit_store[k][-1] if rate_limit_store[k] else 0)[: len(rate_limit_store) - RATE_LIMIT_MAX_TRACKED_IPS // 2]:
+            rate_limit_store.pop(ip, None)
     rate_limit_store[client_ip].append(now)
 
 
@@ -45,8 +71,51 @@ def check_rate_limit(client_ip: str) -> None:
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
-app = FastAPI(title="Trading Intelligence API", version="1.0.0")
+# Repository root, resolved from this file rather than from the working
+# directory. The dashboards used to be served via a relative
+# FileResponse("reports/..."), which 500s whenever the process is started
+# from anywhere other than the repo root -- i.e. always, under Docker,
+# systemd, or uWSGI.
+REPO_ROOT = Path(__file__).resolve().parents[1]
+REPORTS_DIR = REPO_ROOT / "reports"
 
+
+@asynccontextmanager
+async def _lifespan(app: FastAPI):
+    """Startup/shutdown.
+
+    In production this refuses to serve with a dev-default API secret, an
+    unsupported live mode, or a blocked-execution misconfiguration. In
+    development it only logs the problems, so local work is never gated.
+    """
+    from observability import setup_logging
+    setup_logging()
+
+    from appconfig import check_production_readiness
+    cfg = get_config()
+    problems = check_production_readiness(cfg)
+    if cfg.environment == "production":
+        if problems:
+            msg = "Refusing to start in production:\n  - " + "\n  - ".join(problems)
+            raise ConfigError(msg)
+        logger.info("production startup OK: %s", cfg.as_public_dict())
+    else:
+        logger.warning(
+            "development startup. Production-readiness problems (%d): %s",
+            len(problems), "; ".join(problems) or "none",
+            extra={"extra_data": {"problems": problems}},
+        )
+    logger.info("mode=%s live_enabled=%s adapter=%s",
+                cfg.safe_mode_label, cfg.live_trading_enabled,
+                cfg.execution_adapter)
+    yield
+    logger.info("shutdown complete")
+
+
+app = FastAPI(title="Trading Intelligence API", version="1.0.0",
+              lifespan=_lifespan)
+
+# Same-origin only unless explicitly widened. See ALLOWED_ORIGINS above.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -55,13 +124,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+logger = logging.getLogger("api.main")
+
 
 # ---------------------------------------------------------------------------
 # DB helpers - synchronous context manager for sync SQLite
 # ---------------------------------------------------------------------------
 def get_db_path() -> Path:
-    """Get DB path from environment or default."""
-    return Path(os.getenv("TRADING_DB_PATH", Path(__file__).resolve().parents[1] / "db" / "trading.db"))
+    """Get DB path from environment or default.
+
+    Honours TRADING_DB_PATH (used by the tests) and, failing that, the
+    appconfig value, which itself resolves relative paths against the
+    repository root so a container can mount the database anywhere.
+    """
+    env = os.getenv("TRADING_DB_PATH")
+    if env:
+        p = Path(env).expanduser()
+        return p if p.is_absolute() else REPO_ROOT / p
+    from appconfig import get_config
+    return get_config().effective_db_path
 
 
 @contextmanager
@@ -427,25 +508,66 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
-# Serve dashboard
+# Serve dashboard. Paths are absolute (derived from REPO_ROOT) so the API
+# works from any working directory -- see the note at the top of this file.
 @app.get("/")
 @app.get("/dashboard")
 async def serve_dashboard():
-    return FileResponse("reports/client_dashboard.html", media_type="text/html")
+    path = REPORTS_DIR / "client_dashboard.html"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="client dashboard not built")
+    return FileResponse(path, media_type="text/html")
 
 @app.get("/admin")
 async def serve_admin():
-    return FileResponse("reports/dashboard.html", media_type="text/html")
+    path = REPORTS_DIR / "dashboard.html"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="admin dashboard not built")
+    return FileResponse(path, media_type="text/html")
+
+
+@app.get("/m")
+async def serve_mobile():
+    """Phone dashboard (Phase 5). Single file, no build step, no CDN.
+
+    The API base is derived from window.location.origin inside the page, so
+    the same file works at localhost, at a LAN IP, and behind a reverse
+    proxy on a domain with no rebuild.
+    """
+    path = REPO_ROOT / "dashboard" / "mobile.html"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="mobile dashboard missing")
+    return FileResponse(path, media_type="text/html",
+                        headers={"Cache-Control": "no-cache"})
+
+
+# ---------------------------------------------------------------------------
+# Deployment API (Phase 4): /health, /api/status, /api/system, /api/strategies,
+# /api/signals, /api/performance, /api/backtests, /api/worker, /api/logs,
+# /api/errors, /api/control/*, and the /ws status channel.
+#
+# Mounted AFTER the legacy endpoints above so the original client-scoped
+# /api/trades keeps precedence. See api/deploy.py for the full list.
+# ---------------------------------------------------------------------------
+from api.deploy import ROUTER as _deploy_router
+app.include_router(_deploy_router)
 
 
 # ---------------------------------------------------------------------------
 # Health check
 # ---------------------------------------------------------------------------
+# NOTE: /api/health is kept for backwards compatibility. The richer,
+# deployment-oriented endpoint is GET /health (from api/deploy.py), which
+# is what Docker's healthcheck and any load balancer should call.
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "version": "1.0.0"}
+    from appconfig import get_config as _gc
+    return {"status": "ok", "version": "1.0.0", "mode": _gc().safe_mode_label}
 
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
+    from appconfig import get_config as _c
+    _cfg = _c()
+    uvicorn.run("api.main:app", host=_cfg.api_host, port=_cfg.api_port,
+                reload=False)

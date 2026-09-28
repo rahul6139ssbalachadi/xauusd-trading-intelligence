@@ -1,0 +1,69 @@
+# Keep the build context small and free of state. A 19MB database and a 10MB
+# journal in the build context would slow every build and, worse, could bake
+# local data into an image.
+
+# --- Version control / CI
+.git
+.gitignore
+.github
+.claude
+
+# --- Virtualenvs (Windows AND Linux shapes)
+.venv
+venv
+env
+ENV
+
+# --- Local environment and secrets. .env.example IS needed at runtime for
+# --- documentation, so it is not excluded here, but .env never is.
+.env
+.env.*
+!.env.example
+
+# --- Databases. Git-ignored, git-ignored on purpose, and must never be
+# --- baked into an image. Mount them as volumes instead.
+db/*.db
+db/*.db.*
+db/*.sqlite
+db/*.sqlite3
+db/backtests.db
+
+# --- Journals, logs, runtime state
+*.log
+logs/
+run/
+journal/*.jsonl
+paper/*.jsonl
+execution/journal.jsonl
+.experiment_registry.jsonl
+
+# --- Caches
+.cache/
+.pytest_cache/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+*.egg-info/
+.pytest_cache
+
+# --- OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editors
+.vscode/
+.idea/
+
+# --- Local MT5 config: contains an account number
+config/mt5.toml
+
+# --- Research artefacts that are large, regenerable, and already in reports/
+data/raw/
+data/cache/
+data/processed/
+*.mp3
+
+# --- Docs are not needed at runtime, but the audit/report set is small and
+# --- genuinely useful to have in the image for debugging. Kept, except:
+docs/DEPLOYMENT_AUDIT.md

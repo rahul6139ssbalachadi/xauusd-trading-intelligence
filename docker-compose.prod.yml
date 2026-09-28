@@ -1,0 +1,92 @@
+# =============================================================================
+# PRODUCTION compose — Phase 14
+# =============================================================================
+#   docker compose -f docker-compose.prod.yml up -d
+#
+# Services:
+#   api     FastAPI + the phone dashboard. Port 8000, bound to localhost by
+#           default so the only way in is through the reverse proxy. Change to
+#           0.0.0.0 ONLY if you are deliberately serving plain HTTP to a LAN
+#           and accept that traffic is unencrypted.
+#   worker  Strategy evaluation on closed bars. No ports. Writes a heartbeat
+#           that the API's /health reads.
+#
+# NOT containerised, deliberately:
+#   MetaTrader5 / the MT5 terminal. Windows only. It belongs on your Windows
+#   machine, connected over the bridge described in docs/MT5_ARCHITECTURE.md.
+#   Attempting to containerise it would produce an image that can never start.
+#
+# No PostgreSQL service: the project uses SQLite and that is not changing in
+# this refactor. See docs/DEPLOYMENT_AUDIT.md §7.3.
+# =============================================================================
+
+name: trading-ai
+
+x-common: &common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: trading-ai:latest
+  env_file: [.env]
+  restart: unless-stopped
+  volumes:
+    # The database is git-ignored and is therefore NOT in the image. It must
+    # be present before first start — see docs/SERVER_DEPLOYMENT.md step 5.
+    - db:/app/db
+    # Journals, heartbeats, control flags, control audit.
+    - runtime:/app/run
+    - logs:/app/logs
+
+services:
+  api:
+    <<: *common
+    container_name: trading-api
+    command: ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      # "127.0.0.1:8000:8000" = reachable from the server, NOT from the
+      # internet. This is the correct default behind a reverse proxy.
+      - "${API_BIND:-127.0.0.1}:8000:8000"
+    environment:
+      ENVIRONMENT: production
+      API_HOST: 0.0.0.0
+      API_PORT: "8000"
+      LOG_FORMAT: json
+      LOG_FILE: /app/logs/api.log
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # uvicorn workers >1 would multiply the in-process rate-limit dict;
+    # the deployment is single-user, so one is right.
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "5" }
+
+  worker:
+    <<: *common
+    container_name: trading-worker
+    command: ["python", "worker.py"]
+    environment:
+      ENVIRONMENT: production
+      LOG_FORMAT: json
+      LOG_FILE: /app/logs/worker.log
+      WORKER_TICK_SECONDS: "${WORKER_TICK_SECONDS:-3600}"
+    depends_on:
+      api:
+        condition: service_started
+    # The worker has no healthcheck endpoint, so liveness is judged by the
+    # heartbeat the API reports. `restart: unless-stopped` above covers a
+    # crash; a hang is caught by the /health worker check.
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "5" }
+
+volumes:
+  db:
+    name: trading-db
+  runtime:
+    name: trading-runtime
+  logs:
+    name: trading-logs
