@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trading AI — Dashboard</title>
+<style>
+:root{
+  --bg:#070b14; --bg2:#0c1220; --card:#111a2e; --card2:#0e1626;
+  --line:#1e2b45; --line2:#2a3a5c;
+  --txt:#e8eef9; --dim:#7f92b5; --dim2:#5b6b8a;
+  --ok:#22d3a5; --ok2:#0f9b7a; --warn:#fbbf24; --bad:#fb5c6c;
+  --buy:#22d3a5; --sell:#fb5c6c; --acc:#5b8cff; --acc2:#3b6fe0;
+  --r:14px; --sh:0 4px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:
+   radial-gradient(1200px 600px at 10% -10%, #16233f 0%, transparent 60%),
+   radial-gradient(900px 500px at 100% 0%, #131f3a 0%, transparent 55%),
+   var(--bg);
+  color:var(--txt);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  min-height:100vh}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- top bar ---------- */
+.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+  background:rgba(7,11,20,.82);border-bottom:1px solid var(--line);
+  padding:12px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:-.2px}
+.logo{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--acc),#8b5cf6);box-shadow:0 0 18px rgba(91,140,255,.45);
+  font-size:15px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-left:auto}
+.chip{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;
+  font-size:12px;font-weight:600;border:1px solid var(--line2);background:var(--card2);
+  white-space:nowrap;cursor:pointer;transition:.18s}
+.chip:hover{border-color:var(--acc);transform:translateY(-1px)}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:var(--dim2)}
+.chip.ok{color:var(--ok);border-color:rgba(34,211,165,.35);background:rgba(34,211,165,.09)}
+.chip.ok .dot{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.chip.bad{color:var(--bad);border-color:rgba(251,92,108,.35);background:rgba(251,92,108,.09)}
+.chip.bad .dot{background:var(--bad);box-shadow:0 0 8px var(--bad)}
+.chip.warn{color:var(--warn);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.09)}
+.chip.warn .dot{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1280px;margin:0 auto;padding:20px}
+.grid{display:grid;gap:14px}
+.g5{grid-template-columns:repeat(5,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g2{grid-template-columns:2fr 1fr}
+@media(max-width:1000px){.g5{grid-template-columns:repeat(2,1fr)}.g4,.g2{grid-template-columns:1fr}}
+@media(max-width:560px){.g5{grid-template-columns:1fr}}
+
+.card{background:linear-gradient(180deg,var(--card),var(--card2));
+  border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.card>h2{margin:0;padding:13px 16px;font-size:11.5px;font-weight:700;
+  letter-spacing:.9px;text-transform:uppercase;color:var(--dim);
+  border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.card .body{padding:14px 16px}
+
+/* ---------- money tiles ---------- */
+.tile{position:relative;overflow:hidden;padding:14px 15px;border-radius:12px;
+  background:linear-gradient(160deg,#142038,#0e1729);border:1px solid var(--line2)}
+.tile .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);font-weight:700}
+.tile .v{font-size:23px;font-weight:700;margin-top:5px;letter-spacing:-.6px}
+.tile .s{font-size:11px;color:var(--dim2);margin-top:2px}
+.pos{color:var(--ok)} .neg{color:var(--bad)} .mut{color:var(--dim)}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:9px 10px;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.6px;color:var(--dim);font-weight:700;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid rgba(30,43,69,.55);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:rgba(91,140,255,.06)}
+.side{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:.3px}
+.s-BUY{color:var(--buy);background:rgba(34,211,165,.14)}
+.s-SELL{color:var(--sell);background:rgba(251,92,108,.14)}
+.s-WAIT{color:var(--dim);background:rgba(127,146,181,.14)}
+.s-BLOCKED{color:var(--warn);background:rgba(251,191,36,.14)}
+.empty{padding:22px 16px;text-align:center;color:var(--dim2);font-size:13px;font-style:italic}
+
+/* ---------- strategy cards ---------- */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:12px;padding:14px}
+.scard{background:linear-gradient(165deg,#132038,#0d1524);border:1px solid var(--line2);
+  border-radius:12px;padding:13px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.scard:hover{border-color:var(--acc);transform:translateY(-3px);box-shadow:0 10px 28px rgba(91,140,255,.18)}
+.scard .vh{font-size:17px;font-weight:800;letter-spacing:-.4px}
+.scard .nm{font-size:11px;color:var(--dim);margin-top:1px;height:26px;overflow:hidden;line-height:1.3}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}
+.kv div{background:rgba(7,11,20,.5);border-radius:7px;padding:6px 8px}
+.kv .k{font-size:9.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:.5px}
+.kv .v{font-size:13.5px;font-weight:700;margin-top:1px}
+.tag{position:absolute;top:10px;right:10px;font-size:9.5px;font-weight:800;
+  padding:2px 7px;border-radius:5px;letter-spacing:.4px}
+.t-ok{color:var(--ok);background:rgba(34,211,165,.15)}
+.t-rej{color:var(--bad);background:rgba(251,92,108,.13)}
+.t-res{color:var(--dim);background:rgba(127,146,181,.13)}
+
+/* ---------- drawer ---------- */
+.drawer{position:fixed;inset:0;z-index:100;display:none}
+.drawer.on{display:block}
+.scrim{position:absolute;inset:0;background:rgba(3,6,12,.72);backdrop-filter:blur(3px);
+  animation:fade .2s}
+.panel{position:absolute;right:0;top:0;bottom:0;width:min(560px,100%);
+  background:linear-gradient(180deg,#0d1524,#0a1120);border-left:1px solid var(--line2);
+  overflow-y:auto;animation:slide .26s cubic-bezier(.2,.8,.2,1)}
+@keyframes fade{from{opacity:0}} @keyframes slide{from{transform:translateX(30px);opacity:0}}
+.phead{padding:18px 20px;border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:flex-start;gap:12px;position:sticky;top:0;
+  background:rgba(13,21,36,.95);backdrop-filter:blur(8px);z-index:2}
+.x{background:var(--card2);border:1px solid var(--line2);color:var(--dim);
+  width:32px;height:32px;border-radius:9px;cursor:pointer;font-size:17px;line-height:1}
+.x:hover{color:var(--bad);border-color:var(--bad)}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:16px 20px}
+.mgrid>div{background:linear-gradient(160deg,#132038,#0e1729);border:1px solid var(--line2);
+  border-radius:10px;padding:10px 12px}
+.mgrid .k{font-size:9.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.mgrid .v{font-size:18px;font-weight:800;margin-top:3px;letter-spacing:-.4px}
+.sect{padding:0 20px 18px}
+.sect h3{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--dim);
+  margin:0 0 9px;font-weight:700}
+.note{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.28);
+  border-radius:9px;padding:11px 13px;font-size:12px;color:var(--warn);margin:0 20px 16px}
+.reason{font-size:12px;color:var(--dim);line-height:1.5}
+.bar{height:5px;background:#0a0f1a;border-radius:3px;overflow:hidden;margin-top:4px}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc))}
+.foot{padding:14px 20px 30px;color:var(--dim2);font-size:11px;text-align:center}
+.skel{height:78px;border-radius:12px;background:linear-gradient(90deg,#0f1728,#16223a,#0f1728);
+  background-size:200% 100%;animation:sh 1.3s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand"><div class="logo">◈</div> Trading AI</div>
+  <div class="chips" id="chips"><div class="chip mut">connecting…</div></div>
+</div>
+
+<div class="wrap">
+  <div class="note" id="banner" style="display:none"></div>
+
+  <div class="grid g5" id="money" style="margin-bottom:14px"></div>
+
+  <div class="grid g2" style="margin-bottom:14px">
+    <div class="card">
+      <h2>Open Positions <span id="posCount" class="mut"></span></h2>
+      <div id="positions"><div class="empty">Loading…</div></div>
+    </div>
+    <div class="card">
+      <h2>Active Signal</h2>
+      <div id="activeSig"><div class="empty">Loading…</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h2>Recent Activity <span class="mut">backtest signals</span></h2>
+    <div id="recent"><div class="empty">Loading…</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Strategies <span class="mut">click a card for full metrics</span></h2>
+    <div class="sgrid" id="strategies"></div>
+  </div>
+
+  <div class="foot">
+    Demo only — this build cannot send a real-money order.
+    Figures labelled <span class="mono">backtest</span> are historical
+    simulations, not live results.
+  </div>
+</div>
+
+<div class="drawer" id="drawer">
+  <div class="scrim" onclick="closeDrawer()"></div>
+  <div class="panel" id="panel"></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nz = v => (v === null || v === undefined || v === "" || Number.isNaN(v)) ? null : Number(v);
+const DASH = "—";
+const fx = (v,d=2) => nz(v) === null ? DASH : Number(v).toFixed(d);
+const pct = (v,d=1) => nz(v) === null ? DASH : (Number(v)*100).toFixed(d) + "%";
+const money = v => nz(v) === null ? DASH : "$" + Number(v).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const pnlCls = v => nz(v) === null ? "mut" : (Number(v) > 0 ? "pos" : Number(v) < 0 ? "neg" : "mut");
+const pnlTxt = v => nz(v) === null ? DASH : (Number(v) > 0 ? "+" : "") + money(v);
+const t = ts => ts ? String(ts).replace("T"," ").slice(0,19) : DASH;
+
+function chip(label, cls, onclick){
+  return `<div class="chip ${cls||''}" ${onclick?`onclick="${onclick}"`:''}>
+    <span class="dot"></span>${esc(label)}</div>`;
+}
+
+function renderHeader(h){
+  const eng = h.engine || {};
+  $("chips").innerHTML =
+    chip(`MT5: ${h.mt5 || "?"}`, h.mt5_connected ? "ok" : "bad") +
+    chip(`Account: ${h.account ?? DASH}`, h.account ? "" : "bad") +
+    chip(`Engine: ${eng.label || DASH}`,
+         eng.state === "running" ? "ok" : eng.state === "stale" ? "warn" : "bad") +
+    (h.active_strategy
+      ? chip(`${h.active_strategy.strategy_number} · ${h.active_strategy.direction}`,
+             h.active_strategy.direction === "WAIT" ? "warn" : "ok")
+      : chip("Strategy: —","bad")) +
+    chip("DEMO","warn");
+
+  const b = $("banner");
+  if (h.stale){
+    b.style.display = "block";
+    b.innerHTML = `<b>Data is stale.</b> The read service has not completed a
+      recent cycle (${fx(h.stale_seconds,0)}s ago). Any signal below was computed
+      from old bars — do not act on it.`;
+  } else { b.style.display = "none"; }
+}
+
+function renderMoney(m){
+  const tiles = [
+    ["Balance", money(m.balance), "broker-confirmed"],
+    ["Equity",  money(m.equity),  "broker-confirmed"],
+    ["Open P&L", pnlTxt(m.open_pnl), pnlCls(m.open_pnl)],
+    ["Today's P&L", pnlTxt(m.todays_pnl), pnlCls(m.todays_pnl)],
+    ["Drawdown", money(m.drawdown), "—"],
+  ];
+  $("money").innerHTML = tiles.map(([k,v,c]) =>
+    `<div class="tile"><div class="k">${esc(k)}</div>
+     <div class="v ${c}">${v}</div>
+     <div class="s">${esc(k==="Balance"||k==="Equity" ? "live account" : "not yet available")}</div></div>`
+  ).join("") + (m.reason
+    ? `<div style="grid-column:1/-1;font-size:11.5px;color:var(--dim2)">${esc(m.reason)}</div>` : "");
+}
+
+function renderPositions(rows){
+  const p = rows && rows[0] ? rows[0].open_positions : null;
+  if (p === null || p === undefined){
+    $("positions").innerHTML = '<div class="empty">Unknown — MT5 offline.</div>';
+    $("posCount").textContent = ""; return;
+  }
+  $("posCount").textContent = p === 0 ? "none" : `${p} open`;
+  $("positions").innerHTML = p === 0
+    ? '<div class="empty">No open positions.</div>'
+    : `<table><thead><tr><th>Symbol</th><th>Direction</th><th>Entry</th>
+       <th>SL</th><th>TP</th><th>Current P&L</th></tr></thead>
+       <tbody><tr><td class="mono">GOLD.i#</td>
+       <td><span class="side s-BUY">BUY</span></td>
+       <td class="num">—</td><td class="num">—</td><td class="num">—</td>
+       <td class="num mut">position detail needs a connected reader</td></tr></tbody></table>`;
+}
+
+function renderActiveSig(s){
+  if (!s || !s.direction){
+    $("activeSig").innerHTML = '<div class="empty">No signal yet.</div>'; return;
+  }
+  const isTrade = s.direction === "BUY" || s.direction === "SELL";
+  $("activeSig").innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px">
+      <div><div style="font-weight:800;font-size:15px">${esc(s.strategy_number||"")} ${esc(s.strategy||"")}</div>
+      <div class="mono" style="font-size:11px;color:var(--dim)">${esc(s.symbol||"")} · ${esc(s.timeframe||"")}</div></div>
+      <span class="side s-${esc(s.direction)}" style="font-size:13px;padding:5px 12px">${esc(s.direction)}</span>
+    </div>
+    ${isTrade ? `<table><tbody>
+      <tr><td class="mut">Entry</td><td class="num">${fx(s.entry)}</td>
+          <td class="mut">SL</td><td class="num neg">${fx(s.stop)}</td>
+          <td class="mut">TP</td><td class="num pos">${fx(s.target)}</td></tr>
+      <tr><td class="mut">Lots</td><td class="num">${fx(s.lots)}</td>
+          <td class="mut">Risk</td><td class="num">${money(s.risk_usd)}</td>
+          <td class="mut">R:R</td><td class="num">${fx(s.risk_reward)}</td></tr>
+      </tbody></table>` : ""}
+    <div style="margin-top:10px">
+      <div class="k" style="font-size:9.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:.5px">
+        Confidence ${fx(s.confidence)}</div>
+      <div class="bar"><i style="width:${Math.max(0,Math.min(1,nz(s.confidence)??0))*100}%"></i></div>
+    </div>
+    <div class="reason" style="margin-top:9px"><b>Reason:</b> ${esc(s.reason||DASH)}</div>
+    <div class="mono" style="font-size:10.5px;color:var(--dim2);margin-top:6px">${t(s.timestamp)}</div>`;
+}
+
+function renderRecent(rows){
+  if (!rows || !rows.length){
+    $("recent").innerHTML = '<div class="empty">No activity recorded yet.</div>'; return;
+  }
+  $("recent").innerHTML = `<table><thead><tr>
+    <th>Strategy</th><th>Side</th><th>Entry</th><th>SL</th><th>TP</th>
+    <th>Conf</th><th>Reason</th><th>Time</th></tr></thead><tbody>` +
+    rows.map(s => `<tr>
+      <td class="mono">${esc(s.strategy_number||"")}</td>
+      <td><span class="side s-${esc(s.direction)}">${esc(s.direction)}</span></td>
+      <td class="num">${fx(s.entry)}</td><td class="num">${fx(s.stop)}</td>
+      <td class="num">${fx(s.target)}</td>
+      <td class="num">${fx(s.confidence)}</td>
+      <td style="max-width:260px;font-size:12px;color:var(--dim)">${esc((s.reason||"").slice(0,70))}</td>
+      <td class="mono" style="font-size:11px;color:var(--dim)">${t(s.timestamp)}</td>
+    </tr>`).join("") + "</tbody></table>";
+}
+
+function renderStrategies(list){
+  if (!list || !list.length){
+    $("strategies").innerHTML = '<div class="empty">No strategy defs found.</div>'; return;
+  }
+  $("strategies").innerHTML = list.map(s => {
+    const h = s.headline || {};
+    const tag = s.status === "approved"
+      ? '<span class="tag t-ok">APPROVED</span>'
+      : (h.profit_factor !== null && h.profit_factor !== undefined && h.profit_factor < 1
+         ? '<span class="tag t-rej">REJECTED</span>'
+         : '<span class="tag t-res">RESEARCH</span>');
+    const pfCls = h.profit_factor >= 1 ? "pos" : (h.profit_factor != null ? "neg" : "mut");
+    return `<div class="scard" onclick="openStrategy('${esc(s.version||s.name)}')">
+      ${tag}
+      <div class="vh">${esc(s.version||"?")}</div>
+      <div class="nm">${esc(s.name||"")}</div>
+      <div class="kv">
+        <div><div class="k">Trades</div><div class="v">${fx(h.trades,0)}</div></div>
+        <div><div class="k">Win rate</div><div class="v">${pct(h.win_rate)}</div></div>
+        <div><div class="k">Profit factor</div><div class="v ${pfCls}">${fx(h.profit_factor)}</div></div>
+        <div><div class="k">Max DD</div><div class="v">${fx(h.max_drawdown_pips,0)}</div></div>
+      </div></div>`;
+  }).join("");
+}
+
+/* ---------- strategy drawer ---------- */
+async function openStrategy(v){
+  $("panel").innerHTML = '<div class="empty">Loading…</div>';
+  $("drawer").classList.add("on");
+  let d;
+  try {
+    const r = await fetch(`/api/dashboard/strategy/${encodeURIComponent(v)}`,{cache:"no-store"});
+    if (!r.ok) throw new Error("HTTP "+r.status);
+    d = await r.json();
+  } catch(e){
+    $("panel").innerHTML = `<div class="empty">Could not load ${esc(v)}: ${esc(e.message)}</div>`;
+    return;
+  }
+  const s = d.strategy, h = s.headline||{}, r = s.robustness||{}, w = s.walk_forward||{};
+  const M = (k,v,cls="") => `<div><div class="k">${esc(k)}</div><div class="v ${cls}">${v}</div></div>`;
+  const pfCls = h.profit_factor >= 1 ? "pos" : (h.profit_factor != null ? "neg" : "");
+
+  $("panel").innerHTML = `
+    <div class="phead">
+      <div>
+        <div style="font-size:20px;font-weight:800;letter-spacing:-.5px">${esc(s.version)}</div>
+        <div style="font-size:12px;color:var(--dim)">${esc(s.name)}</div>
+        <div style="margin-top:6px">
+          <span class="tag ${s.status==="approved"?"t-ok":"t-res"}" style="position:static">${esc(s.status.toUpperCase())}</span>
+        </div>
+      </div>
+      <button class="x" onclick="closeDrawer()">×</button>
+    </div>
+
+    <div class="note">These are <b>backtest</b> metrics over ${esc(s.provenance.period)}.
+      No broker fill has ever been recorded for this strategy.</div>
+
+    <div class="mgrid">
+      ${M("Trades", fx(h.trades,0))}
+      ${M("Win rate", pct(h.win_rate))}
+      ${M("Profit factor", fx(h.profit_factor), pfCls)}
+      ${M("Net (pips)", fx(h.net_pips,0))}
+      ${M("Max DD (pips)", fx(h.max_drawdown_pips,0))}
+      ${M("Expectancy", fx(h.expectancy_pips,1))}
+      ${M("Avg win", fx(h.avg_win_pips,0))}
+      ${M("Avg loss", fx(h.avg_loss_pips,0))}
+      ${M("Sharpe", fx(h.sharpe))}
+      ${M("Sortino", fx(h.sortino))}
+      ${M("Hold (bars)", fx(h.avg_holding_bars))}
+      ${M("Risk/trade", pct(s.risk_pct))}
+    </div>
+
+    <div class="sect">
+      <h3>Walk-forward (out-of-sample)</h3>
+      <table><tbody>
+        <tr><td class="mut">Windows</td><td class="num">${fx(w.windows,0)}</td></tr>
+        <tr><td class="mut">In-sample mean net (pips)</td><td class="num">${fx(w.is_mean_net,0)}</td></tr>
+        <tr><td class="mut">Out-of-sample mean net (pips)</td>
+            <td class="num ${w.oos_exceeds_is?"pos":""}">${fx(w.oos_mean_net,0)}</td></tr>
+        <tr><td class="mut">Degradation</td>
+            <td class="num">${w.oos_exceeds_is
+              ? '<span class="pos">OOS beats in-sample</span>'
+              : fx(w.degradation)}</td></tr>
+        <tr><td class="mut">OOS trades</td><td class="num">${fx(w.oos_trades,0)}</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="sect">
+      <h3>Monte Carlo robustness</h3>
+      <table><tbody>
+        <tr><td class="mut">Robust</td>
+            <td class="num">${r.is_robust===true?'<span class="pos">YES</span>'
+              :r.is_robust===false?'<span class="neg">NO</span>':DASH}</td></tr>
+        <tr><td class="mut">Ruin probability</td>
+            <td class="num">${r.ruin_prob==null?DASH:(Number(r.ruin_prob)*100).toFixed(1)+"%"}</td></tr>
+        <tr><td class="mut">Worst-case net (p5)</td><td class="num">${fx(r.net_p5,0)}</td></tr>
+        <tr><td class="mut">Worst-case PF (p5)</td><td class="num">${fx(r.pf_p5)}</td></tr>
+        <tr><td class="mut">Max DD p95</td><td class="num">${fx(r.max_dd_p95,0)}</td></tr>
+      </tbody></table>
+    </div>
+
+    ${d.live_signal ? `<div class="sect">
+      <h3>Latest signal</h3>
+      <div class="reason"><span class="side s-${esc(d.live_signal.direction)}">${esc(d.live_signal.direction)}</span>
+      <div style="margin-top:7px">${esc(d.live_signal.reason||"")}</div>
+      <div class="mono" style="font-size:10.5px;color:var(--dim2);margin-top:5px">${t(d.live_signal.timestamp)}</div></div>
+    </div>` : `<div class="sect"><h3>Latest signal</h3>
+      <div class="empty">No signal recorded for this strategy yet.</div></div>`}
+
+    <div class="sect"><h3>Hypothesis</h3>
+      <div class="reason">${esc(s.hypothesis||s.description||DASH)}</div></div>`;
+}
+function closeDrawer(){ $("drawer").classList.remove("on"); }
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
+
+async function load(){
+  try{
+    const r = await fetch("/api/dashboard",{cache:"no-store"});
+    if (!r.ok) throw new Error("HTTP "+r.status);
+    const d = await r.json();
+    renderHeader(d.header||{});
+    renderMoney(d.money||{});
+    renderPositions(d.positions);
+    renderActiveSig((d.recent_signals||[])[0]);
+    renderRecent(d.recent_signals||[]);
+    renderStrategies(d.strategies||[]);
+  }catch(e){
+    $("chips").innerHTML = chip("API unreachable","bad");
+    $("banner").style.display="block";
+    $("banner").innerHTML = `<b>Cannot reach the API</b> (${esc(e.message)}). Is the server running?`;
+  }
+}
+load(); setInterval(load, 30000);
+</script>
+</body>
+</html>

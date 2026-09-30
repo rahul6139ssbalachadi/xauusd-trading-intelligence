@@ -27,6 +27,12 @@ run/
 # It IS included in backup.sh archives, so it is never actually lost.
 execution/journal.jsonl
 
+# The signal journal: one Signal payload per decision (execution/signal_payload.py).
+# Append-only operational log, grows without bound, and changes on every
+# strategy cycle — committing it would mean a merge conflict per run.
+# It IS included in backup.sh archives. The dashboard reads it at runtime.
+journal/signals.jsonl
+
 # Local backups produced by scripts/backup.sh. These contain the trading
 # database and belong in a backup store, not in git.
 backups/

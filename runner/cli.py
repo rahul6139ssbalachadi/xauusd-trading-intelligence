@@ -51,6 +51,13 @@ DEFS = ROOT / "strategy" / "defs"
 JOURNAL = ROOT / "journal"
 JOURNAL.mkdir(exist_ok=True)
 
+# Research fallback for position sizing, used ONLY when --equity is not
+# supplied. It is deliberately NOT a real balance: it exists so historical
+# backtests and paper runs are comparable across machines. Paper money
+# figures produced with it must be read as ratios, not as dollars the
+# operator could lose. Pass --equity to size against a real balance.
+DEFAULT_PAPER_EQUITY = 10_000.0
+
 
 def _load_ohlc(timeframe: str, symbol: str = "XAUUSD") -> pd.DataFrame:
     con = sqlite3.connect(DB)
@@ -342,6 +349,9 @@ def main():
 
     p = sub.add_parser("papertrade", help="run paper trading over historical window")
     p.add_argument("strat", help="strategy name")
+    p.add_argument("--equity", type=float, default=None,
+                   help="account equity in dollars for position sizing "
+                        f"(default: {DEFAULT_PAPER_EQUITY:.0f} research fallback)")
 
     p = sub.add_parser("proposals",
                        help="list self-improvement proposals (§25), read-only")
@@ -383,8 +393,20 @@ def main():
         m5 = _load_ohlc("M5", strat.market)
         journal_path = JOURNAL / "papertrade_journal.jsonl"
         journal = JournalStore(journal_path)
+        # Equity drives position sizing and therefore the reported money
+        # figures. It was previously hardcoded to 10_000.0, which silently
+        # sized every simulated trade for an account the operator does not
+        # have. It is now an explicit --equity flag with a clearly-labelled
+        # fallback, and the chosen value is printed so it cannot be mistaken
+        # for the real balance.
+        equity = args.equity if args.equity is not None else DEFAULT_PAPER_EQUITY
+        src = "--equity" if args.equity is not None else "FALLBACK (not your balance)"
+        print(f"  sizing equity : ${equity:,.2f}  [{src}]")
+        if args.equity is None:
+            print("  NOTE: this is a research fallback, NOT the live account "
+                  "balance. Pass --equity to size against your real balance.")
         dec = paper_run(strat, build_features(m15), build_features(m5), journal,
-                        equity=10000.0)
+                        equity=equity)
         print(f"Paper-traded {len(dec)} bars for {strat.name} {strat.version}")
         print(summarize_journal(journal))
     elif args.cmd == "proposals":

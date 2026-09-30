@@ -513,6 +513,12 @@ from fastapi.responses import HTMLResponse
 @app.get("/")
 @app.get("/dashboard")
 async def serve_dashboard():
+    # The owner's primary screen. Falls back to the client dashboard if
+    # the main one is ever removed, rather than 404ing.
+    main = REPO_ROOT / "dashboard" / "index.html"
+    if main.exists():
+        return FileResponse(main, media_type="text/html",
+                            headers={"Cache-Control": "no-store"})
     path = REPORTS_DIR / "client_dashboard.html"
     if not path.exists():
         raise HTTPException(status_code=404, detail="client dashboard not built")
@@ -539,6 +545,66 @@ async def serve_mobile():
         raise HTTPException(status_code=404, detail="mobile dashboard missing")
     return FileResponse(path, media_type="text/html",
                         headers={"Cache-Control": "no-cache"})
+
+
+# ----------------------------------------------------------------------
+# Live status (read-only, no auth).
+#
+# Deliberately unauthenticated: the payload contains no credentials and
+# no order capability, and the phone dashboard needs it before login.
+# It exposes only market state and the system's own decisions. Do NOT
+# mount anything that can place an order on this path.
+# ----------------------------------------------------------------------
+@app.get("/api/live")
+async def get_live_status():
+    """Reader health + latest signals, for the dashboard."""
+    from api.live_status import status
+    return status()
+
+
+@app.get("/api/live/health")
+async def get_live_health():
+    """Just the read-service health. Cheap enough to poll every few
+    seconds, and the staleness of the data is the single most important
+    thing to surface."""
+    from api.live_status import read_health
+    return read_health()
+
+
+@app.get("/live")
+async def serve_live_dashboard():
+    """Live status dashboard: MT5 connection, positions, latest signals.
+
+    Single file, no build step, no CDN, no auth — it renders only
+    read-only state.
+    """
+    path = REPO_ROOT / "dashboard" / "live.html"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="live dashboard missing")
+    return FileResponse(path, media_type="text/html",
+                        headers={"Cache-Control": "no-store"})
+
+
+# ----------------------------------------------------------------------
+# Main dashboard (the owner's requested overview layout).
+# ----------------------------------------------------------------------
+@app.get("/api/dashboard")
+async def get_dashboard():
+    """Header, money, positions, recent activity, strategy cards."""
+    from api.dashboard_api import overview
+    return overview()
+
+
+@app.get("/api/dashboard/strategy/{version}")
+async def get_strategy_page(version: str):
+    """Per-strategy page: trades, win rate, PF, max DD, average trade,
+    plus the robustness evidence (Monte Carlo, walk-forward)."""
+    from api.dashboard_api import strategy_page
+    d = strategy_page(version)
+    if not d.get("found"):
+        raise HTTPException(status_code=404,
+                            detail=f"strategy {version} not found")
+    return d
 
 
 # ---------------------------------------------------------------------------

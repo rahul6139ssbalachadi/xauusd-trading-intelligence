@@ -32,6 +32,7 @@ sys.path.insert(0, str(ROOT))
 from market_data import config as cfg
 from indicators import ema, atr
 from risk import RiskConfig, compute_lot_size
+from execution.signal_payload import Signal, journal_signal, write_signal_csv
 import research.v11_d1_momentum as v11
 
 # V11 validated parameters (frozen — strategy/defs/XAUUSD_D1_MOMENTUM_BREAKOUT_V11.json
@@ -48,6 +49,16 @@ PARAMS = {
 STRATEGY, VERSION = "XAUUSD_D1_MOMENTUM_BREAKOUT", "V11"
 BROKER_SYMBOL = "GOLD.i#"
 MAGIC = 20260922
+
+# Where the MT5 chart indicator picks up markers. The EA reads
+# <terminal data>\MQL5\Files\signals\*.csv; MQL5/Files is the repo's
+# mql5/Files mirror that gets copied into the terminal. See
+# docs/MT5_ARCHITECTURE.md.
+CHART_DIR = ROOT / "mql5" / "signals"
+
+
+def _chart_csv() -> Path:
+    return CHART_DIR / f"{VERSION}_XAUUSD_live.csv"
 
 
 def load_d1_recent(gateway=None, limit: int = 400) -> pd.DataFrame:
@@ -132,11 +143,26 @@ def main() -> int:
     print(f"  dry-run  : {args.dry_run}")
 
     # 1. connect gateway (demo-guarded)
-    from execution.mt5_gateway import MT5Gateway
+    from execution.mt5_gateway import MT5Gateway, MT5GatewayError
     mt5_cfg = cfg.load_mt5_config()
     gw = MT5Gateway(terminal_path=mt5_cfg["terminal_path"],
                     allowed_login=mt5_cfg["allowed_login"])
-    gw.connect()
+    try:
+        gw.connect()
+    except MT5GatewayError as e:
+        # A refused connection is a legitimate, expected outcome — the
+        # wrong account is logged in, the terminal is closed, the broker
+        # is down. It must be recorded and reported, never crash the
+        # runner: a cron job that dies with a traceback tells the operator
+        # nothing, and a silent death looks identical to "no signal".
+        print(f"  BLOCKED  : {e}")
+        from execution.signal_payload import journal_signal, Signal
+        journal_signal(Signal(
+            strategy=STRATEGY, strategy_number=VERSION, symbol="XAUUSD",
+            broker_symbol=BROKER_SYMBOL, timeframe="D1", direction="BLOCKED",
+            confidence=0.0, reason=f"execution refused: {e}", magic=MAGIC,
+        ))
+        return 1
     try:
         # 2. fresh D1 data from the terminal (read-only)
         d1 = load_d1_recent(gateway=gw)
@@ -146,6 +172,17 @@ def main() -> int:
         sig = signal_on_last_closed_bar(d1)
         if sig is None:
             print("  decision : WAIT — no V11 signal on last closed D1 bar")
+            # Record the refusal too. A WAIT with a reason is forward
+            # evidence; an unrecorded WAIT is indistinguishable from a
+            # crashed runner.
+            journal_signal(Signal(
+                strategy=STRATEGY, strategy_number=VERSION, symbol="XAUUSD",
+                broker_symbol=BROKER_SYMBOL, timeframe="D1", direction="WAIT",
+                confidence=0.0,
+                reason=("no V11 momentum entry on the last closed D1 bar "
+                        f"({d1.iloc[-1]['ts']}); WAIT is a valid decision"),
+                bar_timestamp=str(d1.iloc[-1]["ts"]), magic=MAGIC,
+            ))
             return 0
         print(f"  signal   : BUY (body_pct={sig['body_pct']:.2f}, "
               f"ATR={sig['atr']:.1f}, bar={sig['bar_ts']})")
@@ -158,6 +195,31 @@ def main() -> int:
         req = build_order_request(sig, equity)
         print(f"  plan     : {req.lots:.2f} lots  entry~{req.entry:.2f} "
               f"stop={req.stop:.2f} target={req.target:.2f}")
+
+        # 4b. emit the canonical signal payload (name, number, symbol,
+        #     direction, entry, SL, TP, timestamps, confidence, reason)
+        #     BEFORE the order, so the decision is recorded even if the
+        #     send fails. Confidence is stated, not invented: these are the
+        #     frozen validated gates, all of which passed, so the call is
+        #     a rules decision rather than a probabilistic one.
+        payload = Signal(
+            strategy=STRATEGY, strategy_number=VERSION, symbol="XAUUSD",
+            broker_symbol=BROKER_SYMBOL, timeframe="D1", direction="BUY",
+            entry=req.entry, stop=req.stop, target=req.target,
+            lots=req.lots, risk_pct=PARAMS.get("risk_pct", 0.01),
+            risk_usd=abs(req.entry - req.stop) * 100.0 * req.lots,
+            confidence=1.0, magic=MAGIC,
+            reason=(f"D1 momentum bar body_pct={sig['body_pct']:.2f} "
+                    f"(threshold {PARAMS.get('body_pct_threshold')}), "
+                    f"EMA21>EMA55 up-bias, ATR={sig['atr']:.1f}"),
+            reasons=[f"body_pct={sig['body_pct']:.2f}", f"ATR={sig['atr']:.1f}"],
+            invalidation="close below the 1.5x ATR stop, or EMA21<EMA55",
+            bar_timestamp=sig["bar_ts"],
+            simulated=not (not args.dry_run),
+        )
+        journal_signal(payload)
+        write_signal_csv([payload], _chart_csv(), append=True)
+        print(f"  payload  : conf={payload.confidence:.2f} r:R={payload.risk_reward:.2f}")
 
         if args.dry_run:
             from execution import ExecutionEngine

@@ -20,6 +20,16 @@ class MT5GatewayError(RuntimeError):
     pass
 
 
+# Accounts that must NEVER receive an order from this system, under any
+# configuration. Owner ruling 2026-09-30. This is deliberately a hardcoded
+# constant rather than config, so that editing config/mt5.toml cannot
+# authorise it: connect() checks this list before the demo and allowed_login
+# gates and shuts the terminal down on a match.
+FORBIDDEN_LOGINS: frozenset[int] = frozenset({
+    900909716957,  # SharkFunded-live (Shark Funded Ltd.) — prop firm, not ours
+})
+
+
 class MT5Gateway:
     """Thin, explicit wrapper. Every method maps 1:1 to an MT5 call."""
 
@@ -41,6 +51,17 @@ class MT5Gateway:
         if acc is None:
             mt5.shutdown()
             raise MT5GatewayError("account_info() returned None")
+
+        # Hard denylist, checked BEFORE the demo/login gates so that a
+        # forbidden account can never reach an order even if
+        # allowed_login in config/mt5.toml is later mis-edited to it.
+        # Owner ruling 2026-09-30: never place an order on this login.
+        if acc.login in FORBIDDEN_LOGINS:
+            mt5.shutdown()
+            raise MT5GatewayError(
+                f"REFUSED: login {acc.login} is on the permanent denylist "
+                f"and must never be traded. See FORBIDDEN_LOGINS.")
+
         if acc.trade_mode != mt5.ACCOUNT_TRADE_MODE_DEMO:
             mt5.shutdown()
             raise MT5GatewayError(
