@@ -73,13 +73,28 @@ def _period_metrics(res: dict, period: str) -> dict:
     """Pull the flat metric set out of research_results.<period>.
 
     Skips any block that is not a dict, so a rejected strategy's prose
-    placeholders never become numbers.
+    placeholders never become numbers. Normalises key names so V13's
+    'results' block (which uses total_trades/max_dd_pips) maps to the
+    same field names the dashboard expects.
     """
     block = res.get(period)
     if not isinstance(block, dict):
         return {}
-    return {k: _n(v) for k, v in block.items()
-            if _n(v) is not None and not isinstance(v, (dict, list))}
+    # Normalise V13 key names -> dashboard field names
+    key_map = {
+        "total_trades": "trades",
+        "max_dd_pips": "max_drawdown_pips",
+        "net_usd": "net_pips",  # V12 uses net_usd for its train block
+    }
+    out = {}
+    for k, v in block.items():
+        if isinstance(v, (dict, list)):
+            continue
+        fk = key_map.get(k, k)
+        nv = _n(v)
+        if nv is not None:
+            out[fk] = nv
+    return out
 
 
 def strategy_metrics(version_or_name: str) -> dict:
@@ -102,20 +117,51 @@ def strategy_metrics(version_or_name: str) -> dict:
         return {"found": False, "requested": version_or_name}
 
     res = d.get("research_results") or {}
-    periods = {p: _period_metrics(res, p)
-               for p in ("full_dataset", "train", "validation")}
+    # V13 stores results under "results" (not "research_results")
+    if not res:
+        res = d.get("results") or {}
+
+    # Handle V12's flat structure: top-level keys in research_results
+    # (balance, best_rr, sharpe, etc.) plus a "train" sub-block.
+    # V12 has no full_dataset; map its train as the headline.
+    # Handle V13's "results" block which uses "full_history_d1" instead of
+    # "full_dataset" as the period key.
+    period_names = ("full_dataset", "train", "validation", "full_history_d1")
+    periods = {p: _period_metrics(res, p) for p in period_names}
     periods = {k: v for k, v in periods.items() if v}
+
+    # If no full_dataset but train exists with net_usd, synthesize headline
+    # from the flat research_results (V12 case)
+    if not periods and res.get("train"):
+        periods["train"] = _period_metrics(res, "train")
 
     approved_map = _approved_map()
     key = f"{d.get('name')}:{d.get('version')}"
     appr = approved_map.get(key, {})
 
     full = periods.get("full_dataset", {})
+    # Fall back to train or full_history_d1 if full_dataset is absent
+    # (V12 uses train; V13 uses full_history_d1)
+    if not full:
+        full = periods.get("full_history_d1", {}) or periods.get("train", {})
     # Not every def has these blocks, and a REJECTED strategy sometimes
     # stores prose in the slot instead of a dict (e.g.
     # "monte_carlo": "NOT robust"). Coerce to {} so a rejected strategy
     # renders as "no metrics" rather than crashing the whole dashboard.
+    # V13 stores MC/robustness under results.m1_lower_tf_revalidation_2026_09_30.D1_money
+    # and also in results.full_history_d1.monte_carlo_* fields. Handle both.
     mc = res.get("monte_carlo")
+    if mc is None or not isinstance(mc, dict):
+        # Try V13's full_history_d1 monte_carlo_* fields
+        full = res if isinstance(res, dict) and "research_results" not in res else res
+        fd = res.get("full_history_d1") if "full_history_d1" in res else {}
+        if isinstance(fd, dict) and any(k.startswith("monte_carlo_") for k in fd):
+            mc = {
+                "net_p5": fd.get("monte_carlo_net_p5"),
+                "pf_p5": fd.get("monte_carlo_pf_p5"),
+                "ruin_prob": fd.get("monte_carlo_ruin_prob"),
+                "is_robust": fd.get("monte_carlo_robust"),
+            }
     mc = mc if isinstance(mc, dict) else {}
     wf = res.get("walk_forward")
     wf = wf if isinstance(wf, dict) else {}
