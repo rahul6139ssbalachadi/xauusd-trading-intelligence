@@ -9,6 +9,7 @@ the CSV/report shape the user actually reads.
 from __future__ import annotations
 
 import re
+import sqlite3
 import sys
 from pathlib import Path
 
@@ -195,7 +196,20 @@ class TestPeriods:
             all = True
             symbol = "XAUUSD"
         out = TL.periods_for(A, S.V11)
-        assert len(out) == 120          # 10 years of D1
+        # DERIVED, not hardcoded: the span grows as history is ingested.
+        # It was 120 months (2016-09..2026-08); the 2026-10-01 ingest widened
+        # it to 2016-05..2026-10, i.e. 126. Assert the enumeration covers the
+        # data's actual span rather than a frozen number.
+        con = sqlite3.connect(bt_data.DB)
+        lo, hi = con.execute(
+            "SELECT MIN(ts_broker_epoch), MAX(ts_broker_epoch) FROM market_data "
+            "WHERE symbol='XAUUSD' AND timeframe='D1' AND source='mt5'").fetchone()
+        con.close()
+        want = pd.period_range(pd.Timestamp(int(lo), unit="s"),
+                               pd.Timestamp(int(hi), unit="s"), freq="M")
+        assert len(out) == len(want)
+        assert out[0][0] == str(want[0])
+        assert out[-1][0] == str(want[-1])
         assert out[0][0] < out[-1][0]   # chronological
         for _, s, e in out:
             assert s < e

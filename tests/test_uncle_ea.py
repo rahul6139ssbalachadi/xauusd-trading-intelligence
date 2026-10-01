@@ -324,10 +324,22 @@ class TestRealData:
             assert isinstance(s["why"], str) and s["why"]
 
     def test_no_look_ahead_on_real_data(self):
+        """Recompute on a prefix; every signal fully inside the prefix must
+        be identical to the same signal on the full history.
+
+        The comparison is over signals the PREFIX CAN EMIT. `signals()`
+        requires `1 <= i < len - 1`, so on a prefix of length `cut` the
+        highest possible index is `cut - 2`. A full-history signal sitting at
+        `i == cut - 1` is not a look-ahead defect — the prefix simply cannot
+        emit it. Comparing against `i < cut` therefore fails whenever a
+        signal lands on that one boundary index (it did, at i=31203 with
+        cut=31204, once the M5 history grew past 44k bars).
+        """
         cut = int(len(REAL) * 0.7)
         full = signals(REAL, 60, False, None, 2.0)
         prefix = signals(REAL.iloc[:cut].reset_index(drop=True), 60, False, None, 2.0)
-        assert prefix == [s for s in full if s["i"] < cut]
+        assert prefix, "prefix produced no signals — the test would be vacuous"
+        assert prefix == [s for s in full if s["i"] < cut - 1]
 
     def test_backtest_produces_coherent_metrics(self):
         sg = signals(REAL, 60, False, None, 2.0)

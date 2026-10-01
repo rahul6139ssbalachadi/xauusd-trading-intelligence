@@ -230,12 +230,30 @@ class TestStrategyReuse:
         assert res["checked"] > 20
 
     def test_v11_signals_match_documented_count(self):
-        """V11 produced exactly 82 signals over the 10y D1 history. If this
-        changes, the reuse broke — do not silently accept a new number."""
+        """V11 produced exactly 82 signals over the ORIGINAL 10y D1 history
+        (2016-09-02 .. 2026-08-28). Do not silently accept a new number.
+
+        The count is history-dependent and legitimately rises as history is
+        added, because EMA21/55 warm-up and the 60-bar momentum-rank window
+        shift the early bars. The 2026-10-01 ingest prepended 84 D1 bars and
+        took it 82 -> 84, both new signals landing in the first weeks after
+        the old start. So assert BOTH: the old span still yields exactly 82,
+        and the full span yields a count consistent with the extra history.
+        """
         if not _have("XAUUSD", "D1", 2000):
             pytest.skip("no full D1 history")
-        feats = runner.build_features(bt_data.load("XAUUSD", "D1"), V11)
-        assert len(strategies.v11_signals(feats)) == 82
+        raw = bt_data.load("XAUUSD", "D1")
+        ts = pd.to_datetime(raw["ts_broker_epoch"], unit="s", utc=True)
+
+        # The originally-documented span.
+        old = raw[(ts >= pd.Timestamp("2016-09-02", tz="UTC")) &
+                  (ts <= pd.Timestamp("2026-08-28", tz="UTC"))].reset_index(drop=True)
+        assert len(strategies.v11_signals(runner.build_features(old, V11))) == 82
+
+        # The full, current span: 82 plus whatever the added history unlocked.
+        full = strategies.v11_signals(runner.build_features(raw, V11))
+        assert 82 <= len(full) <= 90, f"unexpected signal count {len(full)}"
+        assert all(s["entry_ts"] for s in full)
 
     def test_signals_are_buy_only_and_long(self):
         """V11 and V12 are LONG-only by design; a SELL would be a bug."""
@@ -588,10 +606,14 @@ class TestPeriods:
         assert (out["ts_broker"] < hi).all()
         assert (out["ts_broker"] >= lo).any()
         assert (out["ts_broker"] < lo).sum() == 50
-        # the offset must line the window up with the full frame exactly:
-        # 50 warm-up bars plus everything from 2016 up to January 2026
+        # The offset must line the window up with the full frame exactly.
+        # DERIVED, not hardcoded: the absolute offset legitimately moves when
+        # history is prepended (the 2026-10-01 ingest added 84 D1 bars,
+        # shifting Jan 2026 from 2357 to 2441). What must hold is the
+        # ALIGNMENT — that is what this test is about.
         assert feats.iloc[off]["ts_broker"] == out["ts_broker"].iloc[0]
-        assert off == 2357      # position of January 2026 in the 10y history
+        first_in_period = int((feats["ts_broker"] < lo).sum())
+        assert off + 50 == first_in_period
 
     def test_empty_slice_returns_empty_frame_and_offset(self):
         if not _have("XAUUSD", "D1"):

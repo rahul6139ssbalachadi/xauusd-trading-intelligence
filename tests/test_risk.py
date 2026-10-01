@@ -87,19 +87,33 @@ def test_apply_risk_attaches_lots_and_usd():
 
 
 def test_real_backtest_gets_sized():
+    """Sizing integration test on a real slice.
+
+    The slice is pinned by TIMESTAMP, not by LIMIT. LIMIT anchors to the
+    dataset start, so the window silently moves whenever history is
+    prepended — the 2026-10-01 ingest shifted M15's first 2,000 bars from
+    2024-08-13 to 2024-07-23 and the strategy stopped firing in it. Pinning
+    the dates keeps this test measuring the same market window forever.
+    """
     db = cfg.PROJECT_ROOT / cfg.load_settings()["paths"]["db"]
     con = sqlite3.connect(db)
-    m5 = pd.read_sql_query(
-        "SELECT ts_broker_epoch, open, high, low, close, spread FROM market_data "
-        "WHERE symbol='XAUUSD' AND timeframe='M5' AND source='mt5' ORDER BY ts_broker_epoch "
-        "LIMIT 8000", con)
-    m15 = pd.read_sql_query(
-        "SELECT ts_broker_epoch, open, high, low, close, spread FROM market_data "
-        "WHERE symbol='XAUUSD' AND timeframe='M15' AND source='mt5' ORDER BY ts_broker_epoch "
-        "LIMIT 2000", con)
+
+    def window(tf, start, end):
+        return pd.read_sql_query(
+            "SELECT ts_broker_epoch, open, high, low, close, spread "
+            "FROM market_data WHERE symbol='XAUUSD' AND timeframe=? "
+            "AND source='mt5' AND ts_broker_epoch >= ? AND ts_broker_epoch < ? "
+            "ORDER BY ts_broker_epoch",
+            con, params=(tf, int(pd.Timestamp(start, tz="UTC").timestamp()),
+                         int(pd.Timestamp(end, tz="UTC").timestamp())))
+
+    # A window with a documented downtrend (the test flips bias to DOWN to
+    # get signals from LONG-only V1 logic).
+    m5 = window("M5", "2026-02-16", "2026-04-01")
+    m15 = window("M15", "2026-02-16", "2026-04-01")
     con.close()
-    if len(m5) < 2000 or len(m15) < 2000:
-        pytest.skip("not enough data")
+    if len(m5) < 2000 or len(m15) < 500:
+        pytest.skip(f"not enough data (m5={len(m5)}, m15={len(m15)})")
     for d in (m5, m15):
         d["ts"] = pd.to_datetime(d["ts_broker_epoch"], unit="s", utc=True)
         d["spread_pips"] = d["spread"] * 0.01 / 0.10
