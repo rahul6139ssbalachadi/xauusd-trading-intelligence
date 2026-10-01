@@ -109,10 +109,10 @@ def test_risk_reward_for_buy():
 
 
 def test_risk_reward_for_sell():
-    s = _sell = Signal(strategy="x", direction="SELL", entry=4197.0,
-                       stop=4214.0, target=4146.0)
+    s = Signal(strategy="x", direction="SELL", entry=4197.0,
+               stop=4214.0, target=4146.0)
     # risk 17, reward 51 -> 3.0
-    assert _sell.risk_reward == pytest.approx(3.0)
+    assert s.risk_reward == pytest.approx(3.0)
 
 
 def test_risk_reward_is_nan_without_prices():

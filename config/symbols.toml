@@ -43,4 +43,12 @@ active = false
 active = false
 
 [symbols.BTCUSD]
-active = false
+active = true
+dukascopy = "BTCUSD"
+histdata = "BTCUSD"
+# Confirmed against the live terminal 2026-09-28 via symbols_get():
+#   'BTCUSD#'  digits=2  point=0.01  visible=True  trade_mode=4 (full)
+# Also present and visible: BTCEUR#, BTCGBP# (BTCJPY# exists but NOT visible).
+# Availability probed 2026-09-28 (hard ~100k bar cap per request):
+#   M1  ~68d   M5  ~340d   M15 ~2y   M30 ~4y   H1 ~10y   H4 ~13y   D1 ~13y
+xm = "BTCUSD#"

@@ -56,8 +56,6 @@ from pathlib import Path
 
 import MetaTrader5 as mt5
 
-from market_data import config as cfg
-
 from execution.mt5_gateway import FORBIDDEN_LOGINS
 
 log = logging.getLogger("mt5reader")
@@ -121,7 +119,6 @@ class MT5Reader:
         self.allowed_login = int(allowed_login)
         self.forbidden = forbidden
         self.health = ReadHealth()
-        mt5_cfg = cfg.load_mt5_config()
         self.db_path = Path(db_path or (Path(__file__).resolve().parents[1] / "db" / "trading.db"))
         self._connected = False
 

@@ -55,9 +55,10 @@ def histdata_provider(tmp_path):
 
 
 def test_from_config_symbol_map_matches_symbols_toml(dukascopy_provider):
-    # config/symbols.toml maps EURUSD and XAUUSD for dukascopy; inactive
-    # symbols (GBPUSD etc.) have no dukascopy key and must not appear.
-    assert dukascopy_provider.available_symbols() == ["EURUSD", "XAUUSD"]
+    # config/symbols.toml maps BTCUSD, EURUSD and XAUUSD for dukascopy;
+    # inactive symbols (GBPUSD etc.) have no dukascopy key and must not appear.
+    # BTCUSD became active 2026-09-28 (confirmed broker symbol 'BTCUSD#').
+    assert dukascopy_provider.available_symbols() == ["BTCUSD", "EURUSD", "XAUUSD"]
 
 
 # ---------------------------------------------------------------------------

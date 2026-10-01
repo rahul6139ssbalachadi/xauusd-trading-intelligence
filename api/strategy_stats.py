@@ -29,13 +29,15 @@ DEFS = ROOT / "strategy" / "defs"
 APPROVED = ROOT / "execution" / "approved.json"
 BACKTESTS_DB = ROOT / "db" / "backtests.db"
 
-# A metric that does not exist. Distinct from zero: "no drawdown" and
-# "we never measured drawdown" are different facts.
-MISSING = None
-
 
 def _n(v):
-    """Normalise a metric to a float, or None if it is not a real number."""
+    """Normalise a metric to a float, or None if it is not a real number.
+
+    None is the important value here: it means "never measured", which is
+    a different fact from 0 ("measured, and it was zero"). The dashboard
+    renders the former as an em-dash and must never render the latter as
+    a dash too.
+    """
     if v is None or isinstance(v, bool):
         return None
     if isinstance(v, (int, float)):
