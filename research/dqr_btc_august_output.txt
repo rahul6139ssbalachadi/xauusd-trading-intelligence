@@ -1,0 +1,101 @@
+==============================================================================
+DQR — BTCUSD BACKTEST :: 2026-08 (single month)
+==============================================================================
+window: 2026-08-01 .. 2026-08-31
+costs : spread<=225.0pips slippage=5.0pips (per-bar DB spread used when present), round-trip in pips
+
+WARNING: one month is a DESCRIPTIVE REPLAY, not a validation.
+         31 D1 bars / ~744 H1 bars. Read alongside the multi-year
+         numbers, never instead of them.
+
+D1 level frame: 3930 bars (2013-01-21 .. 2026-09-28)
+  levels[   pdh_pdl] =  7856
+  levels[    swings] =  1032
+  levels[   touches] =  1032
+
+--- execution TF H1 (744 bars in month) ---
+       pdh_pdl:  26 trades  net=   2116.6 PF= 1.15 t=  26 win%=  58 sharpe= 0.05 maxDD=  8387.6  BUY=16 SELL=10
+        SELL entry   62853.40 stop   63634.70 exit   63634.70 (stop) net    -836.3p
+        BUY  entry   63336.00 stop   61989.55 exit   64257.60 (end) net     866.6p
+        BUY  entry   64760.90 stop   63784.49 exit   64904.70 (end) net      88.8p
+        BUY  entry   64826.10 stop   63950.54 exit   65031.10 (end) net     150.0p
+        SELL entry   64883.20 stop   65660.52 exit   64124.30 (end) net     703.9p
+        BUY  entry   65289.90 stop   64672.46 exit   64672.46 (stop) net    -672.4p
+        SELL entry   64545.00 stop   65563.36 exit   63657.25 (end) net     832.8p
+        BUY  entry   63735.25 stop   62862.63 exit   63865.05 (end) net      89.8p
+        SELL entry   63826.80 stop   64815.86 exit   63518.65 (end) net     268.2p
+        SELL entry   63153.75 stop   64372.34 exit   63026.05 (end) net      87.7p
+        BUY  entry   63096.05 stop   62528.68 exit   63947.10 (target) net     811.1p
+        BUY  entry   64195.65 stop   63245.82 exit   64480.65 (end) net     245.0p
+        BUY  entry   68530.35 stop   64234.14 exit   73699.95 (end) net    5129.6p
+        BUY  entry   75117.45 stop   71920.57 exit   76973.55 (end) net    1816.1p
+        BUY  entry   76313.75 stop   73983.57 exit   77277.25 (end) net     923.5p
+        BUY  entry   78499.55 stop   75460.33 exit   76091.75 (end) net   -2447.8p
+        SELL entry   76052.45 stop   77781.43 exit   77781.43 (stop) net   -1769.0p
+        BUY  entry   77831.75 stop   76518.04 exit   79802.32 (target) net    1930.6p
+        BUY  entry   79155.05 stop   76527.12 exit   78555.35 (end) net    -639.7p
+        BUY  entry   79736.75 stop   77617.15 exit   78438.75 (end) net   -1338.0p
+        BUY  entry   79754.85 stop   78049.86 exit   78049.86 (stop) net   -1745.0p
+        BUY  entry   80204.55 stop   78080.07 exit   78080.07 (stop) net   -2164.5p
+        SELL entry   79918.95 stop   82254.63 exit   77585.75 (end) net    2293.2p
+        SELL entry   77784.30 stop   80797.82 exit   78069.35 (end) net    -325.1p
+        SELL entry   77674.85 stop   79440.22 exit   78854.45 (end) net   -1219.6p
+        SELL entry   77931.65 stop   79410.20 exit   78854.45 (end) net    -962.8p
+        swings:   7 trades  net=   1887.3 PF= 1.76 t=   7 win%=  71 sharpe= 0.20 maxDD=  2164.5  BUY=3 SELL=4
+        BUY  entry   63336.00 stop   61989.55 exit   64257.60 (end) net     866.6p
+        SELL entry   64883.20 stop   65660.52 exit   64124.30 (end) net     703.9p
+        SELL entry   63826.80 stop   64815.86 exit   63518.65 (end) net     268.2p
+        BUY  entry   64195.65 stop   63245.82 exit   64480.65 (end) net     245.0p
+        BUY  entry   80204.55 stop   78080.07 exit   78080.07 (stop) net   -2164.5p
+        SELL entry   79918.95 stop   82254.63 exit   77585.75 (end) net    2293.2p
+        SELL entry   77784.30 stop   80797.82 exit   78069.35 (end) net    -325.1p
+       touches:   7 trades  net=   1887.3 PF= 1.76 t=   7 win%=  71 sharpe= 0.20 maxDD=  2164.5  BUY=3 SELL=4
+        BUY  entry   63336.00 stop   61989.55 exit   64257.60 (end) net     866.6p
+        SELL entry   64883.20 stop   65660.52 exit   64124.30 (end) net     703.9p
+        SELL entry   63826.80 stop   64815.86 exit   63518.65 (end) net     268.2p
+        BUY  entry   64195.65 stop   63245.82 exit   64480.65 (end) net     245.0p
+        BUY  entry   80204.55 stop   78080.07 exit   78080.07 (stop) net   -2164.5p
+        SELL entry   79918.95 stop   82254.63 exit   77585.75 (end) net    2293.2p
+        SELL entry   77784.30 stop   80797.82 exit   78069.35 (end) net    -325.1p
+
+--- execution TF D1 (31 bars in month) ---
+       pdh_pdl: 0 signals in 2026-08
+        swings: 0 signals in 2026-08
+       touches: 0 signals in 2026-08
+
+--- execution TF H4 (186 bars in month) ---
+       pdh_pdl:   4 trades  net=   4203.4 PF= 3.93 t=   4 win%=  75 sharpe= 0.56 maxDD=  1433.0  BUY=2 SELL=2
+        SELL entry   63893.40 stop   65877.46 exit   63077.85 (end) net     760.6p
+        SELL entry   62927.05 stop   64320.03 exit   64320.03 (stop) net   -1433.0p
+        BUY  entry   64876.25 stop   63542.94 exit   66876.21 (target) net    1960.0p
+        BUY  entry   75023.25 stop   70821.54 exit   77979.15 (end) net    2915.9p
+        swings: 0 signals in 2026-08
+       touches: 0 signals in 2026-08
+
+==============================================================================
+CONTEXT — same frozen config over FULL history (not a month)
+==============================================================================
+   H1    pdh_pdl: net=-933894.7 PF= 0.34 t=1299 win%=  31 sharpe=-0.41 maxDD=945919.3  MC p5=-872629 PF_p5=0.33 robust=False
+   H1     swings: net=-213955.9 PF= 0.45 t= 372 win%=  36 sharpe=-0.30 maxDD=230805.7  MC p5=-210473 PF_p5=0.41 robust=False
+   H1    touches: net=-213955.9 PF= 0.45 t= 372 win%=  36 sharpe=-0.30 maxDD=230805.7  MC p5=-210473 PF_p5=0.41 robust=False
+   D1    pdh_pdl: net=  -2281.5 PF= 0.99 t=  78 win%=  46 sharpe=-0.00 maxDD= 65558.5  MC p5=-31330 PF_p5=0.82 robust=False
+   D1     swings: net=  39802.8 PF= 1.79 t=  36 win%=  61 sharpe= 0.21 maxDD= 18504.0  MC p5=19282 PF_p5=1.40 robust=True
+   D1    touches: net=  39802.8 PF= 1.79 t=  36 win%=  61 sharpe= 0.21 maxDD= 18504.0  MC p5=19282 PF_p5=1.40 robust=True
+   H4    pdh_pdl: net=-193789.2 PF= 0.62 t= 389 win%=  38 sharpe=-0.18 maxDD=210428.7  MC p5=-203329 PF_p5=0.57 robust=False
+   H4     swings: net= -12623.1 PF= 0.93 t= 149 win%=  42 sharpe=-0.03 maxDD= 56693.2  MC p5=-30443 PF_p5=0.82 robust=False
+   H4    touches: net= -12623.1 PF= 0.93 t= 149 win%=  42 sharpe=-0.03 maxDD= 56693.2  MC p5=-30443 PF_p5=0.82 robust=False
+
+==============================================================================
+AUGUST SUMMARY — BTCUSD 2026-08
+==============================================================================
+   H1    pdh_pdl: net=   2116.6 PF= 1.15 t=  26 win%=  58 sharpe= 0.05 maxDD=  8387.6
+   H1     swings: net=   1887.3 PF= 1.76 t=   7 win%=  71 sharpe= 0.20 maxDD=  2164.5
+   H1    touches: net=   1887.3 PF= 1.76 t=   7 win%=  71 sharpe= 0.20 maxDD=  2164.5
+   D1    pdh_pdl: no signals
+   D1     swings: no signals
+   D1    touches: no signals
+   H4    pdh_pdl: net=   4203.4 PF= 3.93 t=   4 win%=  75 sharpe= 0.56 maxDD=  1433.0
+   H4     swings: no signals
+   H4    touches: no signals
+
+Read-only. No MT5 writes, no orders, no fabricated numbers.

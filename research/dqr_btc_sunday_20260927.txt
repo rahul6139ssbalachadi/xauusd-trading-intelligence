@@ -1,0 +1,40 @@
+==============================================================================
+DQR :: BTCUSD LAST COMPLETE WEEK :: $1,000.00 account
+==============================================================================
+window      : 2026-09-27 (single closed day)
+execution TF: H1
+risk/trade  : 1.00% of RUNNING equity (hard cap 1%)
+stop        : 1.5 x ATR14   R:R adaptive 1.0..3.0 from measured momentum
+contract    : 1 lot = 1 BTC  (multiplier 1.0)
+
+bars in week: 24  (+200 warmup bars, not traded)
+week close  : 84145.45 -> 84541.95 (+0.47%)
+
+--- family pdh_pdl: 0 trades
+    no DQR setup qualified in this week
+
+--- family swings: 0 trades
+    no DQR setup qualified in this week
+
+--- family touches: 0 trades
+    no DQR setup qualified in this week
+
+==============================================================================
+WEEK REPORT — BTCUSD 2026-09-27 (single closed day)
+==============================================================================
+  NO DQR SETUP FIRED THIS WEEK on any level family.
+
+  This is a legitimate outcome, not an error. The spec requires a
+  real liquidity sweep of a D1 level plus momentum confirmation;
+  in a quiet week that simply does not happen. The strategy is
+  designed to be flat.
+
+  A week with zero trades tells you nothing about edge. For the
+  multi-year evidence see research/dqr_btc_output.txt:
+    D1 + swing levels: net=+39802 pips, PF=1.79, 36 trades,
+    Monte Carlo robust=True  (the only robust config found)
+    H1/H4 same config:   deeply negative, NOT robust
+
+==============================================================================
+balance $1,000.00 -> $1,000.00 (unchanged)
+==============================================================================

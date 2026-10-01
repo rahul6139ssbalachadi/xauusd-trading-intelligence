@@ -1,0 +1,155 @@
+==============================================================================
+V13 BTCUSD DQR — AUGUST 2026 — ALL TIMEFRAMES — $1,000.00
+==============================================================================
+report generated (UTC) : 2026-09-30 09:58:27
+timeframes             : M5, M15, M30, H1, H4, D1
+signal selection       : Jun-Jul 2026 (August held out, per-TF R:R)
+
+SHARED DECISIONS (owner delegated lot size + TP/SL):
+  lot 0.01 fixed (broker min) | risk cap $15.00/trade,
+  wider stop => declined | stop 1.5 x TF ATR(14) |
+  target fixed R, R:R per-TF from Jun-Jul, hold cap 12 bars/R | signal frozen V13 DQR
+  costs $230.00/lot round trip = $2.30 at 0.01 lot
+
+  M5   R:R 3.0  august  28 trades  win  28.6%  net $ -11.98  PF 0.75
+  M15  R:R 1.5  august  11 trades  win  36.4%  net $  +1.46  PF 1.08
+  M30  R:R 4.0  august   7 trades  win  57.1%  net $  -0.50  PF 0.98
+  H1   R:R 3.0  august   4 trades  win 100.0%  net $ +18.78  PF inf
+  H4   R:R 1.5  august   0 trades  win   0.0%  net $  +0.00  PF inf
+  D1   R:R 1.5  august   0 trades  win   0.0%  net $  +0.00  PF inf
+
+==============================================================================
+M5   R:R 3.0   August 2026   (8898 bars, BTC +25.27% that month)
+==============================================================================
+  TRADED BUY  2026-08-03 15:20 -> 2026-08-03 17:25 ( 25 bars)  SL  62,344.24  TP  63,521.68  exit  63,521.68 (target)  risk $ 2.94  net $  +8.28
+  TRADED BUY  2026-08-03 16:20 -> 2026-08-03 16:30 (  2 bars)  SL  62,587.03  TP  64,022.10  exit  62,587.03 (stop)  risk $ 3.59  net $  -4.14
+  TRADED BUY  2026-08-04 14:50 -> 2026-08-04 17:00 ( 26 bars)  SL  63,605.75  TP  64,873.16  exit  63,605.75 (stop)  risk $ 3.17  net $  -3.72
+  TRADED SELL 2026-08-04 23:05 -> 2026-08-05 02:05 ( 36 bars)  SL  64,425.43  TP  63,290.71  exit  64,425.43 (stop)  risk $ 2.84  net $  -3.39
+  TRADED SELL 2026-08-05 16:15 -> 2026-08-05 17:05 ( 10 bars)  SL  64,403.43  TP  63,336.91  exit  64,403.43 (stop)  risk $ 2.67  net $  -3.22
+  TRADED SELL 2026-08-06 03:45 -> 2026-08-06 06:45 ( 36 bars)  SL  64,776.34  TP  64,206.18  exit  64,521.70 (end)  risk $ 1.43  net $  +0.57
+  TRADED SELL 2026-08-10 01:25 -> 2026-08-10 04:25 ( 36 bars)  SL  65,509.99  TP  64,284.84  exit  64,991.70 (end)  risk $ 3.06  net $  +1.57
+  TRADED BUY  2026-08-12 04:45 -> 2026-08-12 07:45 ( 36 bars)  SL  63,662.34  TP  64,267.97  exit  63,807.85 (end)  risk $ 1.51  net $  -0.46
+  TRADED BUY  2026-08-12 06:40 -> 2026-08-12 09:20 ( 32 bars)  SL  63,660.17  TP  64,324.49  exit  63,660.17 (stop)  risk $ 1.66  net $  -2.06
+  TRADED BUY  2026-08-12 07:50 -> 2026-08-12 09:20 ( 18 bars)  SL  63,665.81  TP  64,248.76  exit  63,665.81 (stop)  risk $ 1.46  net $  -1.86
+  TRADED BUY  2026-08-12 11:00 -> 2026-08-12 14:00 ( 36 bars)  SL  63,613.66  TP  64,445.82  exit  64,117.35 (end)  risk $ 2.08  net $  +2.56
+  TRADED BUY  2026-08-13 08:10 -> 2026-08-13 11:10 ( 36 bars)  SL  63,577.89  TP  64,560.93  exit  63,832.35 (end)  risk $ 2.46  net $  -0.31
+  TRADED BUY  2026-08-13 16:40 -> 2026-08-13 18:55 ( 27 bars)  SL  63,446.02  TP  64,872.13  exit  63,446.02 (stop)  risk $ 3.57  net $  -3.97
+  TRADED BUY  2026-08-14 11:40 -> 2026-08-14 14:40 ( 36 bars)  SL  62,577.31  TP  63,640.66  exit  62,881.25 (end)  risk $ 2.66  net $  -0.02
+  TRADED BUY  2026-08-14 18:30 -> 2026-08-14 21:30 ( 36 bars)  SL  62,578.62  TP  63,669.94  exit  62,945.55 (end)  risk $ 2.73  net $  +0.54
+  TRADED SELL 2026-08-18 04:55 -> 2026-08-18 07:55 ( 36 bars)  SL  64,338.78  TP  63,587.06  exit  64,201.05 (end)  risk $ 1.88  net $  -0.90
+  TRADED SELL 2026-08-18 10:50 -> 2026-08-18 11:35 (  9 bars)  SL  64,324.16  TP  63,750.91  exit  64,324.16 (stop)  risk $ 1.43  net $  -1.83
+  TRADED SELL 2026-08-22 03:10 -> 2026-08-22 06:10 ( 36 bars)  SL  78,881.68  TP  74,894.76  exit  78,391.55 (end)  risk $ 9.97  net $  -5.47
+  SKIPPED SELL 2026-08-22 08:15 -> 2026-08-22 11:45 ( 36 bars)  SL  78,970.50  TP  72,329.49  exit  77,194.85 (end)  risk $16.60  net $  +0.00
+         stop $16.60 > cap $15.00
+  TRADED BUY  2026-08-23 08:25 -> 2026-08-23 11:25 ( 36 bars)  SL  75,233.04  TP  79,448.49  exit  76,227.65 (end)  risk $10.54  net $  -0.99
+  TRADED BUY  2026-08-23 11:10 -> 2026-08-23 14:10 ( 36 bars)  SL  75,757.66  TP  77,621.62  exit  76,858.05 (end)  risk $ 4.66  net $  +5.94
+  TRADED BUY  2026-08-25 03:50 -> 2026-08-25 06:50 ( 36 bars)  SL  78,653.32  TP  82,356.24  exit  80,544.25 (end)  risk $ 9.26  net $  +9.25
+  TRADED BUY  2026-08-27 11:10 -> 2026-08-27 14:10 ( 36 bars)  SL  78,845.00  TP  82,456.40  exit  79,766.85 (end)  risk $ 9.03  net $  -0.21
+  TRADED BUY  2026-08-27 17:00 -> 2026-08-27 20:00 ( 36 bars)  SL  78,785.22  TP  81,753.74  exit  80,329.35 (end)  risk $ 7.42  net $  +7.62
+  TRADED SELL 2026-08-28 12:05 -> 2026-08-28 14:20 ( 27 bars)  SL  79,741.53  TP  77,948.42  exit  79,741.53 (stop)  risk $ 4.48  net $  -4.88
+  TRADED SELL 2026-08-30 01:20 -> 2026-08-30 03:15 ( 23 bars)  SL  78,287.65  TP  77,436.85  exit  78,287.65 (stop)  risk $ 2.13  net $  -2.53
+  TRADED SELL 2026-08-30 12:25 -> 2026-08-30 14:05 ( 20 bars)  SL  78,150.71  TP  77,695.68  exit  78,150.71 (stop)  risk $ 1.14  net $  -1.54
+  TRADED SELL 2026-08-31 02:30 -> 2026-08-31 05:30 ( 36 bars)  SL  78,662.95  TP  74,677.36  exit  77,836.15 (end)  risk $ 9.96  net $  -2.10
+  TRADED SELL 2026-08-31 11:20 -> 2026-08-31 11:55 (  7 bars)  SL  78,487.67  TP  76,754.00  exit  78,487.67 (stop)  risk $ 4.33  net $  -4.73
+  -> 28 trades, win 8/20 = 28.6%, net $-11.98, PF 0.75, MC p5 -2,155 ruin 92%
+
+==============================================================================
+M15   R:R 1.5   August 2026   (2971 bars, BTC +25.27% that month)
+==============================================================================
+  TRADED BUY  2026-08-03 17:00 -> 2026-08-03 21:30 ( 18 bars)  SL  62,270.84  TP  64,933.74  exit  63,839.00 (end)  risk $10.65  net $  +4.48
+  TRADED BUY  2026-08-04 17:45 -> 2026-08-04 22:15 ( 18 bars)  SL  63,325.10  TP  65,286.60  exit  64,272.80 (end)  risk $ 7.85  net $  +1.08
+  TRADED SELL 2026-08-10 01:45 -> 2026-08-10 06:15 ( 18 bars)  SL  65,557.64  TP  64,206.29  exit  65,013.50 (end)  risk $ 5.41  net $  -0.51
+  TRADED BUY  2026-08-14 12:00 -> 2026-08-14 16:30 ( 18 bars)  SL  62,508.18  TP  63,555.36  exit  62,706.05 (end)  risk $ 4.19  net $  -2.61
+  TRADED BUY  2026-08-14 18:45 -> 2026-08-14 23:15 ( 18 bars)  SL  62,458.72  TP  63,817.55  exit  62,941.25 (end)  risk $ 5.44  net $  -1.01
+  TRADED SELL 2026-08-18 12:30 -> 2026-08-18 17:00 ( 18 bars)  SL  64,411.70  TP  63,773.33  exit  64,250.55 (end)  risk $ 2.55  net $  -1.34
+  TRADED SELL 2026-08-19 09:15 -> 2026-08-19 11:30 (  9 bars)  SL  64,414.27  TP  63,798.72  exit  64,414.27 (stop)  risk $ 2.46  net $  -2.86
+  TRADED BUY  2026-08-25 04:00 -> 2026-08-25 08:30 ( 18 bars)  SL  78,308.39  TP  81,879.29  exit  80,696.75 (end)  risk $14.28  net $  +9.20
+  TRADED SELL 2026-08-28 05:00 -> 2026-08-28 09:30 ( 18 bars)  SL  81,851.13  TP  78,447.93  exit  79,854.95 (end)  risk $13.61  net $  +5.95
+  TRADED SELL 2026-08-30 04:15 -> 2026-08-30 08:45 ( 18 bars)  SL  78,381.66  TP  77,600.14  exit  78,128.15 (end)  risk $ 3.13  net $  -0.99
+  TRADED SELL 2026-08-31 15:45 -> 2026-08-31 19:45 ( 16 bars)  SL  78,835.32  TP  76,453.89  exit  78,835.32 (stop)  risk $ 9.53  net $  -9.93
+  -> 11 trades, win 4/7 = 36.4%, net $+1.46, PF 1.08, MC p5 -728 ruin 19%
+
+==============================================================================
+M30   R:R 4.0   August 2026   (1488 bars, BTC +25.27% that month)
+==============================================================================
+  SKIPPED BUY  2026-08-03 17:30 -> 2026-08-04 17:30 ( 48 bars)  SL  62,143.42  TP  70,260.83  exit  64,117.50 (end)  risk $16.23  net $  +0.00
+         stop $16.23 > cap $15.00
+  TRADED BUY  2026-08-04 18:00 -> 2026-08-05 18:00 ( 48 bars)  SL  63,272.40  TP  67,498.91  exit  64,487.90 (end)  risk $ 8.45  net $  +3.15
+  TRADED SELL 2026-08-10 18:30 -> 2026-08-11 18:30 ( 48 bars)  SL  65,165.38  TP  61,241.47  exit  63,595.85 (end)  risk $ 7.85  net $  +7.30
+  TRADED SELL 2026-08-12 16:30 -> 2026-08-13 16:30 ( 48 bars)  SL  64,723.95  TP  60,869.46  exit  63,719.05 (end)  risk $ 7.71  net $  +1.94
+  TRADED BUY  2026-08-17 18:30 -> 2026-08-18 18:30 ( 48 bars)  SL  63,326.04  TP  66,905.60  exit  64,852.85 (end)  risk $ 7.16  net $  +7.71
+  TRADED SELL 2026-08-18 16:30 -> 2026-08-18 17:00 (  1 bars)  SL  64,472.46  TP  62,429.42  exit  64,472.46 (stop)  risk $ 4.09  net $  -4.49
+  SKIPPED SELL 2026-08-24 20:30 -> 2026-08-25 05:00 ( 17 bars)  SL  80,719.88  TP  69,741.73  exit  80,719.88 (stop)  risk $21.96  net $  +0.00
+         stop $21.96 > cap $15.00
+  SKIPPED BUY  2026-08-27 17:30 -> 2026-08-28 17:30 ( 48 bars)  SL  78,336.32  TP  86,203.47  exit  79,533.35 (end)  risk $15.73  net $  +0.00
+         stop $15.73 > cap $15.00
+  SKIPPED SELL 2026-08-28 05:30 -> 2026-08-29 05:30 ( 48 bars)  SL  82,044.13  TP  71,385.23  exit  77,661.45 (end)  risk $21.32  net $  +0.00
+         stop $21.32 > cap $15.00
+  TRADED BUY  2026-08-28 14:00 -> 2026-08-28 17:00 (  6 bars)  SL  78,537.98  TP  83,667.84  exit  78,537.98 (stop)  risk $10.26  net $ -10.66
+  SKIPPED SELL 2026-08-28 19:00 -> 2026-08-29 19:00 ( 48 bars)  SL  80,519.67  TP  69,494.08  exit  77,944.95 (end)  risk $22.05  net $  +0.00
+         stop $22.05 > cap $15.00
+  TRADED SELL 2026-08-30 04:30 -> 2026-08-30 15:00 ( 21 bars)  SL  78,513.29  TP  75,985.07  exit  78,513.29 (stop)  risk $ 5.06  net $  -5.46
+  -> 7 trades, win 4/3 = 57.1%, net $-0.50, PF 0.98, MC p5 -2,029 ruin 27%
+
+==============================================================================
+H1   R:R 3.0   August 2026   (744 bars, BTC +25.27% that month)
+==============================================================================
+  TRADED BUY  2026-08-03 17:00 -> 2026-08-05 05:00 ( 36 bars)  SL  61,989.55  TP  67,375.34  exit  64,361.60 (end)  risk $13.46  net $  +9.71
+  TRADED SELL 2026-08-10 03:00 -> 2026-08-11 15:00 ( 36 bars)  SL  65,660.52  TP  62,551.25  exit  64,317.00 (end)  risk $ 7.77  net $  +5.11
+  TRADED SELL 2026-08-12 17:00 -> 2026-08-14 05:00 ( 36 bars)  SL  64,815.86  TP  60,859.61  exit  63,459.65 (end)  risk $ 9.89  net $  +3.27
+  TRADED BUY  2026-08-17 19:00 -> 2026-08-19 07:00 ( 36 bars)  SL  63,245.82  TP  67,045.14  exit  64,304.65 (end)  risk $ 9.50  net $  +0.69
+  SKIPPED BUY  2026-08-27 18:00 -> 2026-08-28 19:00 ( 25 bars)  SL  78,080.07  TP  86,577.98  exit  78,080.07 (stop)  risk $21.24  net $  +0.00
+         stop $21.24 > cap $15.00
+  SKIPPED SELL 2026-08-28 06:00 -> 2026-08-29 18:00 ( 36 bars)  SL  82,254.63  TP  72,911.92  exit  77,849.85 (end)  risk $23.36  net $  +0.00
+         stop $23.36 > cap $15.00
+  SKIPPED SELL 2026-08-28 20:00 -> 2026-08-30 08:00 ( 36 bars)  SL  80,797.82  TP  68,743.73  exit  78,128.15 (end)  risk $30.14  net $  +0.00
+         stop $30.14 > cap $15.00
+  -> 4 trades, win 4/0 = 100.0%, net $+18.78, PF inf, MC n<10
+
+==============================================================================
+H4   R:R 1.5   August 2026   (186 bars, BTC +25.27% that month)
+==============================================================================
+  -> 0 trades, win 0/0 = 0.0%, net $+0.00, PF inf, MC n<10
+
+==============================================================================
+D1   R:R 1.5   August 2026   (31 bars, BTC +25.27% that month)
+==============================================================================
+  -> 0 trades, win 0/0 = 0.0%, net $+0.00, PF inf, MC n<10
+
+==============================================================================
+WEEK BY WEEK — AUGUST 2026 — net $ per timeframe
+==============================================================================
+week               M5       M15       M30        H1        H4        D1
+Aug 1-2            --        --        --        --        --        --
+Aug 3-9         -5.61     +5.56     +3.15     +9.71        --        --
+Aug 10-16       -4.01     -4.13     +9.24     +8.38        --        --
+Aug 17-23       -3.25     -4.20     +3.22     +0.69        --        --
+Aug 24-31       +0.88     +4.23    -16.12        --        --        --
+------------------------------------------------------------------------------
+CUMULATIVE     -11.98     +1.46     -0.50    +18.78     +0.00     +0.00
+FINAL $        988.02  1,001.46    999.50  1,018.78  1,000.00  1,000.00
+
+==============================================================================
+SUMMARY — AUGUST 2026, $1,000 balance, V13 DQR frozen signal side
+==============================================================================
+TF      bars   R:R  sigs  trades  skip   win%     PF     net $    final $  maxDD $  MC
+M5      8898   3.0    33      28     1  28.6%   0.75    -11.98     988.02    27.09  p5 -2,155 ruin 92%
+M15     2971   1.5    13      11     0  36.4%   1.08     +1.46   1,001.46    10.92  p5 -728 ruin 19%
+M30     1488   4.0    16       7     5  57.1%   0.98     -0.50     999.50    20.60  p5 -2,029 ruin 27%
+H1       744   3.0    10       4     3 100.0%    inf    +18.78   1,018.78     0.00  n<10
+H4       186   1.5     0       0     0   0.0%    inf     +0.00   1,000.00     0.00  n<10
+D1        31   1.5     0       0     0   0.0%    inf     +0.00   1,000.00     0.00  n<10
+
+  best timeframe this month: H1  net $+18.78  win 100.0%  PF inf
+  Monte Carlo robust      : none
+
+  READ THIS CAREFULLY:
+  - The signal side is IDENTICAL across all six rows. Only the execution
+    timeframe changed. A timeframe that looks better here has not been
+    promoted; it has been re-measured on one month.
+  - 0-7 trades per row means every win rate above is 1-3 trades wide.
+    Do not rank timeframes off this table.
+  - V13's own def already measured M1/M5/M15 as NOT robust over their
+    full stored history, and D1 as the only robust execution TF. This
+    August table is consistent with that, not a new discovery.
+  - V13 remains RESEARCH. Not in execution/approved.json. No orders.

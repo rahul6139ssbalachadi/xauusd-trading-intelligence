@@ -1,0 +1,360 @@
+==============================================================================
+V13 BTCUSD DQR — LOWER-TIMEFRAME RE-VALIDATION — $1,000.00 account
+==============================================================================
+run at (UTC)     : 2026-09-30 08:12:57
+levels TF        : D1 (unfrozen, full history, availability-gated)
+signal/exec TF   : M1,M5,M15,M30,H1,H4,D1
+risk/trade       : 1% of equity, min 0.01 lot, step 0.01
+config           : FROZEN V13 D1 config, no re-tuning on lower TFs
+
+Config frozen from strategy/defs/BTCUSD_DQR_SWING_REVERSAL_V13.json
+(swing levels, deep_penetration 0.25 ATR, close_pos 0.70, impulse 0.80,
+ stop 1.5x ATR, target 1.5R, 32-bar exit, 4-bar cooldown).
+
+D1 level frame   : 3930 bars (2013-01-21 .. 2026-09-28)
+  levels[   pdh_pdl] =  7856
+  levels[    swings] =  1032
+  levels[   touches] =  1032
+
+costs            : round trip = 230.00 USD/lot (230 pips). On a 0.01 lot that is $2.30 per trade.
+
+--- execution TF M1  |  97618 bars  2026-07-22 08:49:00 .. 2026-09-28 08:48:00 ---
+    pips view   : net=  -2862.6 PF= 0.77 t= 144 win%=  40 sharpe=-0.10 maxDD=  4331.5
+    money view  : $746.36 final (-25.36%)  maxDD $300.00  executed 142 / skipped 2
+    per month   : $-113.57  (over 67 days)
+      BUY  2026-07-22 16:35 -> 2026-07-22 17:05  (30 bars)  entry  65,783.20 stop  65,588.18 exit  66,075.73 (target) 0.05 lots  risk $9.75  net $+11.88
+      BUY  2026-07-22 22:15 -> 2026-07-22 22:32  (17 bars)  entry  65,749.30 stop  65,636.99 exit  65,917.76 (target) 0.09 lots  risk $10.11  net $+10.21
+      BUY  2026-07-23 10:04 -> 2026-07-23 10:10  (6 bars)  entry  65,735.45 stop  65,647.77 exit  65,647.77 (stop) 0.11 lots  risk $9.64  net $-15.69
+      BUY  2026-07-23 16:55 -> 2026-07-23 17:27  (32 bars)  entry  65,072.00 stop  64,780.66 exit  65,141.40 (end) 0.03 lots  risk $8.74  net $+0.43
+      BUY  2026-07-24 05:41 -> 2026-07-24 06:07  (26 bars)  entry  65,036.90 stop  64,916.53 exit  65,217.46 (target) 0.08 lots  risk $9.63  net $+10.04
+      BUY  2026-07-24 05:52 -> 2026-07-24 06:05  (13 bars)  entry  65,001.50 stop  64,886.73 exit  65,173.66 (target) 0.08 lots  risk $9.18  net $+9.37
+      SELL 2026-07-24 10:35 -> 2026-07-24 11:07  (32 bars)  entry  65,553.40 stop  65,752.16 exit  65,437.90 (end) 0.05 lots  risk $9.94  net $+3.02
+      SELL 2026-07-24 16:52 -> 2026-07-24 17:20  (28 bars)  entry  64,120.60 stop  64,355.32 exit  63,768.52 (target) 0.04 lots  risk $9.39  net $+11.88
+      BUY  2026-07-24 17:51 -> 2026-07-24 18:23  (32 bars)  entry  63,934.80 stop  63,643.96 exit  64,085.10 (end) 0.03 lots  risk $8.73  net $+2.86
+      SELL 2026-07-24 18:43 -> 2026-07-24 19:15  (32 bars)  entry  64,156.40 stop  64,396.19 exit  64,142.60 (end) 0.04 lots  risk $9.59  net $-1.65
+      SELL 2026-07-24 22:03 -> 2026-07-24 22:35  (32 bars)  entry  64,213.80 stop  64,305.84 exit  64,214.50 (end) 0.11 lots  risk $10.12  net $-6.13
+      SELL 2026-07-24 22:47 -> 2026-07-24 23:19  (32 bars)  entry  64,211.50 stop  64,275.77 exit  64,183.30 (end) 0.16 lots  risk $10.28  net $-4.29
+      SELL 2026-07-26 20:57 -> 2026-07-26 21:29  (32 bars)  entry  64,663.50 stop  64,707.53 exit  64,679.20 (end) 0.23 lots  risk $10.13  net $-16.26
+      SELL 2026-07-26 21:16 -> 2026-07-26 21:39  (23 bars)  entry  64,664.00 stop  64,705.99 exit  64,705.99 (stop) 0.24 lots  risk $10.08  net $-23.28
+      SELL 2026-07-26 22:11 -> 2026-07-26 22:22  (11 bars)  entry  64,679.60 stop  64,708.37 exit  64,708.37 (stop) 0.34 lots  risk $9.78  net $-28.48
+      SELL 2026-07-26 23:03 -> 2026-07-26 23:19  (16 bars)  entry  64,681.90 stop  64,701.99 exit  64,651.77 (target) 0.47 lots  risk $9.44  net $-11.69
+      BUY  2026-07-27 04:39 -> 2026-07-27 05:11  (32 bars)  entry  65,060.20 stop  64,878.10 exit  65,209.50 (end) 0.05 lots  risk $9.11  net $+4.72
+      SELL 2026-07-27 09:09 -> 2026-07-27 09:41  (32 bars)  entry  65,512.90 stop  65,738.74 exit  65,499.90 (end) 0.04 lots  risk $9.03  net $-1.68
+      SELL 2026-07-27 09:19 -> 2026-07-27 09:51  (32 bars)  entry  65,559.90 stop  65,700.59 exit  65,409.70 (end) 0.06 lots  risk $8.44  net $+5.71
+      BUY  2026-07-27 16:32 -> 2026-07-27 16:36  (4 bars)  entry  65,017.70 stop  64,879.43 exit  65,225.10 (target) 0.06 lots  risk $8.30  net $+9.14
+      SELL 2026-07-27 16:54 -> 2026-07-27 17:26  (32 bars)  entry  65,386.20 stop  65,777.45 exit  65,035.00 (end) 0.02 lots  risk $7.83  net $+5.92
+      SELL 2026-07-27 17:38 -> 2026-07-27 18:10  (32 bars)  entry  64,521.20 stop  64,913.02 exit  64,596.00 (end) 0.02 lots  risk $7.84  net $-2.60
+      BUY  2026-07-27 23:30 -> 2026-07-27 23:40  (10 bars)  entry  65,003.50 stop  64,941.31 exit  64,941.31 (stop) 0.15 lots  risk $9.33  net $-17.58
+      SELL 2026-07-28 01:25 -> 2026-07-28 01:34  (9 bars)  entry  64,662.50 stop  64,742.28 exit  64,542.82 (target) 0.11 lots  risk $8.78  net $+7.11
+      BUY  2026-07-28 02:19 -> 2026-07-28 02:51  (32 bars)  entry  63,867.90 stop  63,605.96 exit  63,742.10 (end) 0.03 lots  risk $7.86  net $-5.42
+      BUY  2026-07-28 18:25 -> 2026-07-28 18:57  (32 bars)  entry  63,870.30 stop  63,590.89 exit  63,871.30 (end) 0.03 lots  risk $8.38  net $-1.62
+      BUY  2026-07-29 05:22 -> 2026-07-29 05:29  (7 bars)  entry  63,796.10 stop  63,663.48 exit  63,995.04 (target) 0.07 lots  risk $9.28  net $+10.08
+      BUY  2026-07-29 06:37 -> 2026-07-29 07:02  (25 bars)  entry  63,797.60 stop  63,671.05 exit  63,671.05 (stop) 0.07 lots  risk $8.86  net $-12.71
+      SELL 2026-07-29 16:39 -> 2026-07-29 16:42  (3 bars)  entry  64,170.80 stop  64,381.71 exit  64,381.71 (stop) 0.04 lots  risk $8.44  net $-10.64
+      BUY  2026-07-29 20:33 -> 2026-07-29 20:50  (17 bars)  entry  63,817.20 stop  63,663.35 exit  64,047.97 (target) 0.06 lots  risk $9.23  net $+10.55
+      BUY  2026-07-30 00:59 -> 2026-07-30 01:06  (7 bars)  entry  63,825.00 stop  63,648.93 exit  64,089.10 (target) 0.05 lots  risk $8.80  net $+10.46
+      BUY  2026-07-30 04:05 -> 2026-07-30 04:37  (32 bars)  entry  63,814.70 stop  63,654.91 exit  63,987.80 (end) 0.06 lots  risk $9.59  net $+7.09
+      SELL 2026-07-30 06:32 -> 2026-07-30 07:04  (32 bars)  entry  64,177.30 stop  64,305.68 exit  64,134.90 (end) 0.07 lots  risk $8.99  net $-0.88
+      SELL 2026-07-31 04:49 -> 2026-07-31 05:21  (32 bars)  entry  64,575.50 stop  64,851.30 exit  64,412.00 (end) 0.03 lots  risk $8.27  net $+3.25
+      BUY  2026-07-31 13:21 -> 2026-07-31 13:41  (20 bars)  entry  63,759.90 stop  63,679.78 exit  63,880.07 (target) 0.12 lots  risk $9.61  net $+7.82
+      BUY  2026-07-31 16:16 -> 2026-07-31 16:30  (14 bars)  entry  63,785.40 stop  63,671.44 exit  63,671.44 (stop) 0.08 lots  risk $9.12  net $-13.52
+      BUY  2026-07-31 19:02 -> 2026-07-31 19:34  (32 bars)  entry  62,773.80 stop  62,640.86 exit  62,860.30 (end) 0.07 lots  risk $9.31  net $+2.21
+      BUY  2026-08-03 16:37 -> 2026-08-03 16:59  (22 bars)  entry  62,885.55 stop  62,588.73 exit  63,330.78 (target) 0.03 lots  risk $8.90  net $+11.71
+      BUY  2026-08-03 19:03 -> 2026-08-03 19:35  (32 bars)  entry  63,818.70 stop  63,575.36 exit  63,819.40 (end) 0.04 lots  risk $9.73  net $-2.17
+      BUY  2026-08-03 19:46 -> 2026-08-03 20:18  (32 bars)  entry  63,804.00 stop  63,680.92 exit  63,828.70 (end) 0.07 lots  risk $8.62  net $-2.12
+      ... 104 more
+    MC          : net_p5 -3,781 pips  PF_p5 0.68  ruin 100.0%  robust=False
+
+--- execution TF M5  |  97602 bars  2025-10-23 08:50:00 .. 2026-09-28 08:45:00 ---
+    pips view   : net=  -6588.4 PF= 0.85 t= 203 win%=  44 sharpe=-0.06 maxDD= 16279.6
+    money view  : $857.66 final (-14.23%)  maxDD $224.58  executed 173 / skipped 30
+    per month   : $-12.60  (over 339 days)
+      SELL 2025-10-26 22:30 -> 2025-10-26 23:25  (11 bars)  entry 113,349.15 stop 113,579.53 exit 113,003.58 (target) 0.04 lots  risk $9.22  net $+11.02
+      BUY  2025-10-27 16:30 -> 2025-10-27 19:10  (32 bars)  entry 114,976.40 stop 114,154.42 exit 115,538.60 (end) 0.01 lots  risk $8.22  net $+5.07
+      SELL 2025-10-28 04:50 -> 2025-10-28 07:30  (32 bars)  entry 113,664.90 stop 114,368.23 exit 113,863.80 (end) 0.01 lots  risk $7.03  net $-2.54
+      BUY  2025-10-28 14:50 -> 2025-10-28 15:15  (5 bars)  entry 114,482.00 stop 114,169.20 exit 114,951.20 (target) 0.03 lots  risk $9.38  net $+12.43
+      BUY  2025-10-28 16:20 -> 2025-10-28 16:40  (4 bars)  entry 115,993.90 stop 115,077.37 exit 115,077.37 (stop) 0.01 lots  risk $9.17  net $-9.72
+      SELL 2025-10-28 16:40 -> 2025-10-28 19:20  (32 bars)  entry 115,378.00 stop 116,298.52 exit 115,558.80 (end) 0.01 lots  risk $9.21  net $-2.36
+      SELL 2025-10-29 15:40 -> 2025-10-29 17:30  (22 bars)  entry 112,993.60 stop 113,823.96 exit 111,748.07 (target) 0.01 lots  risk $8.30  net $+11.91
+      SELL 2025-10-30 06:15 -> 2025-10-30 06:25  (2 bars)  entry 109,989.10 stop 110,900.43 exit 108,622.11 (target) 0.01 lots  risk $9.11  net $+13.12
+      BUY  2025-10-31 02:50 -> 2025-10-31 03:05  (3 bars)  entry 108,904.00 stop 108,264.41 exit 109,863.38 (target) 0.01 lots  risk $6.40  net $+9.04
+      BUY  SKIPPED (below_min_lot) stop_dist 1,276.5 risk $10.48
+      BUY  2025-11-07 22:45 -> 2025-11-08 01:25  (32 bars)  entry 103,834.00 stop 102,980.58 exit 103,404.90 (end) 0.01 lots  risk $8.53  net $-4.84
+      BUY  2025-11-10 09:10 -> 2025-11-10 10:35  (17 bars)  entry 106,486.10 stop 105,920.63 exit 105,920.63 (stop) 0.01 lots  risk $5.65  net $-6.20
+      BUY  2025-11-11 04:35 -> 2025-11-11 06:50  (27 bars)  entry 106,685.70 stop 105,715.49 exit 105,715.49 (stop) 0.01 lots  risk $9.70  net $-10.25
+      BUY  2025-11-14 00:15 -> 2025-11-14 02:55  (32 bars)  entry  99,292.70 stop  98,406.94 exit  98,968.90 (end) 0.01 lots  risk $8.86  net $-3.79
+      SELL 2025-12-04 13:35 -> 2025-12-04 16:15  (32 bars)  entry  92,756.60 stop  93,342.93 exit  92,624.00 (end) 0.01 lots  risk $5.86  net $+0.78
+      BUY  SKIPPED (below_min_lot) stop_dist 2,774.0 risk $10.24
+      BUY  2025-12-18 15:15 -> 2025-12-18 15:40  (5 bars)  entry  87,888.70 stop  87,268.51 exit  88,818.98 (target) 0.01 lots  risk $6.20  net $+8.75
+      BUY  2025-12-19 09:10 -> 2025-12-19 11:50  (32 bars)  entry  88,020.50 stop  87,187.32 exit  88,059.60 (end) 0.01 lots  risk $8.33  net $-0.16
+      BUY  2025-12-19 22:20 -> 2025-12-20 01:00  (32 bars)  entry  88,000.60 stop  87,240.32 exit  88,272.10 (end) 0.01 lots  risk $7.60  net $+2.17
+      BUY  2025-12-21 16:10 -> 2025-12-21 18:50  (32 bars)  entry  88,041.30 stop  87,329.72 exit  88,273.70 (end) 0.01 lots  risk $7.12  net $+1.77
+      BUY  2025-12-22 10:25 -> 2025-12-22 13:05  (32 bars)  entry  89,624.30 stop  88,983.71 exit  89,805.80 (end) 0.01 lots  risk $6.41  net $+1.27
+      BUY  2025-12-29 00:55 -> 2025-12-29 03:35  (32 bars)  entry  87,926.30 stop  87,536.78 exit  88,227.00 (end) 0.02 lots  risk $7.79  net $+4.91
+      BUY  2025-12-29 05:15 -> 2025-12-29 07:55  (32 bars)  entry  89,483.50 stop  88,842.66 exit  89,966.00 (end) 0.01 lots  risk $6.41  net $+4.28
+      BUY  2025-12-30 10:15 -> 2025-12-30 12:55  (32 bars)  entry  87,867.60 stop  87,504.98 exit  87,933.70 (end) 0.02 lots  risk $7.25  net $+0.22
+      BUY  SKIPPED (below_min_lot) stop_dist 1,123.5 risk $10.47
+      SELL SKIPPED (below_min_lot) stop_dist 1,210.0 risk $10.47
+      SELL 2026-01-03 06:15 -> 2026-01-03 08:45  (30 bars)  entry  90,241.60 stop  90,497.54 exit  89,857.69 (target) 0.04 lots  risk $10.24  net $+13.16
+      SELL 2026-01-06 16:50 -> 2026-01-06 18:30  (20 bars)  entry  93,849.65 stop  94,610.95 exit  92,707.70 (target) 0.01 lots  risk $7.61  net $+10.87
+      SELL 2026-01-08 08:25 -> 2026-01-08 10:30  (25 bars)  entry  90,187.00 stop  90,714.74 exit  90,714.74 (stop) 0.02 lots  risk $10.55  net $-11.65
+      SELL 2026-01-09 10:45 -> 2026-01-09 13:25  (32 bars)  entry  90,306.80 stop  90,807.01 exit  90,554.70 (end) 0.02 lots  risk $10.00  net $-6.06
+      SELL 2026-01-09 14:20 -> 2026-01-09 15:10  (10 bars)  entry  90,274.80 stop  90,624.23 exit  90,624.23 (stop) 0.03 lots  risk $10.48  net $-12.13
+      SELL 2026-01-10 20:00 -> 2026-01-10 22:40  (32 bars)  entry  90,538.70 stop  90,671.23 exit  90,571.20 (end) 0.07 lots  risk $9.28  net $-6.13
+      SELL 2026-01-12 16:25 -> 2026-01-12 16:35  (2 bars)  entry  90,203.50 stop  90,825.64 exit  90,825.64 (stop) 0.01 lots  risk $6.22  net $-6.77
+      SELL 2026-01-21 09:40 -> 2026-01-21 12:20  (32 bars)  entry  89,200.50 stop  89,799.37 exit  89,303.80 (end) 0.01 lots  risk $5.99  net $-1.58
+      BUY  SKIPPED (below_min_lot) stop_dist 1,959.4 risk $10.27
+      SELL 2026-01-22 01:50 -> 2026-01-22 03:00  (14 bars)  entry  89,356.80 stop  90,037.08 exit  90,037.08 (stop) 0.01 lots  risk $6.80  net $-7.35
+      SELL 2026-01-23 21:20 -> 2026-01-24 00:00  (32 bars)  entry  89,964.80 stop  90,809.19 exit  89,568.60 (end) 0.01 lots  risk $8.44  net $+3.41
+      BUY  2026-01-24 16:10 -> 2026-01-24 18:50  (32 bars)  entry  89,462.80 stop  89,091.43 exit  89,284.80 (end) 0.02 lots  risk $7.43  net $-4.66
+      BUY  2026-01-26 01:50 -> 2026-01-26 04:20  (30 bars)  entry  86,692.70 stop  85,934.11 exit  87,830.59 (target) 0.01 lots  risk $7.59  net $+10.83
+      BUY  2026-01-26 16:40 -> 2026-01-26 18:15  (19 bars)  entry  88,106.90 stop  87,206.84 exit  87,206.84 (stop) 0.01 lots  risk $9.00  net $-9.55
+      ... 163 more
+    MC          : net_p5 -9,574 pips  PF_p5 0.77  ruin 98.8%  robust=False
+
+--- execution TF M15  |  69965 bars  2024-09-28 09:00:00 .. 2026-09-28 08:45:00 ---
+    pips view   : net= -36322.0 PF= 0.74 t= 262 win%=  41 sharpe=-0.12 maxDD= 39248.1
+    money view  : $866.44 final (-13.36%)  maxDD $141.92  executed 96 / skipped 166
+    per month   : $-5.50  (over 729 days)
+      SELL 2024-09-30 05:15 -> 2024-09-30 13:15  (32 bars)  entry  64,500.26 stop  65,407.90 exit  63,572.66 (end) 0.01 lots  risk $9.08  net $+7.68
+      SELL 2024-09-30 13:15 -> 2024-09-30 21:15  (32 bars)  entry  63,270.67 stop  64,176.34 exit  63,135.53 (end) 0.01 lots  risk $9.06  net $-0.24
+      BUY  2024-10-01 06:15 -> 2024-10-01 14:15  (32 bars)  entry  63,581.55 stop  62,870.62 exit  63,788.83 (end) 0.01 lots  risk $7.11  net $+0.48
+      BUY  SKIPPED (below_min_lot) stop_dist 1,123.1 risk $10.08
+      SELL SKIPPED (below_min_lot) stop_dist 1,110.4 risk $10.08
+      SELL 2024-10-03 11:30 -> 2024-10-03 19:30  (32 bars)  entry  60,317.47 stop  61,250.51 exit  60,136.66 (end) 0.01 lots  risk $9.33  net $+0.21
+      SELL SKIPPED (below_min_lot) stop_dist 1,056.4 risk $10.08
+      SELL 2024-10-04 16:30 -> 2024-10-04 20:00  (14 bars)  entry  61,517.48 stop  62,289.71 exit  62,289.71 (stop) 0.01 lots  risk $7.72  net $-9.32
+      BUY  2024-10-06 17:45 -> 2024-10-07 01:45  (32 bars)  entry  62,509.75 stop  62,125.70 exit  62,581.51 (end) 0.02 lots  risk $7.68  net $-1.75
+      BUY  2024-10-07 04:15 -> 2024-10-07 12:15  (32 bars)  entry  63,845.38 stop  62,873.77 exit  63,088.02 (end) 0.01 lots  risk $9.72  net $-9.17
+      SELL 2024-10-07 18:15 -> 2024-10-08 01:45  (30 bars)  entry  63,737.86 stop  64,567.60 exit  62,493.26 (target) 0.01 lots  risk $8.30  net $+10.85
+      BUY  2024-10-08 17:00 -> 2024-10-08 17:30  (2 bars)  entry  62,998.66 stop  62,228.10 exit  62,228.10 (stop) 0.01 lots  risk $7.71  net $-9.30
+      BUY  2024-10-08 18:00 -> 2024-10-09 02:00  (32 bars)  entry  62,742.66 stop  61,759.65 exit  62,047.65 (end) 0.01 lots  risk $9.83  net $-8.54
+      SELL SKIPPED (below_min_lot) stop_dist 1,522.1 risk $9.81
+      BUY  2024-10-11 20:45 -> 2024-10-12 04:45  (32 bars)  entry  62,700.66 stop  61,776.96 exit  62,696.33 (end) 0.01 lots  risk $9.24  net $-1.64
+      BUY  2024-10-13 19:45 -> 2024-10-14 03:45  (32 bars)  entry  62,588.67 stop  62,022.57 exit  62,482.85 (end) 0.01 lots  risk $5.66  net $-2.65
+      BUY  SKIPPED (below_min_lot) stop_dist 985.2 risk $9.77
+      SELL SKIPPED (below_min_lot) stop_dist 2,487.2 risk $9.77
+      SELL 2024-10-21 06:00 -> 2024-10-21 14:00  (32 bars)  entry  68,672.66 stop  69,377.89 exit  68,394.66 (end) 0.01 lots  risk $7.05  net $+1.19
+      SELL SKIPPED (below_min_lot) stop_dist 1,484.8 risk $9.78
+      SELL SKIPPED (below_min_lot) stop_dist 2,140.8 risk $9.78
+      SELL SKIPPED (below_min_lot) stop_dist 1,061.7 risk $9.78
+      SELL 2024-11-03 11:45 -> 2024-11-03 19:45  (32 bars)  entry  68,215.25 stop  68,727.44 exit  68,329.23 (end) 0.01 lots  risk $5.12  net $-2.47
+      SELL 2024-11-04 09:45 -> 2024-11-04 17:45  (32 bars)  entry  68,721.25 stop  69,320.08 exit  68,615.25 (end) 0.01 lots  risk $5.99  net $-0.27
+      SELL 2024-11-04 16:00 -> 2024-11-04 19:00  (12 bars)  entry  68,635.24 stop  69,440.64 exit  67,427.14 (target) 0.01 lots  risk $8.05  net $+10.75
+      SELL SKIPPED (below_min_lot) stop_dist 1,100.6 risk $9.86
+      SELL 2024-11-06 00:00 -> 2024-11-06 02:15  (9 bars)  entry  69,123.25 stop  70,095.22 exit  70,095.22 (stop) 0.01 lots  risk $9.72  net $-11.05
+      SELL SKIPPED (below_min_lot) stop_dist 1,951.7 risk $9.75
+      SELL SKIPPED (below_min_lot) stop_dist 2,128.1 risk $9.75
+      SELL 2024-11-27 14:30 -> 2024-11-27 15:00  (2 bars)  entry  92,829.25 stop  93,779.29 exit  93,779.29 (stop) 0.01 lots  risk $9.50  net $-10.83
+      SELL SKIPPED (below_min_lot) stop_dist 6,634.6 risk $9.64
+      SELL SKIPPED (below_min_lot) stop_dist 2,965.9 risk $9.64
+      SELL SKIPPED (below_min_lot) stop_dist 2,422.0 risk $9.64
+      SELL SKIPPED (below_min_lot) stop_dist 1,475.7 risk $9.64
+      SELL SKIPPED (below_min_lot) stop_dist 1,136.1 risk $9.64
+      BUY  SKIPPED (below_min_lot) stop_dist 2,577.4 risk $9.64
+      SELL 2025-01-04 23:45 -> 2025-01-05 07:45  (32 bars)  entry  98,349.75 stop  98,892.02 exit  98,328.22 (end) 0.01 lots  risk $5.42  net $-1.11
+      SELL SKIPPED (below_min_lot) stop_dist 1,298.4 risk $9.63
+      BUY  SKIPPED (below_min_lot) stop_dist 2,835.4 risk $9.63
+      BUY  2025-01-12 13:30 -> 2025-01-12 17:15  (15 bars)  entry  94,261.96 stop  93,772.63 exit  94,995.95 (target) 0.01 lots  risk $4.89  net $+6.01
+      ... 222 more
+    MC          : net_p5 -42,341 pips  PF_p5 0.67  ruin 100.0%  robust=False
+
+--- execution TF M30  |  70074 bars  2022-09-29 09:00:00 .. 2026-09-28 08:30:00 ---
+    pips view   : net=  14665.4 PF= 1.09 t= 345 win%=  50 sharpe= 0.03 maxDD= 16985.5
+    money view  : $953.60 final (-4.64%)  maxDD $103.04  executed 135 / skipped 210
+    per month   : $-0.95  (over 1459 days)
+      BUY  2022-09-30 17:30 -> 2022-10-01 09:30  (32 bars)  entry  19,593.78 stop  19,029.95 exit  19,283.53 (end) 0.01 lots  risk $5.64  net $-3.56
+      BUY  2022-10-13 19:00 -> 2022-10-14 11:00  (32 bars)  entry  18,953.11 stop  18,152.51 exit  19,565.11 (end) 0.01 lots  risk $8.01  net $+5.66
+      BUY  2022-10-21 19:00 -> 2022-10-22 11:00  (32 bars)  entry  19,164.96 stop  18,779.40 exit  19,154.03 (end) 0.02 lots  risk $7.71  net $-1.14
+      BUY  2022-10-24 01:30 -> 2022-10-24 07:00  (11 bars)  entry  19,608.46 stop  19,333.59 exit  19,333.59 (stop) 0.03 lots  risk $8.25  net $-9.62
+      BUY  2022-10-25 16:30 -> 2022-10-25 18:00  (3 bars)  entry  19,370.46 stop  19,179.83 exit  19,656.41 (target) 0.05 lots  risk $9.53  net $+12.00
+      BUY  2022-10-25 19:00 -> 2022-10-25 21:00  (4 bars)  entry  19,748.96 stop  19,365.51 exit  20,324.13 (target) 0.02 lots  risk $7.67  net $+10.59
+      SELL 2022-10-25 23:30 -> 2022-10-26 11:30  (24 bars)  entry  20,067.46 stop  20,623.06 exit  20,623.06 (stop) 0.01 lots  risk $5.56  net $-6.01
+      SELL 2022-10-28 02:00 -> 2022-10-28 18:00  (32 bars)  entry  20,260.46 stop  20,599.67 exit  20,441.46 (end) 0.02 lots  risk $6.78  net $-4.54
+      BUY  2022-10-29 11:30 -> 2022-10-30 03:30  (32 bars)  entry  20,919.96 stop  20,585.41 exit  20,708.96 (end) 0.02 lots  risk $6.69  net $-5.14
+      SELL 2022-10-29 14:00 -> 2022-10-30 06:00  (32 bars)  entry  20,771.96 stop  21,218.70 exit  20,768.46 (end) 0.02 lots  risk $8.93  net $-0.85
+      SELL 2022-10-30 01:30 -> 2022-10-30 17:30  (32 bars)  entry  20,765.46 stop  21,015.80 exit  20,673.46 (end) 0.03 lots  risk $7.51  net $+1.38
+      SELL 2022-11-02 21:30 -> 2022-11-03 13:30  (32 bars)  entry  20,241.11 stop  21,032.38 exit  20,114.28 (end) 0.01 lots  risk $7.91  net $+0.81
+      BUY  2022-11-04 15:30 -> 2022-11-05 07:30  (32 bars)  entry  20,864.61 stop  20,217.86 exit  21,379.61 (end) 0.01 lots  risk $6.47  net $+4.69
+      SELL 2022-11-07 02:00 -> 2022-11-07 18:00  (32 bars)  entry  20,900.53 stop  21,248.62 exit  20,741.03 (end) 0.02 lots  risk $6.96  net $+2.27
+      BUY  2022-11-07 22:00 -> 2022-11-08 00:00  (4 bars)  entry  20,839.53 stop  20,572.35 exit  20,572.35 (stop) 0.03 lots  risk $8.02  net $-9.39
+      SELL 2022-11-08 06:30 -> 2022-11-08 20:00  (27 bars)  entry  19,764.78 stop  20,683.57 exit  18,386.59 (target) 0.01 lots  risk $9.19  net $+13.32
+      BUY  SKIPPED (below_min_lot) stop_dist 1,193.5 risk $10.10
+      SELL SKIPPED (below_min_lot) stop_dist 1,746.7 risk $10.10
+      BUY  2022-11-22 15:30 -> 2022-11-23 07:30  (32 bars)  entry  16,036.67 stop  15,569.85 exit  16,431.46 (end) 0.02 lots  risk $9.34  net $+6.98
+      SELL 2022-12-16 11:30 -> 2022-12-17 03:30  (32 bars)  entry  17,048.20 stop  17,574.83 exit  16,663.22 (end) 0.01 lots  risk $5.27  net $+3.37
+      SELL 2022-12-17 01:30 -> 2022-12-17 17:30  (32 bars)  entry  16,586.81 stop  16,984.24 exit  16,696.53 (end) 0.02 lots  risk $7.95  net $-3.14
+      SELL 2022-12-25 21:30 -> 2022-12-25 23:30  (4 bars)  entry  16,737.44 stop  16,826.47 exit  16,826.47 (stop) 0.11 lots  risk $9.79  net $-15.02
+      SELL 2022-12-27 03:00 -> 2022-12-27 19:00  (32 bars)  entry  16,858.17 stop  17,003.73 exit  16,733.63 (end) 0.06 lots  risk $8.73  net $+4.62
+      SELL 2023-01-09 22:30 -> 2023-01-10 14:30  (32 bars)  entry  17,237.44 stop  17,410.07 exit  17,211.89 (end) 0.05 lots  risk $8.63  net $-1.10
+      SELL 2023-01-11 18:00 -> 2023-01-11 20:00  (4 bars)  entry  17,320.82 stop  17,481.85 exit  17,481.85 (stop) 0.06 lots  risk $9.66  net $-12.51
+      BUY  2023-01-12 20:00 -> 2023-01-13 12:00  (32 bars)  entry  18,829.58 stop  17,869.82 exit  18,926.70 (end) 0.01 lots  risk $9.60  net $+0.50
+      BUY  SKIPPED (below_min_lot) stop_dist 1,367.8 risk $9.94
+      SELL 2023-01-29 04:30 -> 2023-01-29 15:00  (21 bars)  entry  23,145.12 stop  23,595.67 exit  23,595.67 (stop) 0.02 lots  risk $9.01  net $-9.96
+      SELL 2023-01-30 12:00 -> 2023-01-31 04:00  (32 bars)  entry  23,182.83 stop  23,708.38 exit  22,872.53 (end) 0.01 lots  risk $5.26  net $+2.63
+      SELL 2023-02-03 00:00 -> 2023-02-03 16:00  (32 bars)  entry  23,440.45 stop  24,146.67 exit  23,307.54 (end) 0.01 lots  risk $7.06  net $+0.85
+      BUY  2023-02-15 14:30 -> 2023-02-15 22:00  (15 bars)  entry  22,768.86 stop  22,082.69 exit  23,798.12 (target) 0.01 lots  risk $6.86  net $+9.82
+      SELL 2023-02-17 02:00 -> 2023-02-17 18:00  (32 bars)  entry  23,505.90 stop  24,425.06 exit  24,016.38 (end) 0.01 lots  risk $9.19  net $-5.58
+      SELL 2023-02-20 03:30 -> 2023-02-20 11:30  (16 bars)  entry  24,000.53 stop  24,630.60 exit  24,630.60 (stop) 0.01 lots  risk $6.30  net $-6.78
+      SELL 2023-02-22 04:30 -> 2023-02-22 20:30  (32 bars)  entry  24,023.43 stop  24,630.21 exit  23,731.49 (end) 0.01 lots  risk $6.07  net $+2.44
+      SELL 2023-02-22 17:30 -> 2023-02-23 04:30  (22 bars)  entry  23,742.71 stop  24,302.76 exit  24,302.76 (stop) 0.01 lots  risk $5.60  net $-6.08
+      SELL 2023-02-24 18:30 -> 2023-02-25 10:30  (32 bars)  entry  23,135.75 stop  23,829.51 exit  23,091.66 (end) 0.01 lots  risk $6.94  net $-0.03
+      SELL 2023-02-27 20:30 -> 2023-02-28 12:30  (32 bars)  entry  23,194.43 stop  23,629.37 exit  23,353.51 (end) 0.02 lots  risk $8.70  net $-4.13
+      SELL 2023-02-28 10:00 -> 2023-02-28 16:30  (13 bars)  entry  23,225.53 stop  23,517.75 exit  23,517.75 (stop) 0.03 lots  risk $8.77  net $-10.19
+      BUY  2023-03-11 04:00 -> 2023-03-11 09:30  (11 bars)  entry  20,849.12 stop  20,063.17 exit  20,063.17 (stop) 0.01 lots  risk $7.86  net $-8.33
+      BUY  SKIPPED (below_min_lot) stop_dist 998.7 risk $9.59
+      ... 305 more
+    MC          : net_p5 1,684 pips  PF_p5 1.01  ruin 2.6%  robust=True
+
+--- execution TF H1  |  71361 bars  2016-10-03 00:00:00 .. 2026-09-28 08:00:00 ---
+    pips view   : net=-213955.9 PF= 0.45 t= 372 win%=  36 sharpe=-0.30 maxDD=230805.7
+    money view  : $205.88 final (-79.41%)  maxDD $794.12  executed 39 / skipped 333
+    per month   : $-6.53  (over 3647 days)
+      SELL 2017-01-24 01:00 -> 2017-01-25 09:00  (32 bars)  entry     895.49 stop     926.57 exit     887.33 (end) 0.32 lots  risk $9.94  net $-0.59
+      SELL 2017-01-24 11:00 -> 2017-01-25 19:00  (32 bars)  entry     898.05 stop     923.46 exit     887.53 (end) 0.39 lots  risk $9.91  net $+0.20
+      SELL 2017-01-26 19:00 -> 2017-01-27 15:00  (20 bars)  entry     904.25 stop     916.75 exit     916.75 (stop) 0.79 lots  risk $9.88  net $-17.78
+      SELL 2017-06-07 22:00 -> 2017-06-09 06:00  (32 bars)  entry   2,629.88 stop   2,846.81 exit   2,803.93 (end) 0.04 lots  risk $8.68  net $-7.36
+      SELL 2017-06-12 18:00 -> 2017-06-14 02:00  (32 bars)  entry   2,572.84 stop   2,873.31 exit   2,752.54 (end) 0.03 lots  risk $9.01  net $-5.69
+      BUY  2017-09-12 07:00 -> 2017-09-12 21:00  (14 bars)  entry   4,273.04 stop   4,144.28 exit   4,144.28 (stop) 0.07 lots  risk $9.01  net $-41.91
+      SELL 2017-09-14 21:00 -> 2017-09-15 17:00  (20 bars)  entry   3,303.01 stop   3,659.18 exit   3,659.18 (stop) 0.02 lots  risk $7.12  net $-12.93
+      BUY  2017-09-15 19:00 -> 2017-09-19 03:00  (32 bars)  entry   3,843.01 stop   3,159.38 exit   4,000.97 (end) 0.01 lots  risk $6.84  net $-1.32
+      SELL 2017-10-24 05:00 -> 2017-10-25 13:00  (32 bars)  entry   5,658.00 stop   6,039.74 exit   5,573.00 (end) 0.02 lots  risk $7.63  net $-8.10
+      SELL SKIPPED (below_min_lot) stop_dist 1,604.0 risk $9.05
+      BUY  SKIPPED (below_min_lot) stop_dist 2,110.7 risk $9.05
+      BUY  SKIPPED (below_min_lot) stop_dist 1,412.2 risk $9.05
+      BUY  SKIPPED (below_min_lot) stop_dist 1,488.5 risk $9.05
+      BUY  SKIPPED (below_min_lot) stop_dist 929.1 risk $9.05
+      SELL SKIPPED (below_min_lot) stop_dist 920.4 risk $9.05
+      SELL 2018-03-06 03:00 -> 2018-03-06 21:00  (18 bars)  entry  11,253.91 stop  11,728.48 exit  10,542.05 (target) 0.01 lots  risk $4.75  net $-3.22
+      BUY  2018-03-23 17:00 -> 2018-03-26 14:00  (21 bars)  entry   8,548.53 stop   8,072.96 exit   8,072.96 (stop) 0.01 lots  risk $4.76  net $-15.54
+      BUY  2018-04-24 19:00 -> 2018-04-25 13:00  (18 bars)  entry   9,330.04 stop   9,026.50 exit   9,026.50 (stop) 0.02 lots  risk $6.07  net $-27.91
+      SELL 2018-04-30 00:00 -> 2018-04-30 01:00  (1 bars)  entry   9,262.62 stop   9,358.01 exit   9,358.01 (stop) 0.08 lots  risk $7.63  net $-105.01
+      BUY  2018-05-03 17:00 -> 2018-05-07 01:00  (32 bars)  entry   9,393.24 stop   9,043.70 exit   9,548.45 (end) 0.02 lots  risk $6.99  net $-10.90
+      SELL 2018-05-07 05:00 -> 2018-05-08 13:00  (32 bars)  entry   9,280.28 stop   9,756.02 exit   9,259.46 (end) 0.01 lots  risk $4.76  net $-11.90
+      SELL 2018-05-16 06:00 -> 2018-05-17 14:00  (32 bars)  entry   8,093.78 stop   8,610.94 exit   8,265.89 (end) 0.01 lots  risk $5.17  net $-13.83
+      BUY  2018-06-07 04:00 -> 2018-06-08 12:00  (32 bars)  entry   7,724.50 stop   7,546.81 exit   7,624.00 (end) 0.04 lots  risk $7.11  net $-4.82
+      BUY  2018-06-14 21:00 -> 2018-06-18 05:00  (32 bars)  entry   6,601.00 stop   6,211.37 exit   6,425.50 (end) 0.01 lots  risk $3.90  net $-3.10
+      BUY  2018-06-18 21:00 -> 2018-06-20 05:00  (32 bars)  entry   6,726.00 stop   6,355.54 exit   6,605.00 (end) 0.01 lots  risk $3.70  net $-1.51
+      BUY  2018-06-25 18:00 -> 2018-06-27 02:00  (32 bars)  entry   6,282.00 stop   5,968.32 exit   6,066.50 (end) 0.02 lots  risk $6.27  net $-5.91
+      BUY  2018-06-28 02:00 -> 2018-06-29 00:00  (22 bars)  entry   6,134.00 stop   6,009.49 exit   6,009.49 (stop) 0.05 lots  risk $6.23  net $-8.73
+      BUY  2018-07-16 15:00 -> 2018-07-17 20:00  (29 bars)  entry   6,594.97 stop   6,377.26 exit   6,921.54 (target) 0.03 lots  risk $6.53  net $-30.11
+      BUY  SKIPPED (below_min_lot) stop_dist 739.6 risk $6.62
+      BUY  2018-07-30 23:00 -> 2018-07-31 16:00  (17 bars)  entry   8,074.23 stop   7,692.79 exit   7,692.79 (stop) 0.01 lots  risk $3.81  net $-17.12
+      SELL 2018-09-05 14:00 -> 2018-09-06 03:00  (13 bars)  entry   6,956.62 stop   7,443.70 exit   6,226.00 (target) 0.01 lots  risk $4.87  net $-6.00
+      SELL SKIPPED (below_min_lot) stop_dist 666.8 risk $6.39
+      BUY  2018-10-15 10:00 -> 2018-10-16 18:00  (32 bars)  entry   6,632.01 stop   6,073.30 exit   6,404.01 (end) 0.01 lots  risk $5.59  net $-15.58
+      SELL 2018-11-08 19:00 -> 2018-11-12 03:00  (32 bars)  entry   6,391.99 stop   6,483.81 exit   6,330.88 (end) 0.06 lots  risk $5.51  net $-76.15
+      BUY  2018-12-18 17:00 -> 2018-12-19 13:00  (20 bars)  entry   3,539.36 stop   3,380.09 exit   3,778.27 (target) 0.03 lots  risk $4.78  net $-21.94
+      BUY  2019-02-08 19:00 -> 2019-02-12 03:00  (32 bars)  entry   3,639.10 stop   3,329.32 exit   3,543.22 (end) 0.01 lots  risk $3.10  net $-10.66
+      BUY  2019-02-18 16:00 -> 2019-02-20 00:00  (32 bars)  entry   3,770.69 stop   3,614.45 exit   3,884.00 (end) 0.03 lots  risk $4.69  net $-25.71
+      SELL 2019-03-11 08:00 -> 2019-03-12 16:00  (32 bars)  entry   3,843.11 stop   3,916.27 exit   3,841.49 (end) 0.06 lots  risk $4.39  net $-58.11
+      SELL SKIPPED (below_min_lot) stop_dist 461.6 risk $4.31
+      SELL SKIPPED (below_min_lot) stop_dist 736.6 risk $4.31
+      ... 332 more
+    MC          : net_p5 -210,473 pips  PF_p5 0.41  ruin 100.0%  robust=False
+
+--- execution TF H4  |  18804 bars  2013-01-21 00:00:00 .. 2026-09-28 08:00:00 ---
+    pips view   : net= -12623.1 PF= 0.93 t= 149 win%=  42 sharpe=-0.03 maxDD= 56693.2
+    money view  : $570.43 final (-42.96%)  maxDD $437.31  executed 27 / skipped 122
+    per month   : $-2.58  (over 4998 days)
+      SELL 2013-09-09 00:00 -> 2013-10-14 00:00  (25 bars)  entry     126.32 stop     150.00 exit     150.00 (stop) 0.42 lots  risk $9.94  net $-14.14
+      SELL 2014-02-07 00:00 -> 2014-02-13 00:00  (4 bars)  entry     811.01 stop   1,026.78 exit     487.36 (target) 0.04 lots  risk $8.63  net $+12.55
+      BUY  2014-06-03 00:00 -> 2014-07-17 00:00  (32 bars)  entry     655.61 stop     513.57 exit     618.51 (end) 0.07 lots  risk $9.94  net $-3.30
+      BUY  2014-11-13 00:00 -> 2014-12-17 00:00  (24 bars)  entry     420.23 stop     320.03 exit     320.03 (stop) 0.09 lots  risk $9.02  net $-9.92
+      SELL 2015-03-19 00:00 -> 2015-05-04 00:00  (32 bars)  entry     250.71 stop     309.49 exit     232.27 (end) 0.16 lots  risk $9.40  net $+1.35
+      BUY  2015-06-17 00:00 -> 2015-07-10 00:00  (17 bars)  entry     244.22 stop     216.18 exit     286.27 (target) 0.35 lots  risk $9.81  net $+11.22
+      BUY  2015-10-07 00:00 -> 2015-10-22 00:00  (11 bars)  entry     240.68 stop     220.14 exit     271.49 (target) 0.48 lots  risk $9.86  net $+9.99
+      SELL 2017-07-24 00:00 -> 2017-07-25 20:00  (11 bars)  entry   2,779.44 stop   2,960.33 exit   2,508.10 (target) 0.05 lots  risk $9.04  net $-8.93
+      SELL 2017-10-24 08:00 -> 2017-10-29 20:00  (22 bars)  entry   5,623.21 stop   6,162.45 exit   6,162.45 (stop) 0.01 lots  risk $5.39  net $-8.29
+      SELL SKIPPED (below_min_lot) stop_dist 3,546.2 risk $9.91
+      BUY  2018-05-03 20:00 -> 2018-05-11 00:00  (31 bars)  entry   9,560.29 stop   8,881.66 exit   8,881.66 (stop) 0.01 lots  risk $6.79  net $-18.05
+      SELL 2018-05-11 04:00 -> 2018-05-18 12:00  (32 bars)  entry   8,899.74 stop   9,569.91 exit   8,077.02 (end) 0.01 lots  risk $6.70  net $-2.55
+      BUY  2018-06-15 00:00 -> 2018-06-22 08:00  (32 bars)  entry   6,643.50 stop   6,062.36 exit   6,396.00 (end) 0.01 lots  risk $5.81  net $-2.68
+      BUY  2018-07-04 20:00 -> 2018-07-10 12:00  (22 bars)  entry   6,663.65 stop   6,310.83 exit   6,310.83 (stop) 0.02 lots  risk $7.06  net $-7.26
+      BUY  2018-07-24 16:00 -> 2018-08-01 00:00  (32 bars)  entry   8,179.00 stop   7,565.99 exit   7,627.51 (end) 0.01 lots  risk $6.13  net $-18.82
+      BUY  2018-10-24 08:00 -> 2018-10-29 12:00  (20 bars)  entry   6,421.10 stop   6,292.38 exit   6,292.38 (stop) 0.07 lots  risk $9.01  net $-102.12
+      BUY  2018-12-19 04:00 -> 2018-12-24 04:00  (18 bars)  entry   3,670.78 stop   3,312.83 exit   4,207.71 (target) 0.02 lots  risk $7.16  net $-8.67
+      BUY  2019-02-18 20:00 -> 2019-02-26 04:00  (32 bars)  entry   3,842.91 stop   3,572.96 exit   3,770.95 (end) 0.03 lots  risk $8.10  net $-31.26
+      SELL SKIPPED (below_min_lot) stop_dist 932.7 risk $7.99
+      SELL 2019-08-14 08:00 -> 2019-08-21 16:00  (32 bars)  entry  10,455.55 stop  11,157.78 exit  10,051.10 (end) 0.01 lots  risk $7.02  net $-21.26
+      BUY  2019-12-18 20:00 -> 2019-12-27 16:00  (32 bars)  entry   6,798.35 stop   6,171.10 exit   7,120.46 (end) 0.01 lots  risk $6.27  net $-22.08
+      BUY  2020-01-03 12:00 -> 2020-01-08 00:00  (15 bars)  entry   7,269.76 stop   6,593.03 exit   8,284.85 (target) 0.01 lots  risk $6.77  net $-15.15
+      BUY  2020-01-14 20:00 -> 2020-01-22 04:00  (32 bars)  entry   8,716.48 stop   8,128.85 exit   8,632.22 (end) 0.01 lots  risk $5.88  net $-26.14
+      SELL 2020-02-28 12:00 -> 2020-03-06 12:00  (30 bars)  entry   8,534.95 stop   9,120.02 exit   9,120.02 (stop) 0.01 lots  risk $5.85  net $-31.15
+      BUY  SKIPPED (below_min_lot) stop_dist 885.1 risk $6.83
+      BUY  SKIPPED (below_min_lot) stop_dist 687.1 risk $6.83
+      SELL 2020-05-18 00:00 -> 2020-05-20 16:00  (16 bars)  entry   9,674.00 stop   9,972.48 exit   9,226.29 (target) 0.02 lots  risk $5.97  net $-41.65
+      SELL 2020-06-24 16:00 -> 2020-07-02 00:00  (32 bars)  entry   9,315.00 stop   9,774.13 exit   9,167.34 (end) 0.01 lots  risk $4.59  net $-23.83
+      BUY  2020-07-21 16:00 -> 2020-07-27 00:00  (20 bars)  entry   9,312.00 stop   9,011.62 exit   9,762.57 (target) 0.02 lots  risk $6.01  net $-41.59
+      SELL SKIPPED (below_min_lot) stop_dist 4,997.5 risk $5.76
+      BUY  SKIPPED (below_min_lot) stop_dist 4,636.1 risk $5.76
+      SELL SKIPPED (below_min_lot) stop_dist 9,899.0 risk $5.76
+      BUY  SKIPPED (below_min_lot) stop_dist 2,319.4 risk $5.76
+      SELL SKIPPED (below_min_lot) stop_dist 3,939.9 risk $5.76
+      BUY  SKIPPED (below_min_lot) stop_dist 5,496.7 risk $5.76
+      SELL SKIPPED (below_min_lot) stop_dist 4,876.1 risk $5.76
+      BUY  SKIPPED (below_min_lot) stop_dist 2,867.1 risk $5.76
+      SELL SKIPPED (below_min_lot) stop_dist 2,997.4 risk $5.76
+      SELL SKIPPED (below_min_lot) stop_dist 2,899.9 risk $5.76
+      SELL SKIPPED (below_min_lot) stop_dist 3,131.5 risk $5.76
+      ... 109 more
+    MC          : net_p5 -30,443 pips  PF_p5 0.82  ruin 85.0%  robust=False
+
+--- execution TF D1  |  3930 bars  2013-01-21 00:00:00 .. 2026-09-28 00:00:00 ---
+    pips view   : net=  39802.8 PF= 1.79 t=  36 win%=  61 sharpe= 0.21 maxDD= 18504.0
+    money view  : $1,017.01 final (+1.70%)  maxDD $14.81  executed 8 / skipped 28
+    per month   : $0.10  (over 4998 days)
+      SELL 2013-09-09 00:00 -> 2013-10-14 00:00  (25 bars)  entry     126.32 stop     150.00 exit     150.00 (stop) 0.42 lots  risk $9.94  net $-14.14
+      SELL 2014-02-07 00:00 -> 2014-02-13 00:00  (4 bars)  entry     811.01 stop   1,026.78 exit     487.36 (target) 0.04 lots  risk $8.63  net $+12.55
+      BUY  2014-06-03 00:00 -> 2014-07-17 00:00  (32 bars)  entry     655.61 stop     513.57 exit     618.51 (end) 0.07 lots  risk $9.94  net $-3.30
+      BUY  2014-11-13 00:00 -> 2014-12-17 00:00  (24 bars)  entry     420.23 stop     320.03 exit     320.03 (stop) 0.09 lots  risk $9.02  net $-9.92
+      SELL 2015-03-19 00:00 -> 2015-05-04 00:00  (32 bars)  entry     250.71 stop     309.49 exit     232.27 (end) 0.16 lots  risk $9.40  net $+1.35
+      BUY  2015-06-17 00:00 -> 2015-07-10 00:00  (17 bars)  entry     244.22 stop     216.18 exit     286.27 (target) 0.35 lots  risk $9.81  net $+11.22
+      BUY  2015-10-07 00:00 -> 2015-10-22 00:00  (11 bars)  entry     240.68 stop     220.14 exit     271.49 (target) 0.48 lots  risk $9.86  net $+9.99
+      BUY  2017-07-19 00:00 -> 2017-08-11 00:00  (17 bars)  entry   2,354.97 stop   1,570.36 exit   3,531.89 (target) 0.01 lots  risk $7.85  net $+9.27
+      SELL SKIPPED (below_min_lot) stop_dist 1,441.0 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 1,538.3 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 1,475.7 risk $10.17
+      SELL SKIPPED (below_min_lot) stop_dist 2,079.3 risk $10.17
+      SELL SKIPPED (below_min_lot) stop_dist 8,753.1 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 10,439.2 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 6,440.2 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 2,749.5 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 2,493.9 risk $10.17
+      SELL SKIPPED (below_min_lot) stop_dist 3,725.5 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 2,962.5 risk $10.17
+      SELL SKIPPED (below_min_lot) stop_dist 3,556.0 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 4,889.1 risk $10.17
+      SELL SKIPPED (below_min_lot) stop_dist 3,958.2 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 2,752.0 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 2,704.6 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 5,571.1 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 4,651.8 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 9,097.7 risk $10.17
+      SELL SKIPPED (below_min_lot) stop_dist 9,121.7 risk $10.17
+      SELL SKIPPED (below_min_lot) stop_dist 8,083.1 risk $10.17
+      SELL SKIPPED (below_min_lot) stop_dist 8,418.2 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 7,193.7 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 10,788.6 risk $10.17
+      SELL SKIPPED (below_min_lot) stop_dist 18,554.7 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 6,802.7 risk $10.17
+      SELL SKIPPED (below_min_lot) stop_dist 9,897.1 risk $10.17
+      BUY  SKIPPED (below_min_lot) stop_dist 11,767.1 risk $10.17
+    MC          : net_p5 19,282 pips  PF_p5 1.40  ruin 0.1%  robust=True
+
+==============================================================================
+SUMMARY — V13 BTCUSD DQR lower-TF, $1,000.00 balance
+==============================================================================
+TF        bars  trades     PF     net pips     final $   maxDD $      MC
+M1           -     144   0.77     -2,862.6      746.36    300.00        
+M5           -     203   0.85     -6,588.4      857.66    224.58        
+M15          -     262   0.74    -36,322.0      866.44    141.92        
+M30          -     345   1.09     14,665.4      953.60    103.04        
+H1           -     372   0.45   -213,955.9      205.88    794.12        
+H4           -     149   0.93    -12,623.1      570.43    437.31        
+D1           -      36   1.79     39,802.8    1,017.01     14.81        
+
+context — the SAME frozen config on D1 (the timeframe it was
+approved on): 36 trades, PF 1.79, net 39,803 pips
+
+Read-only. No MT5 writes, no orders, no fabricated numbers.

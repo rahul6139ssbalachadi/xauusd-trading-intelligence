@@ -1,0 +1,172 @@
+{
+  "name": "BTCUSD_DQR_SWING_REVERSAL_V13",
+  "title": "Daily Quality Reversal (DQR) for BTCUSD — D1 Swing-Level Sweep Reversal",
+  "alias": "BTC DQR",
+  "status": "RESEARCH",
+  "market": "BTCUSD",
+  "broker_symbol": "BTCUSD# (XMGlobal-MT5, digits=2, point=0.01)",
+  "version": "V13",
+  "spec_source": "user discretionary brief STEP 1-3 verbatim; STEP 4+ agent-designed (owner spec was truncated after STEP 3)",
+  "supersedes": null,
+  "timeframes": {
+    "level_tf": "D1",
+    "execution_tf": "D1",
+    "note": "D1 execution is MANDATORY. The same logic on H1/H4 is deeply negative and NOT Monte-Carlo robust. Do not port to lower timeframes without re-validating from scratch."
+  },
+  "spec_steps": {
+    "step_1_levels": {
+      "family": "swings",
+      "definition": "confirmed D1 swing highs/lows, fractal left=2 right=2; the right-hand bars are required for confirmation, so a level is only usable after its defining bar closes",
+      "level_price": "swing high or low price",
+      "level_type": "S (support) / R (resistance)",
+      "level_strength": "number of D1 closes within 0.30*ATR of the level, counted only over D1 bars already closed at signal time",
+      "level_age_d1": "days since the level became usable",
+      "distance_from_price": "measured in ATR, must be <= max_level_dist_atr",
+      "tolerance": "LEVEL_TOLERANCE_ATR = 0.10",
+      "expiry": "max_level_age_d1 = 120 D1 bars"
+    },
+    "step_2_sweep": {
+      "long": "D1 low < level - tolerance AND close > level",
+      "short": "D1 high > level + tolerance AND close < level",
+      "min_sweep_atr": 0.25,
+      "sweep_definition": "deep_penetration — price must pierce the level by at least 0.25*ATR. A graze does not count as a liquidity sweep.",
+      "variables": [
+        "penetration_atr",
+        "sweep_wick_atr",
+        "candle_range",
+        "close_position",
+        "atr_normalized_sweep"
+      ]
+    },
+    "step_3_rejection": {
+      "long": "bullish body AND close_position >= 0.70 AND close back above the level",
+      "short": "bearish body AND (1 - close_position) >= 0.70 AND close back below the level",
+      "close_pos_min": 0.7
+    },
+    "step_4plus_agent_designed": {
+      "momentum_confirmation": "the bar immediately after the sweep bar is impulsive in the trade direction: |body| >= 0.80*ATR and close beyond the sweep bar's far side",
+      "impulse_atr": 0.8,
+      "decisive_break_rule": "if any of the last 5 closed bars closed decisively beyond the level by 0.50*ATR, the level is BROKEN and the setup is skipped (spec item 6: reassess, not trade)",
+      "entry": "open of the bar after the confirmation bar closes",
+      "stop": "sweep extreme -/+ 1.5 x ATR(confirmation bar)",
+      "target": "fixed 1.5R",
+      "exit": "stop / target / 32-bar time exit, checked intrabar, closer level wins ties (pessimistic)",
+      "cooldown": "no new entry within 4 bars of the previous entry"
+    }
+  },
+  "parameters": {
+    "level_tol_atr": 0.1,
+    "close_pos_min": 0.7,
+    "impulse_atr": 0.8,
+    "sweep_lookback": 1,
+    "break_lookback": 0,
+    "break_atr": 0.5,
+    "max_level_age_d1": 120,
+    "max_level_dist_atr": 3.0,
+    "min_level_touches": 1,
+    "min_sweep_atr": 0.25,
+    "atr_mult_stop": 1.5,
+    "rr": 1.5,
+    "max_holding_bars": 32,
+    "cooldown_bars": 4
+  },
+  "costs": {
+    "spread": "per-bar DB spread column (median 2250 pts = $22.50/side = 0.032% of price)",
+    "slippage_pips": 5.0,
+    "round_trip_approx_pct": 0.064,
+    "note": "BTC round-trip cost is ~4x gold's as a fraction of price. This materially changes which configs are viable and is why the fallback costs are symbol-specific."
+  },
+  "contract_sizing": {
+    "multiplier": 1.0,
+    "note": "1 lot = 1 BTC; USD P&L per lot equals the price move in USD",
+    "risk_per_trade_pct": 0.01,
+    "min_lots": 0.01,
+    "lot_step": 0.01,
+    "account_constraint": "On $1,000 a 1% risk cap ($10) buys 0.03 lots at a ~331-point stop. Wider stops floor the position to the 0.01 minimum or to zero. A $1,000 account is marginal for BTC."
+  },
+  "anti_lookahead": [
+    "levels gated by known_from = defining D1 bar close",
+    "sweep + confirmation evaluated on closed execution bars only",
+    "entry at the open of the bar AFTER the confirmation bar",
+    "features built on the full series then sliced by TIME, never sliced before building",
+    "dynamic touch counts only ever see D1 bars already closed"
+  ],
+  "results": {
+    "full_history_d1": {
+      "net_pips": 39802.8,
+      "profit_factor": 1.79,
+      "total_trades": 36,
+      "win_rate": 0.61,
+      "sharpe": 0.21,
+      "max_dd_pips": 18504.0,
+      "monte_carlo_net_p5": 19282.0,
+      "monte_carlo_pf_p5": 1.4,
+      "monte_carlo_ruin_prob": 0.001,
+      "monte_carlo_robust": true,
+      "buy_sell_split": "22 BUY / 14 SELL"
+    },
+    "validation_window": {
+      "net_pips": 20290.7,
+      "profit_factor": 3.51,
+      "total_trades": 12,
+      "win_rate": 0.67
+    },
+    "walk_forward": {
+      "windows": 2,
+      "is_mean": 10599.7,
+      "oos_mean": 19330.6,
+      "degradation": -0.82,
+      "oos_trades": 20,
+      "note": "negative degradation = OOS EXCEEDS in-sample"
+    },
+    "rejected_timeframes": {
+      "H1": {
+        "net_pips": -213955.9,
+        "profit_factor": 0.45,
+        "total_trades": 372,
+        "robust": false
+      },
+      "H4": {
+        "net_pips": -12623.1,
+        "profit_factor": 0.93,
+        "total_trades": 149,
+        "robust": false
+      }
+    },
+    "m1_lower_tf_revalidation_2026_09_30": {
+      "run_at_utc": "2026-09-30 08:12",
+      "script": "research/v13_btc_dqr_m1.py",
+      "config": "FROZEN V13 D1 config, no re-tuning on any lower TF",
+      "account": "$1,000, 1% risk/trade, min 0.01 lot, BTC $1/lot per $1 move",
+      "data_note": "M1 BTCUSD history is 97,618 bars = 68 days (2026-07-22..2026-09-28). That is the MT5 ~100k bar request cap, NOT broker retention. Two months is a DESCRIPTIVE REPLAY, not a validation.",
+      "M1":  {"net_pips": -2862.6,  "profit_factor": 0.77, "trades": 144, "win_rate": 0.40, "sharpe": -0.10, "final_equity_usd": 746.36, "return_pct": -25.36, "max_dd_usd": 300.00, "mc_net_p5": -3781, "mc_pf_p5": 0.68, "mc_ruin_prob": 1.00, "mc_robust": false},
+      "M5":  {"net_pips": -6588.4,  "profit_factor": 0.85, "trades": 203, "win_rate": 0.44, "final_equity_usd": 857.66, "return_pct": -14.23, "mc_pf_p5": 0.77, "mc_ruin_prob": 0.988, "mc_robust": false},
+      "M15": {"net_pips": -36322.0, "profit_factor": 0.74, "trades": 262, "win_rate": 0.41, "final_equity_usd": 866.44, "return_pct": -13.36, "mc_pf_p5": 0.67, "mc_ruin_prob": 1.00, "mc_robust": false},
+      "M30": {"net_pips": 14665.4,  "profit_factor": 1.09, "trades": 345, "win_rate": 0.50, "sharpe": 0.03, "final_equity_usd": 953.60, "return_pct": -4.64, "max_dd_usd": 103.04, "mc_net_p5": 1684, "mc_pf_p5": 1.01, "mc_ruin_prob": 0.026, "mc_robust": true,
+              "note": "The ONLY lower TF that is MC-robust, and it still LOSES money on a real $1,000 account (-4.64%). PF 1.09 pips over 4 years does not clear the 230-pip round trip often enough. 210 of 345 signals were untradeable at the 0.01 lot floor. NOT a candidate."},
+      "H1_money":  {"final_equity_usd": 205.88, "return_pct": -79.41, "note": "333 of 372 signals untradeable at min lot; account would be wiped."},
+      "H4_money":  {"final_equity_usd": 570.43, "return_pct": -42.96, "note": "122 of 149 signals untradeable at min lot."},
+      "D1_money":  {"final_equity_usd": 1017.01, "return_pct": 1.70, "max_dd_usd": 14.81, "executed": 8, "skipped": 28,
+              "note": "CRITICAL: on a real $1,000 account the winning D1 config still only makes +1.70% over 13.7 years, because 28 of 36 signals cannot be sized to the 0.01 lot floor without breaching 1% risk. The pips number (+39,802, PF 1.79) is real but it is NOT tradeable at this balance."},
+      "conclusion": "M1 REJECTED, as the def's own warning predicted. PF 0.77, MC ruin 100%, and a $1,000 account loses 25% in 68 days. M5, M15 also rejected. M30 is MC-robust but unprofitable in dollars. The def's standing instruction 'D1 execution is MANDATORY, do not port to lower timeframes' is now backed by a full measured sweep, not just H1/H4."
+    },
+    "august_2026_replay": {
+      "H1_swings": "7 trades, net +1887.3 pips, PF 1.76",
+      "D1_all_families": "0 signals",
+      "warning": "single month, descriptive only; contradicts the multi-year H1 result and is therefore noise",
+      "H1_pdh_pdl": "26 trades, net +2116.6 pips, PF 1.15"
+    },
+    "last_week_2026_09_21_to_27": "0 setups on all three level families. Only level pierce in the week was 0.005 ATR (a graze), correctly rejected by the 0.25 ATR minimum.",
+    "last_sunday_2026_09_27": "0 setups. 24 H1 bars, +0.47% move, no D1 level swept."
+  },
+  "status_detail": {
+    "state": "RESEARCH — not approved for live trading",
+    "required_before_paper": [
+      "month-by-month OOS replay on D1 (not just aggregate multi-year)",
+      "parameter sensitivity around min_sweep_atr 0.10-0.40 and close_pos_min 0.60-0.80",
+      "verification on a second BTC symbol (BTCEUR#) to separate BTC edge from BTCUSD quirk"
+    ],
+    "sample_size_caveat": "36 trades over 13.7 years. Low frequency, justified by D1 context, but the error bars are wide."
+  },
+  "honesty_note": "Mean-reversion-at-level is the same family as the already-rejected V3/V4/V7 on gold. No parameter was chosen to make a backtest look good. The single robust config was found by reporting every family and every sweep definition side by side rather than picking a winner."
+}

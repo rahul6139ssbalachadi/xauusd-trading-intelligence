@@ -1,0 +1,81 @@
+{
+  "name": "XAUUSD_DQR_QUALITY_REVERSAL_V1",
+  "title": "Daily Quality Reversal (DQR) - Liquidity Sweep + D1 Level + Momentum Confirmation",
+  "status": "RESEARCH",
+  "spec_source": "user discretionary brief, STEP 1-3 verbatim; STEP 4+ agent-designed (truncated spec)",
+  "market": "XAUUSD",
+  "broker_symbol": "GOLD.i# (XM demo)",
+  "timeframes": {
+    "level_tf": "D1",
+    "confirmation_tf": "execution TF (H1 or M15)",
+    "execution_tf": ["H1", "M15"],
+    "m5": "NOT used - no measured justification"
+  },
+  "spec_steps": {
+    "step_1_levels": {
+      "families": ["pdh_pdl", "swings", "touches"],
+      "pdh_pdl": "prior D1 high and prior D1 low",
+      "swings": "confirmed D1 swing highs/lows, fractal left=2 right=2 (right bars required => no look-ahead)",
+      "touches": "swing levels with >= 2 historical touches within 0.30*ATR",
+      "variables": ["level_price", "level_type(S/R)", "level_strength(touch count)", "level_age_d1", "distance_from_price_atr"],
+      "availability_rule": "a level defined by D1 bar k is usable only at d1.ts[k] + 1 day, i.e. after that bar has closed",
+      "tolerance": "LEVEL_TOLERANCE_ATR = level_tol_atr (searched: 0.10, 0.25)",
+      "expiry": "max_level_age_d1 (searched: 60, 120 D1 bars)"
+    },
+    "step_2_sweep": {
+      "long": "exec low < level - tolerance AND close > level",
+      "short": "exec high > level + tolerance AND close < level",
+      "variables": ["penetration_atr", "sweep_wick_atr", "candle_range", "close_position", "atr_normalized_sweep"],
+      "definitions_tested": {
+        "any_penetration": 0.0,
+        "clean_penetration": 0.10,
+        "deep_penetration": 0.25
+      },
+      "note": "no single sweep definition is preselected; all three are reported"
+    },
+    "step_3_rejection": {
+      "long": "bullish body AND close_position >= close_pos_min AND close back above level",
+      "short": "bearish body AND (1-close_position) >= close_pos_min AND close back below level",
+      "close_pos_min_searched": [0.5, 0.6, 0.7]
+    },
+    "step_4plus_agent_designed": {
+      "momentum_confirmation": "the bar immediately after the sweep bar is impulsive in the trade direction: |body| >= impulse_atr * ATR and close beyond the sweep bar's far side",
+      "impulse_atr_searched": [0.4, 0.8],
+      "decisive_break_rule": "if any of the last break_lookback closed bars closed decisively beyond the level by break_atr*ATR, the level is treated as BROKEN and the setup is skipped (spec item 6)",
+      "entry": "open of the bar after the confirmation bar closes",
+      "stop": "sweep extreme +/- atr_mult_stop * ATR(confirmation bar)",
+      "target": "fixed R multiple (rr), not the next level",
+      "exit": "stop / target / max_holding_bars, intrabar, closer level wins ties",
+      "cooldown": "no new entry within cooldown_bars of the previous entry; same-level re-use blocked for 10 bars"
+    }
+  },
+  "parameters": {
+    "level_tol_atr": 0.25,
+    "close_pos_min": 0.6,
+    "impulse_atr": 0.4,
+    "sweep_lookback": 1,
+    "break_lookback": 5,
+    "break_atr": 0.5,
+    "max_level_age_d1": 120,
+    "max_level_dist_atr": 3.0,
+    "min_sweep_atr": 0.1,
+    "atr_mult_stop": 1.5,
+    "rr": 2.0,
+    "max_holding_bars": 16,
+    "cooldown_bars": 4
+  },
+  "costs": {
+    "spread_pips": 3.0,
+    "slippage_pips": 1.0,
+    "round_trip_pips": 8.0,
+    "note": "actual per-bar DB spread is used when available"
+  },
+  "anti_lookahead": [
+    "levels gated by known_from = defining D1 bar close",
+    "sweep + confirmation evaluated on closed execution bars only",
+    "entry at the open of the bar AFTER the confirmation bar",
+    "features built on the full series then sliced by TIME, never sliced before building"
+  ],
+  "results": "PENDING - see research/dqr_quality_reversal.py stdout",
+  "honesty_note": "This is a hypothesis under test, not a validated strategy. Mean-reversion-at-level is the same family as the already-rejected V3/V4/V7. No parameter was chosen to make the backtest look good."
+}

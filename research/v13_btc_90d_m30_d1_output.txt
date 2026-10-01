@@ -1,0 +1,190 @@
+==============================================================================
+V13 BTCUSD DQR — LAST WEEK REPLAY — M30 / D1 — $1,000.00
+==============================================================================
+run at (UTC)   : 2026-09-30 08:43
+RR sweep       : 1.5, 2.0, 3.0, 4.0  (only the exit varies)
+stop           : 1.5 x ATR, fixed
+risk/trade     : 1% of equity, min 0.01 lot, step 0.01
+
+D1 level frame : 3930 bars (2013-01-21 .. 2026-09-28)
+usable swing levels at newest bar: 1032
+costs          : round trip 230 pips = $230.00/lot
+
+==============================================================================
+EXECUTION TF M30   window 2026-06-30 09:00:00 .. 2026-09-28 08:30:00   (4318 bars)
+==============================================================================
+  open  59,641.10   high 87,394.45   low 57,806.80   close 83,170.05   move +39.45%
+  raw signal candidates: 42
+    RR 1.5: 34 signals | pips net   2,183.5 PF 1.20 win  53% | $1,000 acct: 14 tradeable, 20 untradeable at 0.01 lot, net $-8.09, final $991.91, maxDD $16.36
+          BUY  2026-07-01 17:30  UNTRADEABLE: needs 0.0058 lot, min is 0.01  stop 1,716 pts
+          BUY  2026-07-06 19:00  UNTRADEABLE: needs 0.0047 lot, min is 0.01  stop 2,126 pts
+          BUY  2026-07-13 18:00  UNTRADEABLE: needs 0.0091 lot, min is 0.01  stop 1,096 pts
+          SELL 2026-07-16 11:00 -> 2026-07-17 03:00 (32 bars)  entry  64,215.70 stop  65,084.11 exit  63,787.40 (end)  0.01 lots  risk $8.68  net $+3.73  equity $1,003.73
+          SELL 2026-07-20 08:30  UNTRADEABLE: needs 0.0096 lot, min is 0.01  stop 1,050 pts
+          SELL 2026-07-21 05:00 -> 2026-07-21 10:30 (11 bars)  entry  65,229.70 stop  66,006.75 exit  66,006.75 (stop)  0.01 lots  risk $7.77  net $-8.32  equity $995.41
+          BUY  2026-07-22 18:30 -> 2026-07-23 10:30 (32 bars)  entry  66,064.70 stop  65,219.23 exit  65,427.10 (end)  0.01 lots  risk $8.45  net $-6.93  equity $988.49
+          SELL 2026-07-23 15:30 -> 2026-07-23 18:00 (5 bars)  entry  65,406.10 stop  65,867.03 exit  64,714.71 (target)  0.02 lots  risk $9.22  net $+12.73  equity $1,001.21
+          SELL 2026-07-24 17:00  UNTRADEABLE: needs 0.0098 lot, min is 0.01  stop 1,026 pts
+          BUY  2026-07-27 02:00 -> 2026-07-27 17:30 (31 bars)  entry  65,403.60 stop  64,640.71 exit  64,640.71 (stop)  0.01 lots  risk $7.63  net $-8.18  equity $993.04
+          SELL 2026-07-28 02:00  UNTRADEABLE: needs 0.0071 lot, min is 0.01  stop 1,405 pts
+          SELL 2026-07-29 23:00  UNTRADEABLE: needs 0.0062 lot, min is 0.01  stop 1,590 pts
+          BUY  2026-07-30 05:00  UNTRADEABLE: needs 0.0093 lot, min is 0.01  stop 1,071 pts
+          SELL 2026-07-31 10:30 -> 2026-07-31 17:00 (13 bars)  entry  63,974.20 stop  64,813.64 exit  62,715.04 (target)  0.01 lots  risk $8.39  net $+12.04  equity $1,005.08
+          BUY  2026-08-03 17:30  UNTRADEABLE: needs 0.0062 lot, min is 0.01  stop 1,623 pts
+          BUY  2026-08-04 18:00 -> 2026-08-05 10:00 (32 bars)  entry  64,117.70 stop  63,272.40 exit  64,063.70 (end)  0.01 lots  risk $8.45  net $-1.09  equity $1,003.99
+          SELL 2026-08-10 18:30 -> 2026-08-11 10:30 (32 bars)  entry  64,380.60 stop  65,165.38 exit  64,056.90 (end)  0.01 lots  risk $7.85  net $+2.69  equity $1,006.67
+          SELL 2026-08-12 16:30 -> 2026-08-13 08:30 (32 bars)  entry  63,953.05 stop  64,723.95 exit  63,865.05 (end)  0.01 lots  risk $7.71  net $+0.48  equity $1,007.15
+          BUY  2026-08-17 18:30 -> 2026-08-18 10:30 (32 bars)  entry  64,041.95 stop  63,326.04 exit  64,193.35 (end)  0.01 lots  risk $7.16  net $+1.11  equity $1,008.27
+          SELL 2026-08-18 16:30 -> 2026-08-18 17:00 (1 bars)  entry  64,063.85 stop  64,472.46 exit  64,472.46 (stop)  0.02 lots  risk $8.17  net $-8.97  equity $999.30
+          SELL 2026-08-24 20:30  UNTRADEABLE: needs 0.0046 lot, min is 0.01  stop 2,196 pts
+          BUY  2026-08-27 17:30  UNTRADEABLE: needs 0.0064 lot, min is 0.01  stop 1,573 pts
+          SELL 2026-08-28 05:30  UNTRADEABLE: needs 0.0047 lot, min is 0.01  stop 2,132 pts
+          BUY  2026-08-28 14:00  UNTRADEABLE: needs 0.0097 lot, min is 0.01  stop 1,026 pts
+          SELL 2026-08-28 19:00  UNTRADEABLE: needs 0.0045 lot, min is 0.01  stop 2,205 pts
+          SELL 2026-08-30 04:30 -> 2026-08-30 15:00 (21 bars)  entry  78,007.65 stop  78,513.29 exit  78,513.29 (stop)  0.01 lots  risk $5.06  net $-5.46  equity $993.84
+          SELL 2026-09-01 18:30  UNTRADEABLE: needs 0.0095 lot, min is 0.01  stop 1,048 pts
+          BUY  2026-09-03 18:00  UNTRADEABLE: needs 0.0040 lot, min is 0.01  stop 2,483 pts
+          SELL 2026-09-04 01:30  UNTRADEABLE: needs 0.0054 lot, min is 0.01  stop 1,836 pts
+          SELL 2026-09-07 17:30 -> 2026-09-08 09:30 (32 bars)  entry  79,045.55 stop  79,941.99 exit  78,312.65 (end)  0.01 lots  risk $8.96  net $+6.93  equity $1,000.77
+          SELL 2026-09-09 13:00  UNTRADEABLE: needs 0.0086 lot, min is 0.01  stop 1,164 pts
+          BUY  2026-09-11 07:30 -> 2026-09-11 15:30 (16 bars)  entry  77,166.15 stop  76,319.92 exit  76,319.92 (stop)  0.01 lots  risk $8.46  net $-8.86  equity $991.91
+          BUY  2026-09-14 05:30  UNTRADEABLE: needs 0.0075 lot, min is 0.01  stop 1,319 pts
+          BUY  2026-09-17 15:30  UNTRADEABLE: needs 0.0081 lot, min is 0.01  stop 1,229 pts
+    RR 2.0: 34 signals | pips net   1,436.3 PF 1.13 win  53% | $1,000 acct: 14 tradeable, 20 untradeable at 0.01 lot, net $-21.44, final $978.56, maxDD $25.18
+          BUY  2026-07-01 17:30  UNTRADEABLE: needs 0.0058 lot, min is 0.01  stop 1,716 pts
+          BUY  2026-07-06 19:00  UNTRADEABLE: needs 0.0047 lot, min is 0.01  stop 2,126 pts
+          BUY  2026-07-13 18:00  UNTRADEABLE: needs 0.0091 lot, min is 0.01  stop 1,096 pts
+          SELL 2026-07-16 11:00 -> 2026-07-17 03:00 (32 bars)  entry  64,215.70 stop  65,084.11 exit  63,787.40 (end)  0.01 lots  risk $8.68  net $+3.73  equity $1,003.73
+          SELL 2026-07-20 08:30  UNTRADEABLE: needs 0.0096 lot, min is 0.01  stop 1,050 pts
+          SELL 2026-07-21 05:00 -> 2026-07-21 10:30 (11 bars)  entry  65,229.70 stop  66,006.75 exit  66,006.75 (stop)  0.01 lots  risk $7.77  net $-8.32  equity $995.41
+          BUY  2026-07-22 18:30 -> 2026-07-23 10:30 (32 bars)  entry  66,064.70 stop  65,219.23 exit  65,427.10 (end)  0.01 lots  risk $8.45  net $-6.93  equity $988.49
+          SELL 2026-07-23 15:30 -> 2026-07-24 07:30 (32 bars)  entry  65,406.10 stop  65,867.03 exit  65,302.50 (end)  0.02 lots  risk $9.22  net $+0.97  equity $989.46
+          SELL 2026-07-24 17:00  UNTRADEABLE: needs 0.0096 lot, min is 0.01  stop 1,026 pts
+          BUY  2026-07-27 02:00 -> 2026-07-27 17:30 (31 bars)  entry  65,403.60 stop  64,640.71 exit  64,640.71 (stop)  0.01 lots  risk $7.63  net $-8.18  equity $981.28
+          SELL 2026-07-28 02:00  UNTRADEABLE: needs 0.0070 lot, min is 0.01  stop 1,405 pts
+          SELL 2026-07-29 23:00  UNTRADEABLE: needs 0.0062 lot, min is 0.01  stop 1,590 pts
+          BUY  2026-07-30 05:00  UNTRADEABLE: needs 0.0092 lot, min is 0.01  stop 1,071 pts
+          SELL 2026-07-31 10:30 -> 2026-08-01 02:30 (32 bars)  entry  63,974.20 stop  64,813.64 exit  62,874.50 (end)  0.01 lots  risk $8.39  net $+10.45  equity $991.73
+          BUY  2026-08-03 17:30  UNTRADEABLE: needs 0.0061 lot, min is 0.01  stop 1,623 pts
+          BUY  2026-08-04 18:00 -> 2026-08-05 10:00 (32 bars)  entry  64,117.70 stop  63,272.40 exit  64,063.70 (end)  0.01 lots  risk $8.45  net $-1.09  equity $990.64
+          SELL 2026-08-10 18:30 -> 2026-08-11 10:30 (32 bars)  entry  64,380.60 stop  65,165.38 exit  64,056.90 (end)  0.01 lots  risk $7.85  net $+2.69  equity $993.32
+          SELL 2026-08-12 16:30 -> 2026-08-13 08:30 (32 bars)  entry  63,953.05 stop  64,723.95 exit  63,865.05 (end)  0.01 lots  risk $7.71  net $+0.48  equity $993.80
+          BUY  2026-08-17 18:30 -> 2026-08-18 10:30 (32 bars)  entry  64,041.95 stop  63,326.04 exit  64,193.35 (end)  0.01 lots  risk $7.16  net $+1.11  equity $994.92
+          SELL 2026-08-18 16:30 -> 2026-08-18 17:00 (1 bars)  entry  64,063.85 stop  64,472.46 exit  64,472.46 (stop)  0.02 lots  risk $8.17  net $-8.97  equity $985.95
+          SELL 2026-08-24 20:30  UNTRADEABLE: needs 0.0045 lot, min is 0.01  stop 2,196 pts
+          BUY  2026-08-27 17:30  UNTRADEABLE: needs 0.0063 lot, min is 0.01  stop 1,573 pts
+          SELL 2026-08-28 05:30  UNTRADEABLE: needs 0.0046 lot, min is 0.01  stop 2,132 pts
+          BUY  2026-08-28 14:00  UNTRADEABLE: needs 0.0096 lot, min is 0.01  stop 1,026 pts
+          SELL 2026-08-28 19:00  UNTRADEABLE: needs 0.0045 lot, min is 0.01  stop 2,205 pts
+          SELL 2026-08-30 04:30 -> 2026-08-30 15:00 (21 bars)  entry  78,007.65 stop  78,513.29 exit  78,513.29 (stop)  0.01 lots  risk $5.06  net $-5.46  equity $980.49
+          SELL 2026-09-01 18:30  UNTRADEABLE: needs 0.0094 lot, min is 0.01  stop 1,048 pts
+          BUY  2026-09-03 18:00  UNTRADEABLE: needs 0.0039 lot, min is 0.01  stop 2,483 pts
+          SELL 2026-09-04 01:30  UNTRADEABLE: needs 0.0053 lot, min is 0.01  stop 1,836 pts
+          SELL 2026-09-07 17:30 -> 2026-09-08 09:30 (32 bars)  entry  79,045.55 stop  79,941.99 exit  78,312.65 (end)  0.01 lots  risk $8.96  net $+6.93  equity $987.42
+          SELL 2026-09-09 13:00  UNTRADEABLE: needs 0.0085 lot, min is 0.01  stop 1,164 pts
+          BUY  2026-09-11 07:30 -> 2026-09-11 15:30 (16 bars)  entry  77,166.15 stop  76,319.92 exit  76,319.92 (stop)  0.01 lots  risk $8.46  net $-8.86  equity $978.56
+          BUY  2026-09-14 05:30  UNTRADEABLE: needs 0.0074 lot, min is 0.01  stop 1,319 pts
+          BUY  2026-09-17 15:30  UNTRADEABLE: needs 0.0080 lot, min is 0.01  stop 1,229 pts
+    RR 3.0: 34 signals | pips net   1,436.3 PF 1.13 win  53% | $1,000 acct: 14 tradeable, 20 untradeable at 0.01 lot, net $-21.44, final $978.56, maxDD $25.18
+          BUY  2026-07-01 17:30  UNTRADEABLE: needs 0.0058 lot, min is 0.01  stop 1,716 pts
+          BUY  2026-07-06 19:00  UNTRADEABLE: needs 0.0047 lot, min is 0.01  stop 2,126 pts
+          BUY  2026-07-13 18:00  UNTRADEABLE: needs 0.0091 lot, min is 0.01  stop 1,096 pts
+          SELL 2026-07-16 11:00 -> 2026-07-17 03:00 (32 bars)  entry  64,215.70 stop  65,084.11 exit  63,787.40 (end)  0.01 lots  risk $8.68  net $+3.73  equity $1,003.73
+          SELL 2026-07-20 08:30  UNTRADEABLE: needs 0.0096 lot, min is 0.01  stop 1,050 pts
+          SELL 2026-07-21 05:00 -> 2026-07-21 10:30 (11 bars)  entry  65,229.70 stop  66,006.75 exit  66,006.75 (stop)  0.01 lots  risk $7.77  net $-8.32  equity $995.41
+          BUY  2026-07-22 18:30 -> 2026-07-23 10:30 (32 bars)  entry  66,064.70 stop  65,219.23 exit  65,427.10 (end)  0.01 lots  risk $8.45  net $-6.93  equity $988.49
+          SELL 2026-07-23 15:30 -> 2026-07-24 07:30 (32 bars)  entry  65,406.10 stop  65,867.03 exit  65,302.50 (end)  0.02 lots  risk $9.22  net $+0.97  equity $989.46
+          SELL 2026-07-24 17:00  UNTRADEABLE: needs 0.0096 lot, min is 0.01  stop 1,026 pts
+          BUY  2026-07-27 02:00 -> 2026-07-27 17:30 (31 bars)  entry  65,403.60 stop  64,640.71 exit  64,640.71 (stop)  0.01 lots  risk $7.63  net $-8.18  equity $981.28
+          SELL 2026-07-28 02:00  UNTRADEABLE: needs 0.0070 lot, min is 0.01  stop 1,405 pts
+          SELL 2026-07-29 23:00  UNTRADEABLE: needs 0.0062 lot, min is 0.01  stop 1,590 pts
+          BUY  2026-07-30 05:00  UNTRADEABLE: needs 0.0092 lot, min is 0.01  stop 1,071 pts
+          SELL 2026-07-31 10:30 -> 2026-08-01 02:30 (32 bars)  entry  63,974.20 stop  64,813.64 exit  62,874.50 (end)  0.01 lots  risk $8.39  net $+10.45  equity $991.73
+          BUY  2026-08-03 17:30  UNTRADEABLE: needs 0.0061 lot, min is 0.01  stop 1,623 pts
+          BUY  2026-08-04 18:00 -> 2026-08-05 10:00 (32 bars)  entry  64,117.70 stop  63,272.40 exit  64,063.70 (end)  0.01 lots  risk $8.45  net $-1.09  equity $990.64
+          SELL 2026-08-10 18:30 -> 2026-08-11 10:30 (32 bars)  entry  64,380.60 stop  65,165.38 exit  64,056.90 (end)  0.01 lots  risk $7.85  net $+2.69  equity $993.32
+          SELL 2026-08-12 16:30 -> 2026-08-13 08:30 (32 bars)  entry  63,953.05 stop  64,723.95 exit  63,865.05 (end)  0.01 lots  risk $7.71  net $+0.48  equity $993.80
+          BUY  2026-08-17 18:30 -> 2026-08-18 10:30 (32 bars)  entry  64,041.95 stop  63,326.04 exit  64,193.35 (end)  0.01 lots  risk $7.16  net $+1.11  equity $994.92
+          SELL 2026-08-18 16:30 -> 2026-08-18 17:00 (1 bars)  entry  64,063.85 stop  64,472.46 exit  64,472.46 (stop)  0.02 lots  risk $8.17  net $-8.97  equity $985.95
+          SELL 2026-08-24 20:30  UNTRADEABLE: needs 0.0045 lot, min is 0.01  stop 2,196 pts
+          BUY  2026-08-27 17:30  UNTRADEABLE: needs 0.0063 lot, min is 0.01  stop 1,573 pts
+          SELL 2026-08-28 05:30  UNTRADEABLE: needs 0.0046 lot, min is 0.01  stop 2,132 pts
+          BUY  2026-08-28 14:00  UNTRADEABLE: needs 0.0096 lot, min is 0.01  stop 1,026 pts
+          SELL 2026-08-28 19:00  UNTRADEABLE: needs 0.0045 lot, min is 0.01  stop 2,205 pts
+          SELL 2026-08-30 04:30 -> 2026-08-30 15:00 (21 bars)  entry  78,007.65 stop  78,513.29 exit  78,513.29 (stop)  0.01 lots  risk $5.06  net $-5.46  equity $980.49
+          SELL 2026-09-01 18:30  UNTRADEABLE: needs 0.0094 lot, min is 0.01  stop 1,048 pts
+          BUY  2026-09-03 18:00  UNTRADEABLE: needs 0.0039 lot, min is 0.01  stop 2,483 pts
+          SELL 2026-09-04 01:30  UNTRADEABLE: needs 0.0053 lot, min is 0.01  stop 1,836 pts
+          SELL 2026-09-07 17:30 -> 2026-09-08 09:30 (32 bars)  entry  79,045.55 stop  79,941.99 exit  78,312.65 (end)  0.01 lots  risk $8.96  net $+6.93  equity $987.42
+          SELL 2026-09-09 13:00  UNTRADEABLE: needs 0.0085 lot, min is 0.01  stop 1,164 pts
+          BUY  2026-09-11 07:30 -> 2026-09-11 15:30 (16 bars)  entry  77,166.15 stop  76,319.92 exit  76,319.92 (stop)  0.01 lots  risk $8.46  net $-8.86  equity $978.56
+          BUY  2026-09-14 05:30  UNTRADEABLE: needs 0.0074 lot, min is 0.01  stop 1,319 pts
+          BUY  2026-09-17 15:30  UNTRADEABLE: needs 0.0080 lot, min is 0.01  stop 1,229 pts
+    RR 4.0: 34 signals | pips net   1,436.3 PF 1.13 win  53% | $1,000 acct: 14 tradeable, 20 untradeable at 0.01 lot, net $-21.44, final $978.56, maxDD $25.18
+          BUY  2026-07-01 17:30  UNTRADEABLE: needs 0.0058 lot, min is 0.01  stop 1,716 pts
+          BUY  2026-07-06 19:00  UNTRADEABLE: needs 0.0047 lot, min is 0.01  stop 2,126 pts
+          BUY  2026-07-13 18:00  UNTRADEABLE: needs 0.0091 lot, min is 0.01  stop 1,096 pts
+          SELL 2026-07-16 11:00 -> 2026-07-17 03:00 (32 bars)  entry  64,215.70 stop  65,084.11 exit  63,787.40 (end)  0.01 lots  risk $8.68  net $+3.73  equity $1,003.73
+          SELL 2026-07-20 08:30  UNTRADEABLE: needs 0.0096 lot, min is 0.01  stop 1,050 pts
+          SELL 2026-07-21 05:00 -> 2026-07-21 10:30 (11 bars)  entry  65,229.70 stop  66,006.75 exit  66,006.75 (stop)  0.01 lots  risk $7.77  net $-8.32  equity $995.41
+          BUY  2026-07-22 18:30 -> 2026-07-23 10:30 (32 bars)  entry  66,064.70 stop  65,219.23 exit  65,427.10 (end)  0.01 lots  risk $8.45  net $-6.93  equity $988.49
+          SELL 2026-07-23 15:30 -> 2026-07-24 07:30 (32 bars)  entry  65,406.10 stop  65,867.03 exit  65,302.50 (end)  0.02 lots  risk $9.22  net $+0.97  equity $989.46
+          SELL 2026-07-24 17:00  UNTRADEABLE: needs 0.0096 lot, min is 0.01  stop 1,026 pts
+          BUY  2026-07-27 02:00 -> 2026-07-27 17:30 (31 bars)  entry  65,403.60 stop  64,640.71 exit  64,640.71 (stop)  0.01 lots  risk $7.63  net $-8.18  equity $981.28
+          SELL 2026-07-28 02:00  UNTRADEABLE: needs 0.0070 lot, min is 0.01  stop 1,405 pts
+          SELL 2026-07-29 23:00  UNTRADEABLE: needs 0.0062 lot, min is 0.01  stop 1,590 pts
+          BUY  2026-07-30 05:00  UNTRADEABLE: needs 0.0092 lot, min is 0.01  stop 1,071 pts
+          SELL 2026-07-31 10:30 -> 2026-08-01 02:30 (32 bars)  entry  63,974.20 stop  64,813.64 exit  62,874.50 (end)  0.01 lots  risk $8.39  net $+10.45  equity $991.73
+          BUY  2026-08-03 17:30  UNTRADEABLE: needs 0.0061 lot, min is 0.01  stop 1,623 pts
+          BUY  2026-08-04 18:00 -> 2026-08-05 10:00 (32 bars)  entry  64,117.70 stop  63,272.40 exit  64,063.70 (end)  0.01 lots  risk $8.45  net $-1.09  equity $990.64
+          SELL 2026-08-10 18:30 -> 2026-08-11 10:30 (32 bars)  entry  64,380.60 stop  65,165.38 exit  64,056.90 (end)  0.01 lots  risk $7.85  net $+2.69  equity $993.32
+          SELL 2026-08-12 16:30 -> 2026-08-13 08:30 (32 bars)  entry  63,953.05 stop  64,723.95 exit  63,865.05 (end)  0.01 lots  risk $7.71  net $+0.48  equity $993.80
+          BUY  2026-08-17 18:30 -> 2026-08-18 10:30 (32 bars)  entry  64,041.95 stop  63,326.04 exit  64,193.35 (end)  0.01 lots  risk $7.16  net $+1.11  equity $994.92
+          SELL 2026-08-18 16:30 -> 2026-08-18 17:00 (1 bars)  entry  64,063.85 stop  64,472.46 exit  64,472.46 (stop)  0.02 lots  risk $8.17  net $-8.97  equity $985.95
+          SELL 2026-08-24 20:30  UNTRADEABLE: needs 0.0045 lot, min is 0.01  stop 2,196 pts
+          BUY  2026-08-27 17:30  UNTRADEABLE: needs 0.0063 lot, min is 0.01  stop 1,573 pts
+          SELL 2026-08-28 05:30  UNTRADEABLE: needs 0.0046 lot, min is 0.01  stop 2,132 pts
+          BUY  2026-08-28 14:00  UNTRADEABLE: needs 0.0096 lot, min is 0.01  stop 1,026 pts
+          SELL 2026-08-28 19:00  UNTRADEABLE: needs 0.0045 lot, min is 0.01  stop 2,205 pts
+          SELL 2026-08-30 04:30 -> 2026-08-30 15:00 (21 bars)  entry  78,007.65 stop  78,513.29 exit  78,513.29 (stop)  0.01 lots  risk $5.06  net $-5.46  equity $980.49
+          SELL 2026-09-01 18:30  UNTRADEABLE: needs 0.0094 lot, min is 0.01  stop 1,048 pts
+          BUY  2026-09-03 18:00  UNTRADEABLE: needs 0.0039 lot, min is 0.01  stop 2,483 pts
+          SELL 2026-09-04 01:30  UNTRADEABLE: needs 0.0053 lot, min is 0.01  stop 1,836 pts
+          SELL 2026-09-07 17:30 -> 2026-09-08 09:30 (32 bars)  entry  79,045.55 stop  79,941.99 exit  78,312.65 (end)  0.01 lots  risk $8.96  net $+6.93  equity $987.42
+          SELL 2026-09-09 13:00  UNTRADEABLE: needs 0.0085 lot, min is 0.01  stop 1,164 pts
+          BUY  2026-09-11 07:30 -> 2026-09-11 15:30 (16 bars)  entry  77,166.15 stop  76,319.92 exit  76,319.92 (stop)  0.01 lots  risk $8.46  net $-8.86  equity $978.56
+          BUY  2026-09-14 05:30  UNTRADEABLE: needs 0.0074 lot, min is 0.01  stop 1,319 pts
+          BUY  2026-09-17 15:30  UNTRADEABLE: needs 0.0080 lot, min is 0.01  stop 1,229 pts
+
+==============================================================================
+EXECUTION TF D1   window 2026-07-01 00:00:00 .. 2026-09-28 00:00:00   (90 bars)
+==============================================================================
+  open  58,721.70   high 87,394.45   low 57,806.80   close 82,965.65   move +41.29%
+  raw signal candidates: 1
+    RR 1.5:  1 signals | pips net   6,684.9 PF inf win 100% | $1,000 acct: 0 tradeable, 1 untradeable at 0.01 lot, net $+0.00, final $1,000.00, maxDD $0.00
+          BUY  2026-08-22 00:00  UNTRADEABLE: needs 0.0008 lot, min is 0.01  stop 11,767 pts
+    RR 2.0:  1 signals | pips net   6,684.9 PF inf win 100% | $1,000 acct: 0 tradeable, 1 untradeable at 0.01 lot, net $+0.00, final $1,000.00, maxDD $0.00
+          BUY  2026-08-22 00:00  UNTRADEABLE: needs 0.0008 lot, min is 0.01  stop 11,767 pts
+    RR 3.0:  1 signals | pips net   6,684.9 PF inf win 100% | $1,000 acct: 0 tradeable, 1 untradeable at 0.01 lot, net $+0.00, final $1,000.00, maxDD $0.00
+          BUY  2026-08-22 00:00  UNTRADEABLE: needs 0.0008 lot, min is 0.01  stop 11,767 pts
+    RR 4.0:  1 signals | pips net   6,684.9 PF inf win 100% | $1,000 acct: 0 tradeable, 1 untradeable at 0.01 lot, net $+0.00, final $1,000.00, maxDD $0.00
+          BUY  2026-08-22 00:00  UNTRADEABLE: needs 0.0008 lot, min is 0.01  stop 11,767 pts
+
+==============================================================================
+SUMMARY — last week, BTCUSD, $1,000.00, RR sweep
+==============================================================================
+TF       RR  signals     PF    net pips  tradeable  untradeable    final $
+M30     1.5       34   1.20     2,183.5         14           20     991.91
+M30     2.0       34   1.13     1,436.3         14           20     978.56
+M30     3.0       34   1.13     1,436.3         14           20     978.56
+M30     4.0       34   1.13     1,436.3         14           20     978.56
+D1      1.5        1    inf     6,684.9          0            1   1,000.00
+D1      2.0        1    inf     6,684.9          0            1   1,000.00
+D1      3.0        1    inf     6,684.9          0            1   1,000.00
+D1      4.0        1    inf     6,684.9          0            1   1,000.00
+
+NOTE: a positive week is a DESCRIPTIVE REPLAY of 7 days on a
+low-frequency strategy, not a validation. V13 remains RESEARCH and
+is NOT in execution/approved.json.
+
+Read-only. No MT5 writes, no orders, no fabricated numbers.

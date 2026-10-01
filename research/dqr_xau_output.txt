@@ -1,0 +1,22 @@
+==============================================================================
+DQR — DAILY QUALITY REVERSAL (liquidity sweep + D1 level + momentum)
+symbol=XAUUSD  pip=0.1  fallback_spread=3.0pips  fallback_slippage=1.0pips
+==============================================================================
+  entry: AGENT_DESIGNED: entry at OPEN of the bar following the confirmation bar (closest possible no-look-ahead entry).
+  stop: AGENT_DESIGNED: stop beyond the sweep extreme by atr_mult_stop x execution-TF ATR, so the stop sits where the sweep thesis is provably wrong rather than at an arbitrary distance.
+  target: AGENT_DESIGNED: fixed R multiple (rr), NOT the next level. Level-based targets are an obvious variant to add later.
+  exit: AGENT_DESIGNED: stop / target / max_holding_bars, checked intrabar, closer level wins ties (pessimistic on same-bar ties).
+  confirmation: AGENT_DESIGNED: an impulsive bar in the trade direction immediately after the sweep bar (body >= impulse_atr x ATR and closing past the sweep bar's opposite extreme).
+  decisive_break: AGENT_DESIGNED: if any of the last break_lookback closed execution bars closed decisively beyond the level by break_atr x ATR, the level is considered BROKEN and the setup is skipped (spec item 6: reassess, not trade).
+  cooldown: AGENT_DESIGNED: no new entry within cooldown_bars of the previous entry; overlapping sweep clusters are one idea.
+  level_age: AGENT_DESIGNED: a level expires after max_level_age_d1 D1 bars. Older untested levels are noise, not structure.
+
+D1 level TF: 2577 bars (2016-09-02 .. 2026-08-28)
+==============================================================================
+DQR RESEARCH :: execution TF = H1 (2016-09-01 .. 2026-08-28, 59313 bars)
+==============================================================================
+split by TIME: TRAIN 2016-09-01..2022-08-23 | VAL 2022-08-23..2024-08-23 | TEST 2024-08-23..2026-08-28
+  levels[   pdh_pdl] =  5150 (support 2575, resistance 2575)  -> Prior D1 high / prior D1 low only (fewest parameters)
+  levels[    swings] =   688 (support 342, resistance 346)  -> Confirmed D1 swing highs/lows (left/right fractal, right bars required -> no look-ahead)
+  levels[   touches] =   688 (support 342, resistance 346)  -> D1 swing levels; min_touches is a SIGNAL parameter applied dynamically at signal time (levels are re-tested over time), tried at 1, 2, 3
+

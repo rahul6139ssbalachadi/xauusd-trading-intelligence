@@ -1,0 +1,86 @@
+==============================================================================
+V13 BTCUSD DQR — LAST WEEK REPLAY — M30 / D1 — $1,000.00
+==============================================================================
+run at (UTC)   : 2026-09-30 08:42
+RR sweep       : 1.5, 2.0, 3.0, 4.0  (only the exit varies)
+stop           : 1.5 x ATR, fixed
+risk/trade     : 1% of equity, min 0.01 lot, step 0.01
+
+D1 level frame : 3930 bars (2013-01-21 .. 2026-09-28)
+usable swing levels at newest bar: 1032
+costs          : round trip 230 pips = $230.00/lot
+
+==============================================================================
+EXECUTION TF M30   window 2026-09-21 09:00:00 .. 2026-09-28 08:30:00   (336 bars)
+==============================================================================
+  open  81,559.70   high 87,394.45   low 81,394.55   close 83,170.05   move +1.97%
+  raw signal candidates: 0
+    near-miss  : level/bar pairs evaluated in range: 890
+    blocking gate counts:
+         394x  no close back beyond level
+         265x  body bullish required
+          92x  body bearish required
+          40x  sweep+rejection OK, impulse bar missing
+           7x  sweep 0.04 < 0.25 ATR
+           5x  sweep 0.24 < 0.25 ATR
+           5x  sweep 0.15 < 0.25 ATR
+           4x  sweep 0.03 < 0.25 ATR
+           4x  sweep 0.16 < 0.25 ATR
+           4x  sweep 0.25 < 0.25 ATR
+           4x  sweep 0.19 < 0.25 ATR
+           4x  sweep 0.17 < 0.25 ATR
+           3x  sweep 0.01 < 0.25 ATR
+           3x  sweep 0.20 < 0.25 ATR
+           3x  close_pos 0.62 < 0.7
+           3x  sweep 0.12 < 0.25 ATR
+           3x  sweep 0.05 < 0.25 ATR
+           3x  sweep 0.14 < 0.25 ATR
+           3x  sweep 0.22 < 0.25 ATR
+           3x  sweep 0.09 < 0.25 ATR
+           3x  sweep 0.10 < 0.25 ATR
+           3x  sweep 0.11 < 0.25 ATR
+           3x  close_pos 0.68 < 0.7
+           3x  sweep 0.00 < 0.25 ATR
+           2x  close_pos 0.70 < 0.7
+           2x  sweep 0.18 < 0.25 ATR
+           2x  sweep 0.06 < 0.25 ATR
+           2x  sweep 0.08 < 0.25 ATR
+           2x  sweep 0.07 < 0.25 ATR
+           2x  close_pos 0.64 < 0.7
+           2x  sweep 0.02 < 0.25 ATR
+           1x  close_pos 0.59 < 0.7
+           1x  close_pos 0.57 < 0.7
+           1x  close_pos 0.60 < 0.7
+           1x  sweep 0.21 < 0.25 ATR
+           1x  sweep 0.13 < 0.25 ATR
+           1x  close_pos 0.41 < 0.7
+           1x  close_pos 0.55 < 0.7
+           1x  close_pos 0.29 < 0.7
+           1x  close_pos 0.66 < 0.7
+           1x  close_pos 0.51 < 0.7
+           1x  close_pos 0.34 < 0.7
+           1x  sweep 0.23 < 0.25 ATR
+    deepest 3 near-misses (shorthand = ATR short of the 0.25 sweep gate):
+        2026-09-23 17:00  SELL @ level 82,829.00  penetrated 7.213 ATR  short by -6.963  (no close back beyond level)
+        2026-09-24 17:30  SELL @ level 82,272.65  penetrated 5.588 ATR  short by -5.338  (no close back beyond level)
+        2026-09-24 11:00  SELL @ level 82,829.00  penetrated 5.193 ATR  short by -4.943  (no close back beyond level)
+
+-- D1: only 7 bars in window, skipped
+
+==============================================================================
+SUMMARY — last week, BTCUSD, $1,000.00, RR sweep
+==============================================================================
+TF       RR  signals     PF    net pips  tradeable  untradeable    final $
+M30       -        0        no signals
+D1        -        0        no signals
+
+VERDICT: no DQR setup satisfied the frozen gates on either M30 or
+D1 in this window. The strategy is built to be flat when no D1
+level is swept, so an empty week is the designed behaviour, not a
+bug. It also means R:R cannot help: the RR sweep only changes the
+exit of trades that never opened.
+
+To widen the sample, replay a longer window, e.g.
+  ./.venv/Scripts/python.exe research/v13_btc_lastweek_m30_d1.py --days 90
+
+Read-only. No MT5 writes, no orders, no fabricated numbers.

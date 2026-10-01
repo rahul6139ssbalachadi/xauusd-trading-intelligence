@@ -1,0 +1,140 @@
+==============================================================================
+DQR — DAILY QUALITY REVERSAL (liquidity sweep + D1 level + momentum)
+symbol=BTCUSD  pip=1.0  fallback_spread=225.0pips  fallback_slippage=5.0pips
+==============================================================================
+  entry: AGENT_DESIGNED: entry at OPEN of the bar following the confirmation bar (closest possible no-look-ahead entry).
+  stop: AGENT_DESIGNED: stop beyond the sweep extreme by atr_mult_stop x execution-TF ATR, so the stop sits where the sweep thesis is provably wrong rather than at an arbitrary distance.
+  target: AGENT_DESIGNED: fixed R multiple (rr), NOT the next level. Level-based targets are an obvious variant to add later.
+  exit: AGENT_DESIGNED: stop / target / max_holding_bars, checked intrabar, closer level wins ties (pessimistic on same-bar ties).
+  confirmation: AGENT_DESIGNED: an impulsive bar in the trade direction immediately after the sweep bar (body >= impulse_atr x ATR and closing past the sweep bar's opposite extreme).
+  decisive_break: AGENT_DESIGNED: if any of the last break_lookback closed execution bars closed decisively beyond the level by break_atr x ATR, the level is considered BROKEN and the setup is skipped (spec item 6: reassess, not trade).
+  cooldown: AGENT_DESIGNED: no new entry within cooldown_bars of the previous entry; overlapping sweep clusters are one idea.
+  level_age: AGENT_DESIGNED: a level expires after max_level_age_d1 D1 bars. Older untested levels are noise, not structure.
+
+D1 level TF: 3930 bars (2013-01-21 .. 2026-09-28)
+==============================================================================
+DQR RESEARCH :: execution TF = D1 (2013-01-21 .. 2026-09-28, 3930 bars)
+==============================================================================
+split by TIME: TRAIN 2013-01-21..2022-06-09 | VAL 2022-06-10..2024-08-03 | TEST 2024-08-04..2026-09-28
+  levels[   pdh_pdl] =  7856 (support 3928, resistance 3928)  -> Prior D1 high / prior D1 low only (fewest parameters)
+  levels[    swings] =  1032 (support 511, resistance 521)  -> Confirmed D1 swing highs/lows (left/right fractal, right bars required -> no look-ahead)
+  levels[   touches] =  1032 (support 511, resistance 521)  -> D1 swing levels; min_touches is a SIGNAL parameter applied dynamically at signal time (levels are re-tested over time), tried at 1, 2, 3
+
+--- pdh_pdl/any_penetration: max TRAIN signals across grid = 656
+    TRAIN net= 16797.7 PF= 1.33 t= 48 tol=0.1 cp=0.7 imp=0.8 lb=3 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 3.0, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net= 16797.7 PF= 1.33 t= 48 tol=0.1 cp=0.7 imp=0.8 lb=3 brk=5 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 3.0, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net=  6867.3 PF= 1.14 t= 46 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 2.0, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    VAL  net= -12094.9 PF= 0.81 t=  25 win%=  44 sharpe=-0.08 maxDD= 37825.3
+    WF   windows=2 IS_mean=-16596.9 OOS_mean=  3382.1 deg=  1.20 OOS_trades=59
+    FULL net=   5275.3 PF= 1.02 t=  95 win%=  44 sharpe= 0.01 maxDD= 96001.5
+    MC   net_mean=4860.6 net_p5=-25873.5 PF_p5=0.87 ruin=40.1% robust=False
+    split: BUY=52 SELL=43
+
+--- pdh_pdl/clean_penetration: max TRAIN signals across grid = 656
+    TRAIN net= 16797.7 PF= 1.33 t= 48 tol=0.1 cp=0.7 imp=0.8 lb=3 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 3.0, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net= 16797.7 PF= 1.33 t= 48 tol=0.1 cp=0.7 imp=0.8 lb=3 brk=5 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 3.0, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net=  6867.3 PF= 1.14 t= 46 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 2.0, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    VAL  net= -12094.9 PF= 0.81 t=  25 win%=  44 sharpe=-0.08 maxDD= 37825.3
+    WF   windows=2 IS_mean=-16596.9 OOS_mean=  3382.1 deg=  1.20 OOS_trades=59
+    FULL net=   5275.3 PF= 1.02 t=  95 win%=  44 sharpe= 0.01 maxDD= 96001.5
+    MC   net_mean=4860.6 net_p5=-25873.5 PF_p5=0.87 ruin=40.1% robust=False
+    split: BUY=52 SELL=43
+
+--- pdh_pdl/deep_penetration: max TRAIN signals across grid = 484
+    TRAIN net=  4023.0 PF= 1.10 t= 36 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 2.0, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net=  4023.0 PF= 1.10 t= 36 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=5 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 2.0, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net=  4023.0 PF= 1.10 t= 36 tol=0.1 cp=0.7 imp=0.8 lb=3 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 2.0, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    VAL  net= -14068.5 PF= 0.73 t=  21 win%=  48 sharpe=-0.12 maxDD= 37825.3
+    WF   windows=2 IS_mean=-17728.7 OOS_mean=  1009.9 deg=  1.06 OOS_trades=52
+    FULL net=   3141.0 PF= 1.02 t=  78 win%=  45 sharpe= 0.01 maxDD= 67898.7
+    MC   net_mean=2467.4 net_p5=-26712.4 PF_p5=0.85 ruin=42.6% robust=False
+    split: BUY=43 SELL=35
+
+--- swings/any_penetration: max TRAIN signals across grid = 77
+    TRAIN net= 12617.0 PF= 1.74 t= 18 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.0, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net= 12617.0 PF= 1.74 t= 18 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=5 age=120 tou=1 | exit {'atr_mult_stop': 1.0, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net= 12617.0 PF= 1.74 t= 18 tol=0.1 cp=0.7 imp=0.8 lb=3 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.0, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    VAL  net=    645.0 PF= 1.03 t=  14 win%=  57 sharpe= 0.01 maxDD= 21549.5
+    WF   windows=2 IS_mean= 10928.2 OOS_mean= 14902.3 deg= -0.36 OOS_trades=24
+    FULL net=  27923.8 PF= 1.36 t=  43 win%=  58 sharpe= 0.11 maxDD= 42627.2
+    MC   net_mean=25508.0 net_p5=5972.6 PF_p5=1.08 ruin=1.6% robust=True
+    split: BUY=25 SELL=18
+
+--- swings/clean_penetration: max TRAIN signals across grid = 77
+    TRAIN net= 12617.0 PF= 1.74 t= 18 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.0, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net= 12617.0 PF= 1.74 t= 18 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=5 age=120 tou=1 | exit {'atr_mult_stop': 1.0, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net= 12617.0 PF= 1.74 t= 18 tol=0.1 cp=0.7 imp=0.8 lb=3 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.0, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    VAL  net=    645.0 PF= 1.03 t=  14 win%=  57 sharpe= 0.01 maxDD= 21549.5
+    WF   windows=2 IS_mean= 10928.2 OOS_mean= 14902.3 deg= -0.36 OOS_trades=24
+    FULL net=  27923.8 PF= 1.36 t=  43 win%=  58 sharpe= 0.11 maxDD= 42627.2
+    MC   net_mean=25508.0 net_p5=5972.6 PF_p5=1.08 ruin=1.6% robust=True
+    split: BUY=25 SELL=18
+
+--- swings/deep_penetration: max TRAIN signals across grid = 53
+    TRAIN net=  3465.4 PF= 1.28 t= 15 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net=  3465.4 PF= 1.28 t= 15 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=5 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net=  3465.4 PF= 1.28 t= 15 tol=0.1 cp=0.7 imp=0.8 lb=3 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    VAL  net=  20290.7 PF= 3.51 t=  12 win%=  67 sharpe= 0.50 maxDD=  3559.0
+    WF   windows=2 IS_mean= 10599.7 OOS_mean= 19330.6 deg= -0.82 OOS_trades=20
+    FULL net=  39802.8 PF= 1.79 t=  36 win%=  61 sharpe= 0.21 maxDD= 18504.0
+    MC   net_mean=35706.2 net_p5=19282.0 PF_p5=1.40 ruin=0.1% robust=True
+    split: BUY=22 SELL=14
+
+--- touches/any_penetration: max TRAIN signals across grid = 77
+    TRAIN net= 12617.0 PF= 1.74 t= 18 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.0, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net= 12617.0 PF= 1.74 t= 18 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=2 | exit {'atr_mult_stop': 1.0, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net= 12617.0 PF= 1.74 t= 18 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=5 age=120 tou=1 | exit {'atr_mult_stop': 1.0, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    VAL  net=    645.0 PF= 1.03 t=  14 win%=  57 sharpe= 0.01 maxDD= 21549.5
+    WF   windows=2 IS_mean= 10928.2 OOS_mean= 14902.3 deg= -0.36 OOS_trades=24
+    FULL net=  27923.8 PF= 1.36 t=  43 win%=  58 sharpe= 0.11 maxDD= 42627.2
+    MC   net_mean=25508.0 net_p5=5972.6 PF_p5=1.08 ruin=1.6% robust=True
+    split: BUY=25 SELL=18
+
+--- touches/clean_penetration: max TRAIN signals across grid = 77
+    TRAIN net= 12617.0 PF= 1.74 t= 18 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.0, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net= 12617.0 PF= 1.74 t= 18 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=2 | exit {'atr_mult_stop': 1.0, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net= 12617.0 PF= 1.74 t= 18 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=5 age=120 tou=1 | exit {'atr_mult_stop': 1.0, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    VAL  net=    645.0 PF= 1.03 t=  14 win%=  57 sharpe= 0.01 maxDD= 21549.5
+    WF   windows=2 IS_mean= 10928.2 OOS_mean= 14902.3 deg= -0.36 OOS_trades=24
+    FULL net=  27923.8 PF= 1.36 t=  43 win%=  58 sharpe= 0.11 maxDD= 42627.2
+    MC   net_mean=25508.0 net_p5=5972.6 PF_p5=1.08 ruin=1.6% robust=True
+    split: BUY=25 SELL=18
+
+--- touches/deep_penetration: max TRAIN signals across grid = 53
+    TRAIN net=  3465.4 PF= 1.28 t= 15 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net=  3465.4 PF= 1.28 t= 15 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=2 | exit {'atr_mult_stop': 1.5, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    TRAIN net=  3465.4 PF= 1.28 t= 15 tol=0.1 cp=0.7 imp=0.8 lb=1 brk=5 age=120 tou=1 | exit {'atr_mult_stop': 1.5, 'rr': 1.5, 'max_holding_bars': 32, 'cooldown_bars': 4}
+    VAL  net=  20290.7 PF= 3.51 t=  12 win%=  67 sharpe= 0.50 maxDD=  3559.0
+    WF   windows=2 IS_mean= 10599.7 OOS_mean= 19330.6 deg= -0.82 OOS_trades=20
+    FULL net=  39802.8 PF= 1.79 t=  36 win%=  61 sharpe= 0.21 maxDD= 18504.0
+    MC   net_mean=35706.2 net_p5=19282.0 PF_p5=1.40 ruin=0.1% robust=True
+    split: BUY=22 SELL=14
+
+==============================================================================
+DQR RESEARCH :: execution TF = H1 (2016-10-03 .. 2026-09-28, 71361 bars)
+==============================================================================
+split by TIME: TRAIN 2016-10-03..2023-06-27 | VAL 2023-06-27..2025-02-10 | TEST 2025-02-10..2026-09-28
+  levels[   pdh_pdl] =  7856 (support 3928, resistance 3928)  -> Prior D1 high / prior D1 low only (fewest parameters)
+  levels[    swings] =  1032 (support 511, resistance 521)  -> Confirmed D1 swing highs/lows (left/right fractal, right bars required -> no look-ahead)
+  levels[   touches] =  1032 (support 511, resistance 521)  -> D1 swing levels; min_touches is a SIGNAL parameter applied dynamically at signal time (levels are re-tested over time), tried at 1, 2, 3
+
+--- pdh_pdl/any_penetration: max TRAIN signals across grid = 5023
+    TRAIN net=-774120.2 PF= 0.10 t=654 tol=0.25 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 2.0, 'rr': 3.0, 'max_holding_bars': 16, 'cooldown_bars': 4}
+    TRAIN net=-774120.2 PF= 0.10 t=654 tol=0.25 cp=0.7 imp=0.8 lb=1 brk=5 age=120 tou=1 | exit {'atr_mult_stop': 2.0, 'rr': 3.0, 'max_holding_bars': 16, 'cooldown_bars': 4}
+    TRAIN net=-782734.2 PF= 0.10 t=658 tol=0.25 cp=0.7 imp=0.8 lb=3 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 2.0, 'rr': 3.0, 'max_holding_bars': 16, 'cooldown_bars': 4}
+    VAL  net= -30271.8 PF= 0.83 t= 307 win%=  43 sharpe=-0.07 maxDD= 36428.1
+    WF   windows=2 IS_mean=-649829.7 OOS_mean=-28372.5 deg=  0.96 OOS_trades=758
+    FULL net=-838390.0 PF= 0.33 t=1299 win%=  31 sharpe=-0.40 maxDD=855634.9
+    MC   net_mean=-754656.6 net_p5=-786126.8 PF_p5=0.31 ruin=100.0% robust=False
+    split: BUY=636 SELL=663
+
+--- pdh_pdl/clean_penetration: max TRAIN signals across grid = 5023
+    TRAIN net=-774120.2 PF= 0.10 t=654 tol=0.25 cp=0.7 imp=0.8 lb=1 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 2.0, 'rr': 3.0, 'max_holding_bars': 16, 'cooldown_bars': 4}
+    TRAIN net=-774120.2 PF= 0.10 t=654 tol=0.25 cp=0.7 imp=0.8 lb=1 brk=5 age=120 tou=1 | exit {'atr_mult_stop': 2.0, 'rr': 3.0, 'max_holding_bars': 16, 'cooldown_bars': 4}
+    TRAIN net=-782734.2 PF= 0.10 t=658 tol=0.25 cp=0.7 imp=0.8 lb=3 brk=0 age=120 tou=1 | exit {'atr_mult_stop': 2.0, 'rr': 3.0, 'max_holding_bars': 16, 'cooldown_bars': 4}
+    VAL  net= -30271.8 PF= 0.83 t= 307 win%=  43 sharpe=-0.07 maxDD= 36428.1
+    WF   windows=2 IS_mean=-649829.7 OOS_mean=-28372.5 deg=  0.96 OOS_trades=758
+    FULL net=-838390.0 PF= 0.33 t=1299 win%=  31 sharpe=-0.40 maxDD=855634.9
+    MC   net_mean=-754656.6 net_p5=-786126.8 PF_p5=0.31 ruin=100.0% robust=False
+    split: BUY=636 SELL=663
+
