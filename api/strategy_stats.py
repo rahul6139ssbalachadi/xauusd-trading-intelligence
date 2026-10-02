@@ -117,9 +117,16 @@ def strategy_metrics(version_or_name: str) -> dict:
         return {"found": False, "requested": version_or_name}
 
     res = d.get("research_results") or {}
+    # Guard: reject any non-dict value (some defs store a string like
+    # "PENDING" or prose in the results/research_results slot). A string
+    # or None must never reach _period_metrics, which assumes .get().
+    if not isinstance(res, dict):
+        res = {}
     # V13 stores results under "results" (not "research_results")
     if not res:
         res = d.get("results") or {}
+    if not isinstance(res, dict):
+        res = {}
 
     # Handle V12's flat structure: top-level keys in research_results
     # (balance, best_rr, sharpe, etc.) plus a "train" sub-block.
@@ -152,8 +159,9 @@ def strategy_metrics(version_or_name: str) -> dict:
     # and also in results.full_history_d1.monte_carlo_* fields. Handle both.
     mc = res.get("monte_carlo")
     if mc is None or not isinstance(mc, dict):
-        # Try V13's full_history_d1 monte_carlo_* fields
-        full = res if isinstance(res, dict) and "research_results" not in res else res
+        # Try V13's full_history_d1 monte_carlo_* fields. Must not touch
+        # `full`: it feeds `headline`, and assigning it here blanked every
+        # metric on the dashboard.
         fd = res.get("full_history_d1") if "full_history_d1" in res else {}
         if isinstance(fd, dict) and any(k.startswith("monte_carlo_") for k in fd):
             mc = {
