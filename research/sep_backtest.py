@@ -8,8 +8,11 @@ Read-only: queries db/trading.db only. No MT5 writes.
 """
 from __future__ import annotations
 
+import argparse
+import os
 import sqlite3
 import sys
+import time
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -24,13 +27,31 @@ from backtest import compute_metrics, Trade
 
 DB = cfg.PROJECT_ROOT / cfg.load_settings()["paths"]["db"]
 
-# September 2026: 01 Sep 00:00 UTC to 30 Sep 23:59:59 UTC
-SEP_START = int(datetime(2026, 9, 1, 0, 0, 0, tzinfo=timezone.utc).timestamp())
-SEP_END   = int(datetime(2026, 10, 1, 0, 0, 0, tzinfo=timezone.utc).timestamp())  # exclusive
+# Month window. Defaults to September 2026 so the original behaviour is
+# unchanged; pass --month 2026-08 for any other calendar month. The window is
+# [start, end) in UTC epoch seconds.
+def _window(month: str):
+    y, m = (int(x) for x in month.split("-"))
+    start = datetime(y, m, 1, 0, 0, 0, tzinfo=timezone.utc)
+    end = (datetime(y + 1, 1, 1, 0, 0, 0, tzinfo=timezone.utc) if m == 12
+           else datetime(y, m + 1, 1, 0, 0, 0, tzinfo=timezone.utc))
+    return int(start.timestamp()), int(end.timestamp())
 
-BALANCE    = 1000.0
-RISK_PCT   = 0.02
-RISK_USD   = BALANCE * RISK_PCT  # $20
+
+SEP_START, SEP_END = _window(os.environ.get("REPORT_MONTH", "2026-09"))
+MONTH_LABEL = time.strftime("%B %Y", time.gmtime(SEP_START))
+
+BALANCE    = float(os.environ.get("REPORT_BALANCE", "1000"))
+RISK_PCT   = float(os.environ.get("REPORT_RISK_PCT", "0.02"))
+RISK_USD   = BALANCE * RISK_PCT
+
+# Readable aliases used by the report banners.
+MONTH_START, MONTH_END = SEP_START, SEP_END
+
+
+def _d(epoch: int) -> str:
+    return time.strftime("%Y-%m-%d %a", time.gmtime(epoch))
+
 
 PIP_VAL = {"XAUUSD": 0.10, "BTCUSD": 1.0}
 MIN_LOTS = 0.01
@@ -365,7 +386,7 @@ def fmt_line(strat, sym, tf, rr, nsig, nt, wr, pf, pfusd, net, fe, ret):
 
 def main():
     print("=" * 90)
-    print("SEPTEMBER BACKTEST: 2026-09-01 (Mon) .. 2026-09-30 (Thu)")
+    print(f"{MONTH_LABEL.upper()} BACKTEST: {_d(MONTH_START)} .. {_d(MONTH_END - 1)}")
     print(f"Balance=${BALANCE:.0f}, Risk={RISK_PCT*100:.0f}%/trade (${RISK_USD:.0f}), adaptive R:R per TF")
     print("=" * 90)
 
@@ -440,13 +461,13 @@ def main():
     print(header)
     print(sep)
     # Load FULL D1 history for level construction
-    d1_full = load("BTCUSD", "D1", start_ts=0, end_ts=int(datetime(2026, 10, 1, tzinfo=timezone.utc).timestamp()))
+    d1_full = load("BTCUSD", "D1", start_ts=0, end_ts=MONTH_END)
     if len(d1_full) < 10:
         print("  BTCUSD D1: too few bars\n")
     else:
         levels = d1_swing_levels(d1_full)
         levels = [l for l in levels if l["ts"].value <= SEP_START * 1_000_000_000]
-        print(f"  D1 levels (historical, valid for Sep): {len(levels)}\n")
+        print(f"  D1 levels (historical, valid for {MONTH_LABEL}): {len(levels)}\n")
         for tf in ["D1", "H1", "M15", "M5", "M1"]:
             df = load("BTCUSD", tf)
             if len(df) < 30:
@@ -469,7 +490,7 @@ def main():
 
     # ---- Summary table ----
     print("\n" + "=" * 90)
-    print("SUMMARY: SEPTEMBER 2026 ($1000, 2% risk, adaptive R:R)")
+    print(f"SUMMARY: {MONTH_LABEL.upper()} (${BALANCE:.0f}, {RISK_PCT*100:.0f}% risk, adaptive R:R)")
     print("=" * 90)
     print(header)
     print(sep)
@@ -478,9 +499,29 @@ def main():
 
     print("\n" + "=" * 90)
     print("RESEARCH COMPLETE — no MT5 writes, no live trading, no fabrication.")
-    print("All numbers computed from db/trading.db, September 2026.")
+    print(f"All numbers computed from db/trading.db, {MONTH_LABEL}.")
     print("=" * 90)
 
 
 if __name__ == "__main__":
+    _ap = argparse.ArgumentParser(description=__doc__)
+    _ap.add_argument("--month", default=os.environ.get("REPORT_MONTH", "2026-09"),
+                     help="calendar month as YYYY-MM (default 2026-09)")
+    _ap.add_argument("--balance", type=float,
+                     default=float(os.environ.get("REPORT_BALANCE", "1000")))
+    _ap.add_argument("--risk-pct", type=float,
+                     default=float(os.environ.get("REPORT_RISK_PCT", "0.02")),
+                     help="risk per trade as a fraction, e.g. 0.02 = 2%")
+    _a = _ap.parse_args()
+    # Re-derive the window and money model from the CLI/env, since the module
+    # constants were already bound at import time.
+    SEP_START, SEP_END = _window(_a.month)
+    MONTH_START, MONTH_END = SEP_START, SEP_END
+    MONTH_LABEL = time.strftime("%B %Y", time.gmtime(SEP_START))
+    BALANCE = _a.balance
+    RISK_PCT = _a.risk_pct
+    RISK_USD = BALANCE * RISK_PCT
+    globals().update(SEP_START=SEP_START, SEP_END=SEP_END, MONTH_START=MONTH_START,
+                     MONTH_END=MONTH_END, MONTH_LABEL=MONTH_LABEL, BALANCE=BALANCE,
+                     RISK_PCT=RISK_PCT, RISK_USD=RISK_USD)
     main()
