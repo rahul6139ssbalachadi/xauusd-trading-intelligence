@@ -1,0 +1,62 @@
+{
+  "name": "XAUUSD_SESSION_BREAK_SWEEP_V15",
+  "version": "V15",
+  "status": "REJECTED",
+  "status_note": "Fails 3 of 4 gates. TRAIN positive, but VAL negative (PF 0.33), walk-forward degradation 6.16, Monte Carlo ruin 72.2%. Best TRAIN config also won the day on 1 lucky month (2026-03 alone was +1406 of a +742 net).",
+  "symbol": "XAUUSD",
+  "timeframe": "H1 range + M5 trigger",
+  "hypothesis": "Session-Break Liquidity Sweep. Range = first H1 candle after the daily session break. On M5 wait for price to sweep one side, then enter on a BODY close back inside the range with EMA9 confirmation. Stop beyond the sweep, target 1:1.5.",
+  "rules_as_given": {
+    "step1_range": "first H1 candle after the session break",
+    "step2_sweep": "low breaks -> look for BUYS; high breaks -> look for SELLS",
+    "step3a_confirmation": "candle BODY closes back inside the range (wick does not count)",
+    "step3b_confirmation": "price on the correct side of the 9 EMA",
+    "step4_stop": "buys below the sweep low; sells above the first post-sweep swing high",
+    "step5_target": "fixed 1:1.5 R:R, optional breakeven-and-hold",
+    "after_stopout": "wait for a FRESH setup that meets all rules again"
+  },
+  "deviations_from_user_rules": [
+    "SELL STOP: the user's rule is 'above the first swing (red+green candle pattern) after the sweep'. This repo has no red+green swing primitive, so sells use the highest high of the M5 bars following the sweep. Closest available proxy; documented, not silently changed.",
+    "SESSION BREAK HOUR: TradingView's 'Session Breaks' is a user-chart setting and is not stored in the DB. Six candidate broker hours (00,06,07,08,12,13) were searched on TRAIN only; 12:00 was selected. If your chart uses a different break hour, re-run -- this result may not transfer.",
+    "ONE TRADE PER DAY: applied the user's 'fresh setup' rule conservatively as at most one position at a time."
+  ],
+  "sample": {
+    "qualifying_setups_total": 362,
+    "buy": 179,
+    "sell": 183,
+    "median_stop_pips": 95.4,
+    "median_stop_vs_cost_ratio": "11.9x round-trip cost (8 pips) -- this is the ONLY reason the idea was testable",
+    "train": "217 setups, 2026-02-16 -> 2026-07-01",
+    "val": "72 setups",
+    "test": "73 setups, 2026-08-14 -> 2026-10-01"
+  },
+  "results": {
+    "train_selected": "break_hour=12 rr=2.0 breakeven=True hold=24 -> net=+741.6 PF=1.23 t=56 win=39.3%",
+    "validation": "net=-423.8 PF=0.33 t=12 win=25.0%  <-- THE KILL",
+    "walk_forward": "IS_mean=+120.5 OOS_mean=-621.7 degradation=6.16 OOS_trades=61",
+    "full": "net=-498.9 PF=0.90 t=82 win=31.7% maxDD=2178.3 sharpe=-0.04",
+    "exit_mix": "stop 46 (56%), time 21 (26%), time_be 15 (18%)",
+    "monthly": "2026-02 +65 | 03 +1406 | 04 -715 | 05 -681 | 06 +602 | 07 -386 | 08 -394 | 09 -395 -> 3/8 profitable",
+    "monte_carlo": "net_mean=-458 net_p5=-1204 PF_p5=0.74 ruin=72.2% robust=False",
+    "money": "-$0.50 on $1,000 (-0.05%) over 224 days at 0.01 lot"
+  },
+  "gates": {
+    "GATE1_train_positive": "PASS net=742",
+    "GATE2_val_positive": "FAIL net=-424",
+    "GATE3_oos_degradation": "FAIL deg=6.16",
+    "GATE4_monte_carlo": "FAIL ruin=72%"
+  },
+  "honest_caveat": "XAUUSD M5 data covers only 2026-02-16 -> 2026-10-01 (193 broker days). Even a PASS here would be low confidence. The REJECT, however, is not merely small-sample: the edge does not merely shrink out of sample, it INVERTS (VAL PF 0.33, 3 of 8 months profitable, 72% Monte Carlo ruin). The conclusion is directionally solid even though the sample is short.",
+  "what_was_learned": [
+    "96% of session-break ranges DO get swept on M5 within 90 minutes -- the sweep premise itself is real and fires often.",
+    "The body-close-back-inside + EMA9 filter cuts 156 sweeps to ~50-90 qualifying setups per break hour, and those do NOT retain the edge.",
+    "Median stop is 95 pips = 11.9x round-trip cost. Cost is NOT the binding constraint here, unlike V1-V10. The premise was structurally sound and still failed, which is a genuinely informative negative.",
+    "Breakeven-and-hold did not rescue it: time_be exits were 18% of trades and overall expectancy stayed negative."
+  ],
+  "files": {
+    "probe": "research/v15_sweep_probe.py",
+    "backtest": "research/v15_sweep.py"
+  },
+  "created": "2026-10-02",
+  "data_revision": "db/trading.db XAUUSD M5 44578 bars 2026-02-16 -> 2026-10-01; H1 61854 bars 2016-05-06 -> 2026-10-01"
+}

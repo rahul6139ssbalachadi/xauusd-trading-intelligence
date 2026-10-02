@@ -1,0 +1,57 @@
+{
+  "name": "XAUUSD_D1_EMA12_200_REGIME_PULLBACK_V14",
+  "version": "V14",
+  "status": "PAPER_TRADE_CANDIDATE",
+    "status_note": "PASSED all four gates, but only on a model that allows overlapping positions, which is not executable. On the realistic one-position-at-a-time model the edge is PF 1.53 / +9,511 pips / +$9.51 on $1,000 at the 0.01 minimum lot. Verdict is STABLE across history truncation and both time halves, unlike V12 which flips. Requires paper trading. NOT approved for live execution.",
+  "symbol": "XAUUSD",
+  "timeframe": "D1",
+  "hypothesis": "EMA12/EMA200 defines a regime. Price ABOVE BOTH is a genuine long-side drift filter on XAUUSD (+0.58% over 10 D1 bars, measured). The tradeable PATTERN is the PULLBACK into the EMA band inside that regime, not the cross itself. Death crosses REVERT rather than follow, so the strategy is long-only and uses a death cross as a regime exit rather than a short entry.",
+  "why_not_scalping": "Measured, not assumed: XAUUSD round-trip cost is ~0.11% while H1/M15 forward drift in every regime state is <= 0.07%. Scalping this idea cannot clear the cost floor. V14 is a swing strategy, D1 bars, avg holding ~8 bars.",
+  "entry_rules": {
+    "regime_gate": "close > EMA12 > EMA200. Every bar. If false, no entry.",
+    "trigger_pullback": "bar trades back into a band of 0.5 x ATR14 around EMA200 or EMA12, while still above it. De-stacked: one entry per pullback, not one per bar.",
+    "trigger_cross": "EMA12 crosses above EMA200 (golden cross).",
+    "selected_trigger": "pullback_or_cross (both)",
+    "entry_price": "NEXT bar open. Never the signal bar close.",
+    "direction": "LONG ONLY. Death cross = regime exit, not a short entry."
+  },
+  "exit_rules": {
+    "stop": "1.5 x ATR14 below entry",
+    "target": "1.5 x risk (1.5R)",
+    "max_holding_d1_bars": 20,
+    "regime_exit": "close the position on a death cross"
+  },
+  "risk": {
+    "risk_pct_per_trade": 0.25,
+    "max_positions": 1,
+    "note": "0.01 lot is the broker minimum; on D1 gold with a 1.5xATR stop, fractional risk sizing floors below it, so realised risk per trade is well above 0.25%."
+  },
+  "params": {
+    "ema_fast": 12,
+    "ema_slow": 200,
+    "pullback_band_atr": 0.5,
+    "atr_mult_stop": 1.5,
+    "rr": 1.5,
+    "max_holding": 20
+  },
+  "measurement": {
+    "basis": "one position at a time (executable model)",
+    "full_sample": "t=85 net=+9511.5 pips PF=1.53 win=54.1% maxDD=2340.6",
+    "train_selected": "net=7808 t=71 PF=1.96",
+    "validation_never_searched": "net=+6497.7 PF=2.00 t=40",
+    "walk_forward": "IS_mean=8078.6 OOS_mean=6431.7 degradation=0.20 OOS_trades=82",
+    "monte_carlo": "net_p5=13748 PF_p5=1.44 ruin=0.0% robust=True",
+    "yearly": "profitable in 7 of 10 years; 2026 currently -2132",
+    "cost_stress_3x": "net=+17905 PF=1.52 (edge is not cost-dilution)",
+    "stability": "STABLE: positive in full span, last 90/80/70/60%, both halves"
+  },
+  "rejected_siblings": {
+    "short_side_pullback": "XAUUSD D1 PB->EMA200 short: h10 -0.45%. No edge. Excluded on measurement, not preference.",
+    "death_cross_short": "XAUUSD D1 death cross: 20-40% dir-win, avg -0.40 to -1.75%. Reverts. Excluded on measurement.",
+    "m15_h1_scalping": "all regime states <= 0.07% drift vs 0.11% round-trip cost. Dead by cost floor.",
+    "pure_crossover": "research/v14_ema_cross.py H4: PF 1.55 long-only vs 1.17 both-sided; D1 only 32 crosses in 10 years (sample-starved). FAILED GATE3 (degradation 0.89). Pure cross is the WEAKER signal here, not the entry."
+  },
+  "next_step": "Paper trade on D1 bar-close. NOT approved for live execution. Per CLAUDE.md s25 the strategy must not be promoted while its only passing measurement came from an overlapping-trade model.",
+  "created": "2026-10-02",
+  "data_revision": "db/trading.db XAUUSD D1 2685 bars 2016-05-09 -> 2026-10-01"
+}
