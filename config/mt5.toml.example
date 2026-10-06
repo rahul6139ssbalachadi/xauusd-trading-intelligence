@@ -1,0 +1,16 @@
+# MetaTrader 5 Configuration
+# Update these values for your environment
+
+# Path to MT5 terminal executable
+terminal_path = "C:\\Program Files\\XM Global MT5\\terminal64.exe"
+
+# Your XM MT5 demo account login number
+# Find this in MT5: View > Account History > Account Number
+allowed_login = 345982869
+
+# Trading symbol - use GOLD.i# for XM
+# Other options: XAUUSD, XAUUSD#
+symbol = "GOLD.i#"
+
+# Optional: specify profile name if using custom MT5 profiles
+# profile = "Default"
